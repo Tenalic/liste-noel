@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 public class ListeDto implements Serializable {
+
+    private String urlPartage;
     
     private Long idListe;
 
@@ -45,5 +47,13 @@ public class ListeDto implements Serializable {
 
     public void setIdListe(Long idListe) {
         this.idListe = idListe;
+    }
+
+    public String getUrlPartage() {
+        return urlPartage;
+    }
+
+    public void setUrlPartage(String urlPartage) {
+        this.urlPartage = urlPartage;
     }
 }

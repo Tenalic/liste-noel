@@ -40,6 +40,10 @@ public class ConnexionController {
 
         Utils.getSessionErrorMessage(session, model);
 
+        if (session.getAttribute(ConstantesSession.EMAIL) != null) {
+            return "redirect:consulter-liste";
+        }
+
         return "connexion";
     }
 
@@ -50,7 +54,7 @@ public class ConnexionController {
             if (compteService.connexion(email, password)) {
                 session.setMaxInactiveInterval(14400);
                 session.setAttribute(ConstantesSession.EMAIL, email);
-                return "redirect:liste";
+                return "redirect:consulter-liste";
             } else {
                 Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_FAIL_KEY, langue));
             }

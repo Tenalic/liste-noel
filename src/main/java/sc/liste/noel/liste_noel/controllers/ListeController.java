@@ -43,6 +43,20 @@ public class ListeController {
 
         return "liste";
     }
+    @GetMapping("/partage")
+    public String partageGet(Model model, HttpSession session, @RequestParam(value = "id", required = true) String idListe) {
+
+        session.setAttribute(Constantes.SHARED_LISTE, Long.valueOf(idListe));
+
+        String email = (String) session.getAttribute(ConstantesSession.EMAIL);
+
+        if (email == null) {
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
+            return "redirect:connexion";
+        }
+
+        return "redirect:consulter-liste";
+    }
 
     @PostMapping("/creer-liste")
     public String creerListe(Model model, HttpSession session, @RequestParam(value = "nomListe", required = true) String nomListe) {
@@ -68,7 +82,16 @@ public class ListeController {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
             return "redirect:connexion";
         }
-        Long idListe = (Long) session.getAttribute(ConstantesSession.ID_LISTE);
+
+        Long idShared = (Long) session.getAttribute(Constantes.SHARED_LISTE);
+        Long idListe;
+        if(idShared != null) {
+            idListe = idShared;
+            session.removeAttribute(Constantes.SHARED_LISTE);
+        } else {
+            idListe = (Long) session.getAttribute(ConstantesSession.ID_LISTE);
+        }
+
         if (idListe == null) {
             return "redirect:liste";
         }

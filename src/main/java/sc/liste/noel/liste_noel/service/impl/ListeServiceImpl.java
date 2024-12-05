@@ -2,6 +2,7 @@ package sc.liste.noel.liste_noel.service.impl;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sc.liste.noel.liste_noel.Utile.mapper.ListeMapper;
 import sc.liste.noel.liste_noel.dao.entity.ListeDao;
@@ -20,6 +21,9 @@ public class ListeServiceImpl implements ListeServiceInterface {
 
     @Autowired
     private ObjetRepo objetRepo;
+
+    @Value("${base_url}")
+    private String baseUrl;
 
     @Override
     public ListeDto creerListe(String proprietaire, String nomListe) {
@@ -45,7 +49,9 @@ public class ListeServiceImpl implements ListeServiceInterface {
     @Override
     public ListeDto getListeById(Long id) {
         ListeDao listeDao = listeRepo.findByIdListe(id);
-        return ListeMapper.daoToDto(listeDao);
+        ListeDto listeDto = ListeMapper.daoToDto(listeDao);
+        listeDto.setUrlPartage(ListeMapper.buildUrlPartage(baseUrl, id));
+        return listeDto;
     }
 
     @Override

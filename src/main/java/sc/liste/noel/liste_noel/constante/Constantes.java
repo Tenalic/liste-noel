@@ -14,6 +14,7 @@ public class Constantes {
 
     // messages connexion
     public static final String CONNEXION_KEY = "connexion";
+    public static final String SHARED_LISTE = "sharedListe";
     public static final String CONNEXION_FR = "Vous devez vous connecter";
     public static final String CONNEXION_EN = "You must log in";
     public static final String MESSAGE_DEFAUT_FR = "Message inconnu";
