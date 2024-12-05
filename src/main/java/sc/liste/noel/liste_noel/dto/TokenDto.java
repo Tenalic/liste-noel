@@ -5,20 +5,20 @@ import java.time.LocalDateTime;
 
 public class TokenDto implements Serializable {
 
-    private String token;
+    private java.lang.String token;
 
     private LocalDateTime tokenExpireDate;
 
-    private String cossy;
+    private java.lang.String cossy;
 
     public TokenDto() {
     }
 
-    public String getToken() {
+    public java.lang.String getToken() {
         return token;
     }
 
-    public void setToken(String token) {
+    public void setToken(java.lang.String token) {
         this.token = token;
     }
 
@@ -30,11 +30,11 @@ public class TokenDto implements Serializable {
         this.tokenExpireDate = tokenExpireDate;
     }
 
-    public String getCossy() {
+    public java.lang.String getCossy() {
         return cossy;
     }
 
-    public void setCossy(String cossy) {
+    public void setCossy(java.lang.String cossy) {
         this.cossy = cossy;
     }
 }
