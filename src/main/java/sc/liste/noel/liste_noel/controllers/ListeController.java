@@ -58,7 +58,7 @@ public class ListeController {
             LOGGER.error("", e);
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
         }
-        return "liste";
+        return "redirect:liste";
     }
 
     @GetMapping("/consulter-liste")
@@ -68,7 +68,7 @@ public class ListeController {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
             return "redirect:connexion";
         }
-        String idListe = (String) session.getAttribute(ConstantesSession.ID_LISTE);
+        Long idListe = (Long) session.getAttribute(ConstantesSession.ID_LISTE);
         if (idListe == null) {
             return "redirect:liste";
         }
@@ -76,7 +76,7 @@ public class ListeController {
         ListeDto listeDto;
         try {
             listeDto = listeServiceInterface.getListeById(idListe);
-            model.addAttribute(ConstantesSession.LISTES, listeDto);
+            model.addAttribute(ConstantesSession.LISTE, listeDto);
         } catch (Exception e) {
             LOGGER.error("", e);
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
@@ -101,8 +101,8 @@ public class ListeController {
         Utils.getSessionErrorMessage(session, model);
         ListeDto listeDto;
         try {
-            listeDto = listeServiceInterface.getListeById(idListe);
-            session.setAttribute(ConstantesSession.LISTES, listeDto);
+            listeDto = listeServiceInterface.getListeById(Long.valueOf(idListe));
+            session.setAttribute(ConstantesSession.LISTE, listeDto);
         } catch (Exception e) {
             LOGGER.error("", e);
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());

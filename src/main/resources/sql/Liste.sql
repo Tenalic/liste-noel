@@ -10,6 +10,7 @@ CREATE TABLE liste_noel.liste
             REFERENCES liste_noel.compte (email)
 );
 
+DROP TABLE liste_noel.objet CASCADE;
 
 CREATE TABLE liste_noel.objet
 (
@@ -18,7 +19,7 @@ CREATE TABLE liste_noel.objet
     titre character varying(1000) NOT NULL,
     description character varying(1000),
     url character varying(1000),
-    estPrit boolean NOT NULL,
+    est_prit boolean NOT NULL,
     detenteur character varying(320),
     PRIMARY KEY (id_objet),
     CONSTRAINT id_liste FOREIGN KEY (id_liste) REFERENCES liste_noel.liste (id_liste),

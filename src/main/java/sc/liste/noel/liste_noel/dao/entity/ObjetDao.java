@@ -18,7 +18,7 @@ public class ObjetDao {
     private String description;
     @Column(name = "url")
     private String url;
-    @Column(name = "estPrit")
+    @Column(name = "est_prit")
     private Boolean estPrit;
     @Column(name = "detenteur")
     private String detenteur;

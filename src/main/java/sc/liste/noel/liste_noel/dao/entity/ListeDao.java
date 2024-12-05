@@ -16,7 +16,7 @@ public class ListeDao {
     private String proprietaire;
     @Column(name = "nom_liste")
     private String nomListe;
-    @OneToMany(mappedBy = "idObjet")
+    @OneToMany(mappedBy = "idListe")
     private List<ObjetDao> objetDaoList;
 
     public ListeDao() {

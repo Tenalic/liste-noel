@@ -10,7 +10,7 @@ public interface ListeServiceInterface {
 
     List<ListeDto> getListeOfEmail(String email);
 
-    ListeDto getListeById(String id);
+    ListeDto getListeById(Long id);
 
     void ajouterObjet(String titre, String url,String description,String idListe, String proprietaire);
 

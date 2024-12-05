@@ -18,6 +18,7 @@ public class ListeServiceImpl implements ListeServiceInterface {
     @Autowired
     private ListeRepo listeRepo;
 
+    @Autowired
     private ObjetRepo objetRepo;
 
     @Override
@@ -42,8 +43,8 @@ public class ListeServiceImpl implements ListeServiceInterface {
     }
 
     @Override
-    public ListeDto getListeById(String id) {
-        ListeDao listeDao = listeRepo.findByIdListe(Long.valueOf(id));
+    public ListeDto getListeById(Long id) {
+        ListeDao listeDao = listeRepo.findByIdListe(id);
         return ListeMapper.daoToDto(listeDao);
     }
 
@@ -55,7 +56,6 @@ public class ListeServiceImpl implements ListeServiceInterface {
         objetDao.setTitre(titre);
         objetDao.setEstPrit(false);
         objetDao.setUrl(url);
-        objetDao.setDetenteur(proprietaire);
         objetRepo.save(objetDao);
     }
 

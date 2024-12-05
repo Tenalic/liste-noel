@@ -28,7 +28,7 @@ public class InscriptionController {
     @GetMapping("/inscription")
     public String inscriptionGet(Model model, HttpSession session) {
         if (session.getAttribute(ConstantesSession.EMAIL) != null) {
-            return "redirect:tournois";
+            return "redirect:liste";
         }
         Utils.getSessionErrorMessage(session, model);
 
@@ -65,7 +65,7 @@ public class InscriptionController {
 
         session.setAttribute(ConstantesSession.EMAIL, email);
 
-        return "redirect:tournois";
+        return "redirect:liste";
     }
 
     @GetMapping("/modifier-password")
