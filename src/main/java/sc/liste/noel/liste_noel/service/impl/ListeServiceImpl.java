@@ -57,4 +57,9 @@ public class ListeServiceImpl implements ListeServiceInterface {
         objetDao.setDetenteur(proprietaire);
         objetRepo.save(objetDao);
     }
+
+    @Override
+    public void prendreUnObjet(String idListe, String idObjet, String personne) {
+
+    }
 }

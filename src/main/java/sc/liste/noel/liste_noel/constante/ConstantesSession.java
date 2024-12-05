@@ -4,6 +4,7 @@ public class ConstantesSession {
 
 	public static String EMAIL = "email";
 	public static String LISTE = "liste";
+	public static String ID_LISTE = "id_liste";
 
 	public static String ERREUR = "erreur";
 

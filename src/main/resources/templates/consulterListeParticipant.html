@@ -55,8 +55,7 @@
 </form>
 
 <div align="center" th:if="${liste}">
-    <h1 class="h1">Objet dans ma liste</h1>
-
+    <h1 class="h1">Objet dans la liste</h1>
     <table class="table table-bordered table-striped">
         <thead class="table-secondary">
         <tr>
@@ -72,7 +71,18 @@
             <td><h5 class="h5" th:text="${objet.titre}"></h5></td>
             <td><h5 class="h5" th:text="${objet.description}"></h5></td>
             <td><h5 class="h5" th:text="${objet.url}"></h5></td>
-            <td><h5 class="h5" th:text="${objet.estPrit}"></h5></td>
+            <td><h5 th:if="${objet.estPrit}" class="h5" th:text="${objet.estPrit}"></h5>
+                    <form th:if="!${objet.estPrit}" action="/prendre" method="post">
+                        <div class="form-group row">
+                            <input type="hidden"
+                                   id="idListe" name="idListe"
+                                   th:value="${liste.idListe}">
+                            <input type="hidden"
+                                   id="idObjet" name="idObjet"
+                                   th:value="${objet.idObjet}">
+                        </div>
+                        <button class="btn btn-success">J'offre ça !</button>
+                    </form></td>
             <td><h5 class="h5" th:text="${objet.detenteur}"></h5></td>
         </tr>
         </tbody>
@@ -80,33 +90,8 @@
     <div th:if="${liste.listeObjet.size()} == 0">Aucun objet dans la liste</div>
 </div>
 
-<div align="center">
-    <h1 class="h1">Ajouter un objet</h1>
-    <div class="card">
-        <div class="card-body">
-            <form action="/ajouter-objet" method="post">
-                <div class="form-group row">
-                    <label class="col-sm-4 col-form-label">Titre</label> <input
-                        type="text" name="titre" class="col-sm-10 form-control"
-                        id="titre" required>
-                    <label class="col-sm-4 col-form-label">Description</label> <input
-                        type="text" name="description" class="col-sm-10 form-control"
-                        id="description">
-                    <label class="col-sm-4 col-form-label">Url</label> <input
-                        type="text" name="url" class="col-sm-10 form-control"
-                        id="url">
-                    <input type="hidden"
-                           id="idListe" name="idListe"
-                           th:value="${liste.idListe}">
-                </div>
-                <div th:if="${erreur}">
-                    <p class="alert alert-danger" th:text="${erreur} ?: ${erreur}"/>
-                </div>
+<script type="text/javascript">
 
-                <button class="btn btn-success">Creer liste</button>
-            </form>
-        </div>
-    </div>
-</div>
+</script>
 </body>
 </html>

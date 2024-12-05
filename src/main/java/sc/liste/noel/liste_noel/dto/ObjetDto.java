@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public class ObjetDto implements Serializable {
 
+    private Long idObjet;
+
     private String titre;
 
     private String description;
@@ -55,5 +57,13 @@ public class ObjetDto implements Serializable {
 
     public void setDetenteur(String detenteur) {
         this.detenteur = detenteur;
+    }
+
+    public Long getIdObjet() {
+        return idObjet;
+    }
+
+    public void setIdObjet(Long idObjet) {
+        this.idObjet = idObjet;
     }
 }

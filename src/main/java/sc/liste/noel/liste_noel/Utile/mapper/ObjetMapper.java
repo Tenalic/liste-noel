@@ -21,6 +21,7 @@ public class ObjetMapper {
             objetDto.setUrl(objetDao.getUrl());
             objetDto.setEstPrit(objetDao.getEstPrit());
             objetDto.setTitre(objetDao.getTitre());
+            objetDto.setIdObjet(objetDao.getIdObjet());
             objetDtoList.add(objetDto);
         }
         return objetDtoList;

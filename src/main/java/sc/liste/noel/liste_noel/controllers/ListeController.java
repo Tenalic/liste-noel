@@ -16,6 +16,7 @@ import sc.liste.noel.liste_noel.dto.ListeDto;
 import sc.liste.noel.liste_noel.service.ListeServiceInterface;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Controller
@@ -30,7 +31,7 @@ public class ListeController {
     public String getListe(Model model, HttpSession session) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
 
-        if(email == null) {
+        if (email == null) {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
             return "redirect:connexion";
         }
@@ -40,13 +41,13 @@ public class ListeController {
 
         model.addAttribute(ConstantesSession.LISTES, listDeListeDto);
 
-        return "liste" ;
+        return "liste";
     }
 
     @PostMapping("/creer-liste")
     public String creerListe(Model model, HttpSession session, @RequestParam(value = "nomListe", required = true) String nomListe) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
-        if(email == null) {
+        if (email == null) {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
             return "redirect:connexion";
         }
@@ -57,27 +58,64 @@ public class ListeController {
             LOGGER.error("", e);
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
         }
-        return "liste" ;
+        return "liste";
+    }
+
+    @GetMapping("/consulter-liste")
+    public String consulterListeGet(Model model, HttpSession session) {
+        String email = (String) session.getAttribute(ConstantesSession.EMAIL);
+        if (email == null) {
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
+            return "redirect:connexion";
+        }
+        String idListe = (String) session.getAttribute(ConstantesSession.ID_LISTE);
+        if (idListe == null) {
+            return "redirect:liste";
+        }
+        Utils.getSessionErrorMessage(session, model);
+        ListeDto listeDto;
+        try {
+            listeDto = listeServiceInterface.getListeById(idListe);
+            model.addAttribute(ConstantesSession.LISTES, listeDto);
+        } catch (Exception e) {
+            LOGGER.error("", e);
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
+            return "redirect:liste";
+        }
+
+        if (email.equals(Optional.ofNullable(listeDto).map(ListeDto::getProprietaire).orElse(null))) {
+            return "consulterListeProprietaire";
+        } else {
+            return "consulterListeParticipant";
+        }
     }
 
     @PostMapping("/selectionner-liste")
     public String selectionnerListe(Model model, HttpSession session,
                                     @RequestParam(value = "idListe", required = true) String idListe) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
-        if(email == null) {
+        if (email == null) {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
             return "redirect:connexion";
         }
         Utils.getSessionErrorMessage(session, model);
+        ListeDto listeDto;
         try {
-            ListeDto listeDto = listeServiceInterface.getListeById(idListe);
+            listeDto = listeServiceInterface.getListeById(idListe);
             session.setAttribute(ConstantesSession.LISTES, listeDto);
         } catch (Exception e) {
             LOGGER.error("", e);
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
-            return "redirect:liste" ;
+            return "redirect:liste";
         }
-        return "consulterListe" ;
+
+        if (listeDto == null) {
+            return "redirect:liste";
+        }
+
+        session.setAttribute(ConstantesSession.ID_LISTE, listeDto.getIdListe());
+
+        return "redirect:consulter-liste";
     }
 
     @PostMapping("/ajouter-objet")
@@ -87,17 +125,36 @@ public class ListeController {
                                @RequestParam(value = "description", required = false) String description,
                                @RequestParam(value = "idListe", required = true) String idListe) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
-        if(email == null) {
+        if (email == null) {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
             return "redirect:connexion";
         }
         Utils.getSessionErrorMessage(session, model);
         try {
-            listeServiceInterface.ajouterObjet(titre, url,description,idListe, email);
+            listeServiceInterface.ajouterObjet(titre, url, description, idListe, email);
         } catch (Exception e) {
             LOGGER.error("", e);
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
         }
-        return "liste" ;
+        return "redirect:consulter-liste";
+    }
+
+    @PostMapping("/prendre")
+    public String prendreObjet(Model model, HttpSession session,
+                               @RequestParam(value = "idListe", required = true) String idListe,
+                               @RequestParam(value = "idObjet", required = true) String idObjet) {
+        String email = (String) session.getAttribute(ConstantesSession.EMAIL);
+        if (email == null) {
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
+            return "redirect:connexion";
+        }
+        Utils.getSessionErrorMessage(session, model);
+        try {
+            listeServiceInterface.prendreUnObjet(idListe, idObjet, email);
+        } catch (Exception e) {
+            LOGGER.error("", e);
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
+        }
+        return "redirect:consulter-liste";
     }
 }
