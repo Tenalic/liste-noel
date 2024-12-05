@@ -2,20 +2,20 @@ package sc.liste.noel.liste_noel.dto;
 
 import java.util.List;
 
-public class String {
+public class CompteDto {
 
-    private java.lang.String email;
+    private String email;
 
     private List<ListeDto> listDeListeDto;
 
-    public String() {
+    public CompteDto() {
     }
 
-    public java.lang.String getEmail() {
+    public String getEmail() {
         return email;
     }
 
-    public void setEmail(java.lang.String email) {
+    public void setEmail(String email) {
         this.email = email;
     }
 

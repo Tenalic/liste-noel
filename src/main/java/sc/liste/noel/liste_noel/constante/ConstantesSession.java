@@ -3,12 +3,13 @@ package sc.liste.noel.liste_noel.constante;
 public class ConstantesSession {
 
 	public static String EMAIL = "email";
+	public static String LISTE = "liste";
 
 	public static String ERREUR = "erreur";
 
 	public static String SUCCES = "succes";
 
-	public static String LISTE = "listes";
+	public static String LISTES = "listes";
 
 	public static String TOURNOI_INFOS = "tournoiInfos";
 

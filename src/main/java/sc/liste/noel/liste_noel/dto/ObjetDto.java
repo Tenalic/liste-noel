@@ -4,11 +4,11 @@ import java.io.Serializable;
 
 public class ObjetDto implements Serializable {
 
-    private java.lang.String titre;
+    private String titre;
 
-    private java.lang.String description;
+    private String description;
 
-    private java.lang.String url;
+    private String url;
 
     private boolean estPrit;
 
@@ -17,27 +17,27 @@ public class ObjetDto implements Serializable {
     public ObjetDto() {
     }
 
-    public java.lang.String getTitre() {
+    public String getTitre() {
         return titre;
     }
 
-    public void setTitre(java.lang.String titre) {
+    public void setTitre(String titre) {
         this.titre = titre;
     }
 
-    public java.lang.String getDescription() {
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(java.lang.String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public java.lang.String getUrl() {
+    public String getUrl() {
         return url;
     }
 
-    public void setUrl(java.lang.String url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 

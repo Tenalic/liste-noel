@@ -50,44 +50,54 @@
     </div>
 </nav>
 
-<div align="center" th:if="${listes}">
-    <h1 class="h1">Liste de mes listes</h1>
-    <form action="/tournois" method="get">
-        <button class="btn btn-primary">actualiser</button>
-    </form>
+<form action="/creer-liste" method="get">
+    <button class="btn btn-primary">actualiser</button>
+</form>
+
+<div align="center" th:if="${liste}">
+    <h1 class="h1">Objet dans ma liste</h1>
 
     <table class="table table-bordered table-striped">
         <thead class="table-secondary">
         <tr>
-            <th>Nom liste</th>
-            <th>Action</th>
+            <th>Titre</th>
+            <th>Description</th>
+            <th>Url</th>
+            <th>Est prit</th>
+            <th>Detenteur</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="liste: ${listes}">
-            <td><h5 class="h5" th:text="${liste.nomListe}"></h5></td>
-            <td><form action="/selectionner-liste" method="post"> <input type="hidden"
-                                                                  id="idListe" name="idListe"
-                                                                  th:value="${liste.idListe}">
-                <div>
-                    <button class="btn btn-success">Selectionner</button>
-            </form></td>
+        <tr th:each="objet: ${liste.listeObjet}">
+            <td><h5 class="h5" th:text="${objet.titre}"></h5></td>
+            <td><h5 class="h5" th:text="${objet.description}"></h5></td>
+            <td><h5 class="h5" th:text="${objet.url}"></h5></td>
+            <td><h5 class="h5" th:text="${objet.estPrit}"></h5></td>
+            <td><h5 class="h5" th:text="${objet.detenteur}"></h5></td>
         </tr>
         </tbody>
     </table>
-    <div th:if="${listes.size()} == 0">Aucunne liste
-        disponible</div>
+    <div th:if="${liste.listeObjet.size()} == 0">Aucun objet dans la liste</div>
 </div>
 
 <div align="center">
-    <h1 class="h1">Créer une nouvelle liste</h1>
+    <h1 class="h1">Ajouter un objet</h1>
     <div class="card">
         <div class="card-body">
-            <form action="/creer-liste" method="post">
+            <form action="/ajouter-objet" method="post">
                 <div class="form-group row">
-                    <label class="col-sm-4 col-form-label">Nom liste</label> <input
-                        type="text" name="nomListe" class="col-sm-10 form-control"
-                        id="nomListe" required>
+                    <label class="col-sm-4 col-form-label">Titre</label> <input
+                        type="text" name="titre" class="col-sm-10 form-control"
+                        id="titre" required>
+                    <label class="col-sm-4 col-form-label">Description</label> <input
+                        type="text" name="description" class="col-sm-10 form-control"
+                        id="description">
+                    <label class="col-sm-4 col-form-label">Url</label> <input
+                        type="text" name="url" class="col-sm-10 form-control"
+                        id="url">
+                    <input type="hidden"
+                           id="idListe" name="idListe"
+                           th:value="${liste.idListe}">
                 </div>
                 <div th:if="${erreur}">
                     <p class="alert alert-danger" th:text="${erreur} ?: ${erreur}"/>

@@ -4,36 +4,46 @@ import java.io.Serializable;
 import java.util.List;
 
 public class ListeDto implements Serializable {
+    
+    private Long idListe;
 
-    private java.lang.String nomListe;
+    private String nomListe;
 
-    private List<ObjetDto> list;
+    private List<ObjetDto> listeObjet;
 
-    private java.lang.String proprietaire;
+    private String proprietaire;
 
 
-    public List<ObjetDto> getList() {
-        return list;
+    public List<ObjetDto> getListeObjet() {
+        return listeObjet;
     }
 
-    public void setList(List<ObjetDto> list) {
-        this.list = list;
+    public void setListeObjet(List<ObjetDto> listeObjet) {
+        this.listeObjet = listeObjet;
     }
 
 
-    public java.lang.String getNomListe() {
+    public String getNomListe() {
         return nomListe;
     }
 
-    public void setNomListe(java.lang.String nomListe) {
+    public void setNomListe(String nomListe) {
         this.nomListe = nomListe;
     }
 
-    public java.lang.String getProprietaire() {
+    public String getProprietaire() {
         return proprietaire;
     }
 
-    public void setProprietaire(java.lang.String proprietaire) {
+    public void setProprietaire(String proprietaire) {
         this.proprietaire = proprietaire;
+    }
+
+    public Long getIdListe() {
+        return idListe;
+    }
+
+    public void setIdListe(Long idListe) {
+        this.idListe = idListe;
     }
 }

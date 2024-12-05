@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ListeMapper {
 
-    public static List<ListeDto> DaoToDto(List<ListeDao> listeDaoList) {
+    public static List<ListeDto> daosToDtos(List<ListeDao> listeDaoList) {
         if(listeDaoList == null) {
             return null;
         }
@@ -17,11 +17,24 @@ public class ListeMapper {
             ListeDto listeDto = new ListeDto();
             listeDto.setNomListe(listeDao.getNomListe());
             listeDto.setProprietaire(listeDao.getProprietaire());
-            // TODO : mapper à creer
-            listeDto.setList(null);
+            listeDto.setIdListe(listeDao.getIdListe());
+            listeDto.setListeObjet(ObjetMapper.daosToDtos(listeDao.getObjetDaoList()));
             list.add(listeDto);
         }
         return list;
+    }
+
+
+    public static ListeDto daoToDto(ListeDao listeDao) {
+        if(listeDao == null) {
+            return null;
+        }
+        ListeDto listeDto = new ListeDto();
+        listeDto.setNomListe(listeDao.getNomListe());
+        listeDto.setProprietaire(listeDao.getProprietaire());
+        listeDto.setIdListe(listeDao.getIdListe());
+        listeDto.setListeObjet(ObjetMapper.daosToDtos(listeDao.getObjetDaoList()));
+        return listeDto;
     }
 
 }

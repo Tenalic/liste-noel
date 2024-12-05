@@ -10,4 +10,6 @@ public interface ListeRepo extends CrudRepository<ListeDao, Long> {
 
 	List<ListeDao> findByProprietaire(String email);
 
+	ListeDao findByIdListe(Long idListe);
+
 }
