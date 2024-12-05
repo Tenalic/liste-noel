@@ -68,14 +68,15 @@ public class ConnexionController {
     @GetMapping("/deconnexion")
     public String deconnexion(String password, Model model, HttpSession session) {
         try {
-            String cossy = (String) session.getAttribute(ConstantesSession.EMAIL);
-            if (cossy != null) {
-                compteService.deconexion(cossy);
+            String email = (String) session.getAttribute(ConstantesSession.EMAIL);
+            if (email != null) {
+                compteService.deconexion(email);
             }
         } catch (Exception e) {
             LOGGER.warn(e);
         }
         session.setAttribute(ConstantesSession.EMAIL, null);
+        session.removeAttribute(ConstantesSession.ID_LISTE);
         return "redirect:connexion";
     }
 

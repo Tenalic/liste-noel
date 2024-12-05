@@ -84,19 +84,21 @@ public class ListeController {
         }
 
         Long idShared = (Long) session.getAttribute(Constantes.SHARED_LISTE);
-        Long idListe;
         if(idShared != null) {
-            idListe = idShared;
             session.removeAttribute(Constantes.SHARED_LISTE);
-        } else {
-            idListe = (Long) session.getAttribute(ConstantesSession.ID_LISTE);
+            session.setAttribute(ConstantesSession.ID_LISTE, idShared);
         }
+
+        Long idListe = (Long) session.getAttribute(ConstantesSession.ID_LISTE);
+
 
         if (idListe == null) {
             return "redirect:liste";
         }
+
         Utils.getSessionErrorMessage(session, model);
         ListeDto listeDto;
+
         try {
             listeDto = listeServiceInterface.getListeById(idListe);
             model.addAttribute(ConstantesSession.LISTE, listeDto);
