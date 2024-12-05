@@ -6,4 +6,6 @@ import sc.liste.noel.liste_noel.dao.entity.ObjetDao;
 
 public interface ObjetRepo extends CrudRepository<ObjetDao, Long> {
 
+    ObjetDao findByIdObjet(Long idObjet);
+
 }

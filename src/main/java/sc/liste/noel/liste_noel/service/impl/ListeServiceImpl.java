@@ -1,5 +1,6 @@
 package sc.liste.noel.liste_noel.service.impl;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sc.liste.noel.liste_noel.Utile.mapper.ListeMapper;
@@ -59,7 +60,11 @@ public class ListeServiceImpl implements ListeServiceInterface {
     }
 
     @Override
+    @Transactional
     public void prendreUnObjet(String idListe, String idObjet, String personne) {
-
+        ObjetDao objetDao = objetRepo.findByIdObjet(Long.valueOf(idObjet));
+        objetDao.setDetenteur(personne);
+        objetDao.setEstPrit(true);
+        objetRepo.save(objetDao);
     }
 }
