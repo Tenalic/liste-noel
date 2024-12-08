@@ -173,9 +173,10 @@ public class ListeController {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
             return "redirect:connexion";
         }
+        String pseudo = (String) session.getAttribute(ConstantesSession.PSEUDO);
         Utils.getSessionErrorMessage(session, model);
         try {
-            listeServiceInterface.prendreUnObjet(idListe, idObjet, email);
+            listeServiceInterface.prendreUnObjet(idListe, idObjet, email, pseudo);
         } catch (Exception e) {
             LOGGER.error("", e);
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());

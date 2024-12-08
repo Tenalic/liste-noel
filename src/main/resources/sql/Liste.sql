@@ -26,4 +26,6 @@ CREATE TABLE liste_noel.objet
     CONSTRAINT detenteur FOREIGN KEY (detenteur) REFERENCES liste_noel.compte (email)
 );
 
+ALTER TABLE liste_noel.objet ADD COLUMN pseudo_detenteur character varying(320);
+
 

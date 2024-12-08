@@ -34,42 +34,48 @@ public class CompteRessource {
     /**
      * API permetant de creer un nouveau compte
      *
-     * @param cossy    : cossy du joueur
+     * @param email    : email du joueur
      * @param password : mot de passe du joueur
      * @param langue   : langue pour les messages retours
      * @param secret   : secret de l'application appelante afin de s'authentifier
-     * @return ResponseEntity<CompteResponse> contenant le cossy, le code retour (0
+     * @return ResponseEntity<CompteResponse> contenant le email, le code retour (0
      * si ok) et le messegae retour
      */
     @PostMapping("/creer")
-    public ResponseEntity<CompteResponse> creerCompte(@RequestParam(value = "cossy", required = true) String cossy,
+    public ResponseEntity<CompteResponse> creerCompte(@RequestParam(value = "email", required = true) String email,
                                                       @RequestParam(value = "password", required = true) String password,
                                                       @RequestHeader(value = "secret", required = true) String secret,
                                                       @RequestHeader(value = "langue", defaultValue = "1") Integer langue,
-                                                      @RequestParam(value = "cguAccepted", required = true) boolean cguAccepted) {
+                                                      @RequestParam(value = "cguAccepted", required = true) boolean cguAccepted,
+                                                      @RequestParam(value = "cguAccepted", required = true) String pseudo) {
         try {
             if (!secretService.verifierSecret(secret)) {
                 return new ResponseEntity<>(
-                        new CompteResponse(cossy, "Secret inconnu", Constantes.RETOUR_API_KO), HttpStatus.UNAUTHORIZED);
+                        new CompteResponse(email, "Secret inconnu", Constantes.RETOUR_API_KO), HttpStatus.UNAUTHORIZED);
             }
             if(!cguAccepted) {
                 return new ResponseEntity<>(
-                        new CompteResponse(cossy, Utils.getMessage(Constantes.CGU_NON_ACCEPTE_KEY, langue), Constantes.RETOUR_API_KO), HttpStatus.INTERNAL_SERVER_ERROR);
+                        new CompteResponse(email, Utils.getMessage(Constantes.CGU_NON_ACCEPTE_KEY, langue), Constantes.RETOUR_API_KO), HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            if (compteService.compteExiste(cossy)) {
-                return new ResponseEntity<>(new CompteResponse(cossy,
+            if (compteService.compteExiste(email)) {
+                return new ResponseEntity<>(new CompteResponse(email,
                         Utils.getMessage(Constantes.COMPTE_EXISTE_KEY, langue), Constantes.RETOUR_API_KO),
                         HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            compteService.creationCompte(cossy, password, cguAccepted);
+            if (compteService.pseudoExiste(pseudo)) {
+                return new ResponseEntity<>(new CompteResponse(email,
+                        Utils.getMessage(Constantes.PSEUDO_EXISTE_KEY, langue), Constantes.RETOUR_API_KO),
+                        HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            compteService.creationCompte(email, password, cguAccepted, pseudo);
         } catch (Exception e) {
             LOGGER.log(Level.ERROR, e);
-            return new ResponseEntity<>(new CompteResponse(cossy,
+            return new ResponseEntity<>(new CompteResponse(email,
                     Utils.getMessage(Constantes.COMPTE_ERROR_KEY, langue) + " : " + e.getMessage(),
                     Constantes.RETOUR_API_KO), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(
-                new CompteResponse(cossy, "Le compte s'est bien créé", Constantes.RETOUR_API_OK), HttpStatus.OK);
+                new CompteResponse(email, "Le compte s'est bien créé", Constantes.RETOUR_API_OK), HttpStatus.OK);
     }
 
     /**
@@ -150,7 +156,7 @@ public class CompteRessource {
                 return new ResponseEntity<>(
                         new ConnexionResponse(null, "Secret inconnu", Constantes.RETOUR_API_KO), HttpStatus.UNAUTHORIZED);
             }
-            if (compteService.connexion(cossy, password)) {
+            if (compteService.connexion(cossy, password) != null) {
                 TokenDto token = compteService.getTokenDtoByEmail(cossy);
                 return new ResponseEntity<>(new ConnexionResponse(token.getToken(), token.getTokenExpireDate(), token.getCossy(), "Token correctement récupéré", Constantes.RETOUR_API_OK), HttpStatus.OK);
             } else {

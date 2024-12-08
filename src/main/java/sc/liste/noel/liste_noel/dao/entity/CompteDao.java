@@ -33,6 +33,9 @@ public class CompteDao {
     @Column(name = "cgu_accepted")
     private Boolean cguAccepted;
 
+    @Column(name = "pseudo")
+    private String pseudo;
+
     public CompteDao() {
         super();
     }
@@ -46,6 +49,18 @@ public class CompteDao {
         this.nbModificationMdp = 0;
         this.setDateDerniereConnexion(LocalDateTime.now());
         this.cguAccepted = cguAccepted;
+    }
+
+    public CompteDao(String email, String password, boolean cguAccepted, String pseudo) {
+        super();
+        this.email = email;
+        this.password = password;
+        this.nbConnexion = 1;
+        this.nbDeconnexion = 0;
+        this.nbModificationMdp = 0;
+        this.setDateDerniereConnexion(LocalDateTime.now());
+        this.cguAccepted = cguAccepted;
+        this.pseudo = pseudo;
     }
 
     public CompteDao(String email, String password, Integer initInteger) {
@@ -64,6 +79,8 @@ public class CompteDao {
         this.nbDeconnexion = nbDeconnexion;
         this.nbModificationMdp = nbModificationMdp;
     }
+
+
 
     public String getEmail() {
         return email;
@@ -143,5 +160,13 @@ public class CompteDao {
 
     public void setListeDeListeDao(List<ListeDao> listeDeListeDao) {
         this.listeDeListeDao = listeDeListeDao;
+    }
+
+    public String getPseudo() {
+        return pseudo;
+    }
+
+    public void setPseudo(String pseudo) {
+        this.pseudo = pseudo;
     }
 }

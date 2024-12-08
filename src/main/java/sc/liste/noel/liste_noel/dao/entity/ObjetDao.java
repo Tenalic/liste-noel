@@ -23,6 +23,9 @@ public class ObjetDao {
     @Column(name = "detenteur")
     private String detenteur;
 
+    @Column(name = "pseudo_detenteur")
+    private String pseudoDetenteur;
+
     public ObjetDao() {
     }
 
@@ -80,5 +83,13 @@ public class ObjetDao {
 
     public void setDetenteur(String detenteur) {
         this.detenteur = detenteur;
+    }
+
+    public String getPseudoDetenteur() {
+        return pseudoDetenteur;
+    }
+
+    public void setPseudoDetenteur(String pseudoDetenteur) {
+        this.pseudoDetenteur = pseudoDetenteur;
     }
 }

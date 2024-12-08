@@ -16,6 +16,8 @@ public class ObjetDto implements Serializable {
 
     private String detenteur;
 
+    private String pseudoDetenteur;
+
     public ObjetDto() {
     }
 
@@ -65,5 +67,13 @@ public class ObjetDto implements Serializable {
 
     public void setIdObjet(Long idObjet) {
         this.idObjet = idObjet;
+    }
+
+    public String getPseudoDetenteur() {
+        return pseudoDetenteur;
+    }
+
+    public void setPseudoDetenteur(String pseudoDetenteur) {
+        this.pseudoDetenteur = pseudoDetenteur;
     }
 }

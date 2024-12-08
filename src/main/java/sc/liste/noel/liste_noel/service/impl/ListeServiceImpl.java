@@ -67,9 +67,10 @@ public class ListeServiceImpl implements ListeServiceInterface {
 
     @Override
     @Transactional
-    public void prendreUnObjet(String idListe, String idObjet, String personne) {
+    public void prendreUnObjet(String idListe, String idObjet, String personne, String pseudo) {
         ObjetDao objetDao = objetRepo.findByIdObjet(Long.valueOf(idObjet));
         objetDao.setDetenteur(personne);
+        objetDao.setPseudoDetenteur(pseudo);
         objetDao.setEstPrit(true);
         objetRepo.save(objetDao);
     }

@@ -3,6 +3,7 @@ package sc.liste.noel.liste_noel.constante;
 public class ConstantesSession {
 
 	public static String EMAIL = "email";
+	public static String PSEUDO = "pseudo";
 	public static String LISTE = "liste";
 	public static String ID_LISTE = "id_liste";
 

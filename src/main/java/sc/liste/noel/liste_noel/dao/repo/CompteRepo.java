@@ -7,6 +7,8 @@ public interface CompteRepo extends CrudRepository<CompteDao, String> {
 
     CompteDao findByEmail(String email);
 
+    CompteDao findByPseudo(String pseudo);
+
     CompteDao findByEmailAndPassword(String email, String password);
 
 

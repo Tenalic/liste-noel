@@ -19,3 +19,5 @@ update liste_noel.compte set nb_deconnexion = 0 where nb_deconnexion is null;
 update liste_noel.compte set nb_modification_mdp = 0 where nb_modification_mdp is null;
 
 ALTER TABLE liste_noel.compte ADD COLUMN cgu_accepted boolean;
+
+ALTER TABLE liste_noel.compte ADD COLUMN pseudo character varying(320) NOT NULL;

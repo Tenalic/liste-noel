@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import sc.liste.noel.liste_noel.Utile.Utils;
 import sc.liste.noel.liste_noel.constante.Constantes;
 import sc.liste.noel.liste_noel.constante.ConstantesSession;
+import sc.liste.noel.liste_noel.dto.CompteDto;
 import sc.liste.noel.liste_noel.service.CompteServiceInterface;
 
 import java.util.Optional;
@@ -51,9 +52,11 @@ public class ConnexionController {
     public String connexionPost(@RequestParam(value = "email", required = true) String email, @RequestParam(value = "password", required = true) String password, Model model, HttpSession session) {
         int langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
         try {
-            if (compteService.connexion(email, password)) {
+            CompteDto compteDto = compteService.connexion(email, password);
+            if (compteDto != null) {
                 session.setMaxInactiveInterval(14400);
                 session.setAttribute(ConstantesSession.EMAIL, email);
+                session.setAttribute(ConstantesSession.PSEUDO, compteDto.getPseudo());
                 return "redirect:consulter-liste";
             } else {
                 Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_FAIL_KEY, langue));

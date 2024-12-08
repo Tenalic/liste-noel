@@ -18,6 +18,7 @@ public class ObjetMapper {
             ObjetDto objetDto = new ObjetDto();
             objetDto.setDescription(objetDao.getDescription());
             objetDto.setDetenteur(objetDao.getDetenteur());
+            objetDto.setPseudoDetenteur(objetDao.getPseudoDetenteur());
             objetDto.setUrl(objetDao.getUrl());
             objetDto.setEstPrit(objetDao.getEstPrit());
             objetDto.setTitre(objetDao.getTitre());

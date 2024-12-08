@@ -41,6 +41,7 @@ public class InscriptionController {
                                   @RequestParam(value = "password", required = true) String password,
                                   @RequestParam(value = "confirmationNewPassword", required = true) String confirmationNewPassword,
                                   @RequestParam(value = "cgu", defaultValue = "false") boolean cgu,
+                                  @RequestParam(value = "pseudo", required = true) String pseudo,
                                   Model model, HttpSession session) {
 
         Integer langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
@@ -55,7 +56,7 @@ public class InscriptionController {
             return "redirect:inscription";
         }
 
-        CompteResponse compteResponse = compteRessource.creerCompte(email, password, secretService.getMySecret(), langue, cgu)
+        CompteResponse compteResponse = compteRessource.creerCompte(email, password, secretService.getMySecret(), langue, cgu, pseudo)
                 .getBody();
         assert compteResponse != null;
         if (compteResponse.getCodeRetour() != 0) {

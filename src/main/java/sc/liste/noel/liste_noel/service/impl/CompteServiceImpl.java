@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sc.liste.noel.liste_noel.Utile.PasswordUtils;
+import sc.liste.noel.liste_noel.Utile.mapper.CompteMapper;
 import sc.liste.noel.liste_noel.dao.entity.CompteDao;
 import sc.liste.noel.liste_noel.dao.repo.CompteRepo;
+import sc.liste.noel.liste_noel.dto.CompteDto;
 import sc.liste.noel.liste_noel.dto.TokenDto;
 import sc.liste.noel.liste_noel.exception.CompteNotFoundException;
 import sc.liste.noel.liste_noel.exception.TokenExpiredException;
@@ -39,15 +41,20 @@ public class CompteServiceImpl implements CompteServiceInterface {
     }
 
     @Override
-    public boolean connexion(String email, String password) {
+    public boolean pseudoExiste(String pseudo) {
+        return Optional.ofNullable(compteRepo.findByPseudo(pseudo)).isPresent();
+    }
+
+    @Override
+    public CompteDto connexion(String email, String password) {
         CompteDao compte = compteRepo.findByEmailAndPassword(email, PasswordUtils.generateSecurePassword(password, salt));
         if (compte != null) {
             compte.setNbConnexion(compte.getNbConnexion() + 1);
             compte.setDateDerniereConnexion(LocalDateTime.now());
             compteRepo.save(compte);
-            return true;
+            return CompteMapper.DaoToDto(compte);
         } else {
-            return false;
+            return null;
         }
     }
 
@@ -65,8 +72,8 @@ public class CompteServiceImpl implements CompteServiceInterface {
     }
 
     @Override
-    public boolean creationCompte(String cossy, String password, boolean cguAccepted) {
-        compteRepo.save(new CompteDao(cossy, PasswordUtils.generateSecurePassword(password, salt), cguAccepted));
+    public boolean creationCompte(String cossy, String password, boolean cguAccepted, String pseudo) {
+        compteRepo.save(new CompteDao(cossy, PasswordUtils.generateSecurePassword(password, salt), cguAccepted, pseudo));
         return true;
     }
 

@@ -5,6 +5,7 @@ import java.util.List;
 public class CompteDto {
 
     private String email;
+    private String pseudo;
 
     private List<ListeDto> listDeListeDto;
 
@@ -24,6 +25,22 @@ public class CompteDto {
     }
 
     public void setListDeListe(List<ListeDto> listDeListeDto) {
+        this.listDeListeDto = listDeListeDto;
+    }
+
+    public String getPseudo() {
+        return pseudo;
+    }
+
+    public void setPseudo(String pseudo) {
+        this.pseudo = pseudo;
+    }
+
+    public List<ListeDto> getListDeListeDto() {
+        return listDeListeDto;
+    }
+
+    public void setListDeListeDto(List<ListeDto> listDeListeDto) {
         this.listDeListeDto = listDeListeDto;
     }
 }

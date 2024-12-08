@@ -1,5 +1,6 @@
 package sc.liste.noel.liste_noel.service;
 
+import sc.liste.noel.liste_noel.dto.CompteDto;
 import sc.liste.noel.liste_noel.dto.TokenDto;
 import sc.liste.noel.liste_noel.exception.CompteNotFoundException;
 import sc.liste.noel.liste_noel.exception.TokenExpiredException;
@@ -9,10 +10,18 @@ public interface CompteServiceInterface {
     /**
      * Verifie si un compte avec le email donnee existe en base de données
      *
-     * @param email : email joueur
+     * @param email : email compte
      * @return true si un compte existe déjà, false sinon
      */
     boolean compteExiste(String email);
+
+    /**
+     * Verifie si un compte avec le pseudo donnee existe en base de données
+     *
+     * @param pseudo : pseudo compte
+     * @return true si un compte existe déjà, false sinon
+     */
+    boolean pseudoExiste(String pseudo);
 
     /**
      * Verifie qu'un compte avec le email et password donnee existe en base de
@@ -23,7 +32,7 @@ public interface CompteServiceInterface {
      * @return true si un compte correspond à la combinaison email et mot de passe,
      * false sinon
      */
-    boolean connexion(String email, String password);
+    CompteDto connexion(String email, String password);
 
     /**
      * Sauvegarde un nouveau compte avec le email et password donné en base de
@@ -33,7 +42,7 @@ public interface CompteServiceInterface {
      * @param password : mot de passe joueur
      * @return true si tout s'est bien passé
      */
-    boolean creationCompte(String email, String password, boolean cguAccepted);
+    boolean creationCompte(String email, String password, boolean cguAccepted, String pseudo);
 
     /**
      * Supprime en base de données le compte avec le email donné

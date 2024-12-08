@@ -64,6 +64,9 @@ public class Constantes {
     public static final String COMPTE_EXISTE_KEY = "compteExiste";
     public static final String COMPTE_EXISTE_FR = "Le compte existe déjà, le compte ne s'est pas créé";
     public static final String COMPTE_EXISTE_EN = "The account already exists, the account has not been created";
+    public static final String PSEUDO_EXISTE_KEY = "pseudoExiste";
+    public static final String PSEUDO_EXISTE_FR = "Le pseudo existe déjà, le compte ne s'est pas créé";
+    public static final String PSEUDO_EXISTE_EN = "The pseudonym already exists, the account has not been created";
     public static final String COMPTE_ERROR_KEY = "compteError";
     public static final String COMPTE_ERROR_FR = "Une erreur est survenue, le compte ne s'est pas créé";
     public static final String COMPTE_ERROR_EN = "An error has occurred, the account has not been created";

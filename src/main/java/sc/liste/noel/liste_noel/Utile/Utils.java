@@ -62,6 +62,8 @@ public class Utils {
                     (langue == Constantes.CODE_ANGLAIS ? Constantes.COSSY_TAILLE_EN : Constantes.COSSY_TAILLE_FR);
             case Constantes.COMPTE_EXISTE_KEY ->
                     (langue == Constantes.CODE_ANGLAIS ? Constantes.COMPTE_EXISTE_EN : Constantes.COMPTE_EXISTE_FR);
+            case Constantes.PSEUDO_EXISTE_KEY ->
+                    (langue == Constantes.CODE_ANGLAIS ? Constantes.PSEUDO_EXISTE_EN : Constantes.PSEUDO_EXISTE_FR);
             case Constantes.COMPTE_ERROR_KEY ->
                     (langue == Constantes.CODE_ANGLAIS ? Constantes.COMPTE_ERROR_EN : Constantes.COMPTE_ERROR_FR);
             case Constantes.PASSWORD_DIFFERENT_KEY ->
