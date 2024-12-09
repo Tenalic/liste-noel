@@ -21,3 +21,13 @@ update liste_noel.compte set nb_modification_mdp = 0 where nb_modification_mdp i
 ALTER TABLE liste_noel.compte ADD COLUMN cgu_accepted boolean;
 
 ALTER TABLE liste_noel.compte ADD COLUMN pseudo character varying(320) NOT NULL;
+
+CREATE TABLE liste_noel.favoris
+(
+    id_favoris SERIAL NOT NULL,
+    id_liste SERIAL NOT NULL,
+    email character varying(320) NOT NULL,
+    PRIMARY KEY (id_favoris),
+    CONSTRAINT id_liste_fk FOREIGN KEY (id_liste) REFERENCES liste_noel.liste (id_liste),
+    CONSTRAINT email_fk FOREIGN KEY (email) REFERENCES liste_noel.compte (email)
+);

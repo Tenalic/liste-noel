@@ -12,6 +12,7 @@ public class ConstantesSession {
 	public static String SUCCES = "succes";
 
 	public static String LISTES = "listes";
+	public static String LISTES_FAVORIS = "listesFavoris";
 
 	public static String TOURNOI_INFOS = "tournoiInfos";
 

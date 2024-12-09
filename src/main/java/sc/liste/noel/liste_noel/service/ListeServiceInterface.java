@@ -12,8 +12,13 @@ public interface ListeServiceInterface {
 
     ListeDto getListeById(Long id);
 
-    void ajouterObjet(String titre, String url,String description,String idListe, String proprietaire);
+    void ajouterObjet(String titre, String url, String description, String idListe, String proprietaire);
 
     void prendreUnObjet(String idListe, String idObjet, String personne, String pseudo);
+
+    List<ListeDto> getFavorisList(String email);
+
+    void ajouterFavoris(Long idListe, String email);
+
 
 }

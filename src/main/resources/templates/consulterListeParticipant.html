@@ -47,12 +47,22 @@
 </nav>
 
 <div align="center" th:if="${liste}">
-    <h1 class="h1">Objet dans la liste</h1>
+    <h1 class="h1">
+        <div class="col-sm">Objet dans la liste :</div>
+        <div class="col-sm" th:text="${liste.nomListe}"></div>
+    </h1>
+    </h1>
     <form action="/consulter-liste" method="get">
-        <button class="btn btn-primary">actualiser</button>
+        <button class="btn btn-primary">Actualiser</button>
+    </form>
+    <form action="/ajouter-favoris" method="post">
+        <input type="hidden"
+               id="idListeFavoris" name="idListeFavoris"
+               th:value="${liste.idListe}">
+        <button class="btn btn-primary">Ajouter aux favoris</button>
     </form>
     Partager la liste :
-    <h5 class="h5" th:text="${liste.urlPartage}"> </h5>
+    <h5 class="h5" th:text="${liste.urlPartage}"></h5>
     <table class="table table-bordered table-striped">
         <thead class="table-secondary">
         <tr>
@@ -69,17 +79,18 @@
             <td><h5 class="h5" th:text="${objet.description}"></h5></td>
             <td><h5 class="h5" th:text="${objet.url}"></h5></td>
             <td><h5 th:if="${objet.estPrit}" class="h5" th:text="${objet.estPrit}"></h5>
-                    <form th:if="!${objet.estPrit}" action="/prendre" method="post">
-                        <div class="form-group row">
-                            <input type="hidden"
-                                   id="idListe" name="idListe"
-                                   th:value="${liste.idListe}">
-                            <input type="hidden"
-                                   id="idObjet" name="idObjet"
-                                   th:value="${objet.idObjet}">
-                        </div>
-                        <button class="btn btn-success">J'offre ça !</button>
-                    </form></td>
+                <form th:if="!${objet.estPrit}" action="/prendre" method="post">
+                    <div class="form-group row">
+                        <input type="hidden"
+                               id="idListe" name="idListe"
+                               th:value="${liste.idListe}">
+                        <input type="hidden"
+                               id="idObjet" name="idObjet"
+                               th:value="${objet.idObjet}">
+                    </div>
+                    <button class="btn btn-success">J'offre ça !</button>
+                </form>
+            </td>
             <td><h5 class="h5" th:text="${objet.pseudoDetenteur}"></h5></td>
         </tr>
         </tbody>

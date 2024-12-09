@@ -5,14 +5,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sc.liste.noel.liste_noel.Utile.mapper.ListeMapper;
+import sc.liste.noel.liste_noel.dao.entity.FavorisDao;
 import sc.liste.noel.liste_noel.dao.entity.ListeDao;
 import sc.liste.noel.liste_noel.dao.entity.ObjetDao;
+import sc.liste.noel.liste_noel.dao.repo.FavorisRepo;
 import sc.liste.noel.liste_noel.dao.repo.ListeRepo;
 import sc.liste.noel.liste_noel.dao.repo.ObjetRepo;
 import sc.liste.noel.liste_noel.dto.ListeDto;
 import sc.liste.noel.liste_noel.service.ListeServiceInterface;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ListeServiceImpl implements ListeServiceInterface {
@@ -21,6 +25,9 @@ public class ListeServiceImpl implements ListeServiceInterface {
 
     @Autowired
     private ObjetRepo objetRepo;
+
+    @Autowired
+    private FavorisRepo favorisRepo;
 
     @Value("${base_url}")
     private String baseUrl;
@@ -73,5 +80,35 @@ public class ListeServiceImpl implements ListeServiceInterface {
         objetDao.setPseudoDetenteur(pseudo);
         objetDao.setEstPrit(true);
         objetRepo.save(objetDao);
+    }
+
+    public List<ListeDto> getFavorisList(String email) {
+        List<FavorisDao> favorisDaoList = favorisRepo.findByEmail(email);
+
+        if (favorisDaoList == null) {
+            return null;
+        }
+        List<ListeDao> list = new ArrayList<>();
+
+        for (FavorisDao favorisDao : favorisDaoList) {
+            ListeDao listeDao = listeRepo.findByIdListe(favorisDao.getIdListe());
+            if (listeDao != null) {
+                list.add(listeDao);
+            }
+        }
+
+        return ListeMapper.daosToDtos(list);
+    }
+
+    @Transactional
+    @Override
+    public void ajouterFavoris(Long idListe, String email) {
+        FavorisDao favorisDaoList = favorisRepo.findByEmailAndIdListe(email, idListe);
+        if (favorisDaoList == null) {
+            FavorisDao favorisDao = new FavorisDao();
+            favorisDao.setEmail(email);
+            favorisDao.setIdListe(idListe);
+            favorisRepo.save(favorisDao);
+        }
     }
 }

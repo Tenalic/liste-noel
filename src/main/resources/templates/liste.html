@@ -47,7 +47,7 @@
 </nav>
 
 <div align="center" th:if="${listes}">
-    <h1 class="h1">Liste de mes listes</h1>
+    <h1 class="h1">Mes listes</h1>
     <form action="/liste" method="get">
         <button class="btn btn-primary">actualiser</button>
     </form>
@@ -73,6 +73,34 @@
     </table>
     <div th:if="${listes.size()} == 0">Aucunne liste
         disponible</div>
+</div>
+
+<div align="center" th:if="${listesFavoris}">
+    <h1 class="h1">Mes favoris</h1>
+    <form action="/liste" method="get">
+        <button class="btn btn-primary">actualiser</button>
+    </form>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-secondary">
+        <tr>
+            <th>Nom liste</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="listeFavoris: ${listesFavoris}">
+            <td><h5 class="h5" th:text="${listeFavoris.nomListe}"></h5></td>
+            <td><form action="/selectionner-liste" method="post"> <input type="hidden"
+                                                                         id="listeFavoris" name="listeFavoris"
+                                                                         th:value="${listeFavoris.idListe}">
+                <div>
+                    <button class="btn btn-success">Selectionner</button>
+            </form></td>
+        </tr>
+        </tbody>
+    </table>
+    <div th:if="${listesFavoris.size()} == 0">Aucunne liste favorite enregistrer</div>
 </div>
 
 <div align="center">

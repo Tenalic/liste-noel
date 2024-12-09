@@ -41,8 +41,14 @@ public class ListeController {
 
         model.addAttribute(ConstantesSession.LISTES, listDeListeDto);
 
+        List<ListeDto> listDeListeDtoFavoris = listeServiceInterface.getFavorisList(email);
+
+        model.addAttribute(ConstantesSession.LISTES_FAVORIS, listDeListeDtoFavoris);
+
         return "liste";
     }
+
+
     @GetMapping("/partage")
     public String partageGet(Model model, HttpSession session, @RequestParam(value = "id", required = true) String idListe) {
 
@@ -117,7 +123,8 @@ public class ListeController {
 
     @PostMapping("/selectionner-liste")
     public String selectionnerListe(Model model, HttpSession session,
-                                    @RequestParam(value = "idListe", required = true) String idListe) {
+                                    @RequestParam(value = "idListe", required = false) String idListe,
+                                    @RequestParam(value = "listeFavoris", required = false) String idListeFavoris) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
         if (email == null) {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
@@ -126,7 +133,8 @@ public class ListeController {
         Utils.getSessionErrorMessage(session, model);
         ListeDto listeDto;
         try {
-            listeDto = listeServiceInterface.getListeById(Long.valueOf(idListe));
+            String id = idListe == null ? idListeFavoris : idListe;
+            listeDto = listeServiceInterface.getListeById(Long.valueOf(id));
             session.setAttribute(ConstantesSession.LISTE, listeDto);
         } catch (Exception e) {
             LOGGER.error("", e);
@@ -183,4 +191,24 @@ public class ListeController {
         }
         return "redirect:consulter-liste";
     }
+
+    @PostMapping("/ajouter-favoris")
+    public String ajouterFavoris(Model model, HttpSession session,
+                               @RequestParam(value = "idListeFavoris", required = true) String idListe) {
+        String email = (String) session.getAttribute(ConstantesSession.EMAIL);
+        if (email == null) {
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
+            return "redirect:connexion";
+        }
+        Utils.getSessionErrorMessage(session, model);
+        try {
+            listeServiceInterface.ajouterFavoris(Long.valueOf(idListe), email);
+        } catch (Exception e) {
+            LOGGER.error("", e);
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
+        }
+        return "redirect:consulter-liste";
+    }
+
+
 }
