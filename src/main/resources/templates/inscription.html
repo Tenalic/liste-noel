@@ -1,68 +1,80 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" content="maximum-scale=1.0, initial-scale=1.0, width=device-width" name="viewport">
+    <meta charset="UTF-8" name="viewport" content="maximum-scale=1.0, initial-scale=1.0, width=device-width">
     <title>Inscription</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
 </head>
-<body>
-<div class="collapse" id="navbarToggleExternalContent" data-bs-theme="dark">
+<body class="d-flex flex-column min-vh-100">
+<header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="navbar-collapse" id="main_nav">
-            <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="/connexion">Connexion</a></li>
-                <li class="nav-item"><a class="nav-link" href="/inscription">Inscription</a></li>
-                <li class="nav-item"><a class="nav-link" href="/welcome">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="/liste">Mes listes</a></li>
-                <li class="nav-item"><a class="nav-link" href="/cgu">Conditions Générales d'Utilisation</a></li>
-                <li class="nav-item"><a class="nav-link" href="/politique-confidentialite">Politique de
-                    Confidentialité</a></li>
-                <li class="nav-item"><a class="nav-link" href="/politique-securite">Politique de Sécurité</a></li>
-                <li class="nav-item"><a class="nav-link" href="/deconnexion">Deconnexion</a></li>
-            </ul>
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/welcome">Liste</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarToggleExternalContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="/connexion">Connexion</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/inscription">Inscription</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/welcome">Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/liste">Mes listes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/cgu">CGU</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/politique-confidentialite">Confidentialité</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/politique-securite">Sécurité</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/deconnexion">Déconnexion</a></li>
+                </ul>
+            </div>
         </div>
     </nav>
-</div>
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</nav>
+</header>
 
-<div align="center">
-    <h1 class="h1">Inscription</h1>
-    <div class="card">
-        <div class="card-body">
-            <form action="/inscription" method="post" class="form-check">
-                <div class="form-group row">
-                    <label class="col-sm-5 col-form-label">Email</label> <input class="col-sm-10 form-control" type="email" name="email" id="email" required>
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h2>Inscription</h2>
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-5 col-form-label">Pseudo</label> <input class="col-sm-10 form-control" type="text" name="pseudo" id="pseudo" required>
+                <div class="card-body">
+                    <form action="/inscription" method="post">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" id="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="pseudo" class="form-label">Pseudo</label>
+                            <input type="text" name="pseudo" class="form-control" id="pseudo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Mot de passe</label>
+                            <input type="password" name="password" class="form-control" id="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmationNewPassword" class="form-label">Confirmation du mot de passe</label>
+                            <input type="password" name="confirmationNewPassword" class="form-control" id="confirmationNewPassword" required>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input type="checkbox" class="form-check-input" id="cgu" name="cgu" required>
+                            <label for="cgu" class="form-check-label">J'accepte les <a href="/cgu" target="_blank">CGU</a></label>
+                        </div>
+                        <div th:if="${erreur}" class="alert alert-danger text-center" role="alert" th:text="${erreur}"></div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success">S'inscrire</button>
+                        </div>
+                    </form>
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-5 col-form-label">Mot de passe</label> <input class="col-sm-10 form-control" type="password" name="password" id="password" required>
+                <div class="card-footer text-center">
+                    <a href="/connexion" class="text-decoration-none">Déjà inscrit ? Connectez-vous ici</a>
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-5 col-form-label">Confirmation mot de
-                        passe</label> <input type="password" name="confirmationNewPassword" class="col-sm-10 form-control" id="confirmationNewPassword" required>
-                </div>
-
-                <div>
-                    <input type="checkbox" id="cgu" name="cgu">
-                    <label for="cgu" class="form-check-label">J'accepte les <a href="/cgu" target="_blank">CGU</a></label>
-                </div>
-                <div th:if="${erreur}">
-                    <p class="alert alert-danger" th:text="${erreur} ?: ${erreur}"></p>
-                </div>
-                <button class="btn btn-success">Inscription</button>
-            </form>
+            </div>
         </div>
-        <a href="/connexion">Déjà inscrit ? Connectez vous ici</a>
     </div>
-</div>
+</main>
+
+<footer class="mt-auto bg-dark text-white text-center py-3">
+    <p class="mb-0">&copy; 2024 Liste. Tous droits réservés.</p>
+</footer>
 </body>
 </html>

@@ -27,13 +27,13 @@ public class ConnexionController {
     private CompteServiceInterface compteService;
 
     @GetMapping(value = {"", "/", "welcome"})
-    public String welcomeGet() {
-        return "welcome";
+    public String redirectGet() {
+        return "redirect:ma-liste-de-cadeau";
     }
 
-    @GetMapping(value = {"tournois"})
-    public String welcomeConnectedGet() {
-        return "welcomeConnected";
+    @GetMapping(value = {"ma-liste-de-cadeau"})
+    public String welcomeGet() {
+        return "welcome";
     }
 
     @GetMapping(value = {"connexion"})
