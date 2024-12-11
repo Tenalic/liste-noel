@@ -1,23 +1,13 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"
-          content='maximum-scale=1.0, initial-scale=1.0, width=device-width'
-          name='viewport'>
+    <meta charset="UTF-8" content="maximum-scale=1.0, initial-scale=1.0, width=device-width" name="viewport">
     <title>Bienvenue</title>
-    <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
-            crossorigin="anonymous">
-    <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
-            integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
-            crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
 </head>
 <body>
-<div class="collapse" id="navbarToggleExternalContent"
-     data-bs-theme="dark">
+<div class="collapse" id="navbarToggleExternalContent" data-bs-theme="dark">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="navbar-collapse" id="main_nav">
             <ul class="navbar-nav">
@@ -36,11 +26,7 @@
 </div>
 <nav class="navbar navbar-dark bg-dark">
     <div class="container-fluid">
-        <button class="navbar-toggler" type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarToggleExternalContent"
-                aria-controls="navbarToggleExternalContent" aria-expanded="false"
-                aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
@@ -69,8 +55,7 @@
         <tr th:each="objet: ${liste.listeObjet}">
             <td><h5 class="h5" th:text="${objet.titre}"></h5></td>
             <td><h5 class="h5" th:text="${objet.description}"></h5></td>
-            <td><a target=”_blank”
-                    th:href="${objet.url}" class="btn btn-link">voir</a></td>
+            <td><a target="”_blank”" th:href="${objet.url}" class="btn btn-link">voir</a></td>
         </tr>
         </tbody>
     </table>
@@ -83,21 +68,13 @@
         <div class="card-body">
             <form action="/ajouter-objet" method="post">
                 <div class="form-group row">
-                    <label class="col-sm-4 col-form-label">Titre</label> <input
-                        type="text" name="titre" class="col-sm-10 form-control"
-                        id="titre" required>
-                    <label class="col-sm-4 col-form-label">Description</label> <input
-                        type="text" name="description" class="col-sm-10 form-control"
-                        id="description">
-                    <label class="col-sm-4 col-form-label">Url</label> <input
-                        type="text" name="url" class="col-sm-10 form-control"
-                        id="url">
-                    <input type="hidden"
-                           id="idListe" name="idListe"
-                           th:value="${liste.idListe}">
+                    <label class="col-sm-4 col-form-label">Titre</label> <input type="text" name="titre" class="col-sm-10 form-control" id="titre" required>
+                    <label class="col-sm-4 col-form-label">Description</label> <input type="text" name="description" class="col-sm-10 form-control" id="description">
+                    <label class="col-sm-4 col-form-label">Url</label> <input type="text" name="url" class="col-sm-10 form-control" id="url">
+                    <input type="hidden" id="idListe" name="idListe" th:value="${liste.idListe}">
                 </div>
                 <div th:if="${erreur}">
-                    <p class="alert alert-danger" th:text="${erreur} ?: ${erreur}"/>
+                    <p class="alert alert-danger" th:text="${erreur} ?: ${erreur}"></p>
                 </div>
                 <button class="btn btn-success">Ajouter objet</button>
             </form>
