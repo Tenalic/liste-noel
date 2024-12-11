@@ -82,6 +82,17 @@ public class ListeServiceImpl implements ListeServiceInterface {
         objetRepo.save(objetDao);
     }
 
+    @Override
+    @Transactional
+    public void nePlusPrendreUnObjet(String idObjet) {
+        ObjetDao objetDao = objetRepo.findByIdObjet(Long.valueOf(idObjet));
+        objetDao.setDetenteur(null);
+        objetDao.setPseudoDetenteur(null);
+        objetDao.setEstPrit(false);
+        objetRepo.save(objetDao);
+    }
+
+
     public List<ListeDto> getFavorisList(String email) {
         List<FavorisDao> favorisDaoList = favorisRepo.findByEmail(email);
 

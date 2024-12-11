@@ -6,12 +6,14 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
     <script>
-        function openModal(titre, idListe, idObjet) {
+        function openModal(titre, idListe, idObjet, text, action) {
             const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
             const modalForm = document.getElementById('modalForm');
 
-            modalTitle.textContent = `Vous souhaitez offrir "${titre}" ?`;
-            modalForm.action = "/prendre"; // Le formulaire envoie à l'URL prévue
+            modalTitle.textContent = `Vous souhaitez ${text} "${titre}" ?`;
+            modalBody.textContent = `Êtes-vous sûr de vouloir ${text} cet objet ?`;
+            modalForm.action = action; // Le formulaire envoie à l'URL prévue
             modalForm.querySelector('[name="idListe"]').value = idListe;
             modalForm.querySelector('[name="idObjet"]').value = idObjet;
 
@@ -79,10 +81,14 @@
                 <td th:text="${objet.description}"></td>
                 <td><a th:if="${objet.url != null and !#strings.isEmpty(objet.url)}" th:href="${objet.url}" class="btn btn-link" target="_blank">Voir</a></td>
                 <td>
-                    <span th:if="${objet.estPrit}" th:text="${objet.estPrit}"></span>
+                    <span th:if="${objet.estPrit and objet.detenteur != email}" >Objet déjà offert</span>
                     <button th:if="!${objet.estPrit}" class="btn btn-warning btn-sm"
-                            th:onclick="openModal(/*[[${objet.titre}]]*/, /*[[${liste.idListe}]]*/, /*[[${objet.idObjet}]]*/)">
-                        J'offre ça !
+                            th:onclick="openModal(/*[[${objet.titre}]]*/, /*[[${liste.idListe}]]*/, /*[[${objet.idObjet}]]*/ , /*[['offrir']]*/, /*[['/prendre']]*/)">
+                        J'offre ça
+                    </button>
+                    <button th:if="${objet.estPrit and objet.detenteur eq email}" class="btn btn-danger btn-sm"
+                            th:onclick="openModal(/*[[${objet.titre}]]*/, /*[[${liste.idListe}]]*/, /*[[${objet.idObjet}]]*/  , /*[['ne plus offrir']]*/, /*[['/ne-plus-prendre']]*/)">
+                        Je n'offre plus ça
                     </button>
                 </td>
                 <td th:text="${objet.pseudoDetenteur}"></td>
@@ -101,9 +107,7 @@
                 <h5 class="modal-title" id="modalTitle"></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                Êtes-vous sûr de vouloir offrir cet objet ?
-            </div>
+            <div class="modal-body" id="modalBody"></div>
             <div class="modal-footer">
                 <form id="modalForm" method="post">
                     <input type="hidden" name="idListe">

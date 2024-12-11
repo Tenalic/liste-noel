@@ -108,6 +108,7 @@ public class ListeController {
         try {
             listeDto = listeServiceInterface.getListeById(idListe);
             model.addAttribute(ConstantesSession.LISTE, listeDto);
+            model.addAttribute(ConstantesSession.EMAIL, email);
         } catch (Exception e) {
             LOGGER.error("", e);
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
@@ -185,6 +186,23 @@ public class ListeController {
         Utils.getSessionErrorMessage(session, model);
         try {
             listeServiceInterface.prendreUnObjet(idListe, idObjet, email, pseudo);
+        } catch (Exception e) {
+            LOGGER.error("", e);
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
+        }
+        return "redirect:consulter-liste";
+    }
+@PostMapping("/ne-plus-prendre")
+    public String nePlusPrendreUnObjet(Model model, HttpSession session,
+                               @RequestParam(value = "idObjet", required = true) String idObjet) {
+        String email = (String) session.getAttribute(ConstantesSession.EMAIL);
+        if (email == null) {
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
+            return "redirect:connexion";
+        }
+        Utils.getSessionErrorMessage(session, model);
+        try {
+            listeServiceInterface.nePlusPrendreUnObjet(idObjet);
         } catch (Exception e) {
             LOGGER.error("", e);
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());

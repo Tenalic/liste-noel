@@ -15,6 +15,7 @@ public interface ListeServiceInterface {
     void ajouterObjet(String titre, String url, String description, String idListe, String proprietaire);
 
     void prendreUnObjet(String idListe, String idObjet, String personne, String pseudo);
+    void nePlusPrendreUnObjet(String idObjet);
 
     List<ListeDto> getFavorisList(String email);
 
