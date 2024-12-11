@@ -5,6 +5,20 @@
     <title>Consulter liste</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
+    <script>
+        function openModal(titre, idListe, idObjet) {
+            const modalTitle = document.getElementById('modalTitle');
+            const modalForm = document.getElementById('modalForm');
+
+            modalTitle.textContent = `Vous souhaitez offrir "${titre}" ?`;
+            modalForm.action = "/prendre"; // Le formulaire envoie à l'URL prévue
+            modalForm.querySelector('[name="idListe"]').value = idListe;
+            modalForm.querySelector('[name="idObjet"]').value = idObjet;
+
+            const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            modal.show();
+        }
+    </script>
 </head>
 <body>
 <header>
@@ -66,11 +80,10 @@
                 <td><a th:if="${objet.url != null and !#strings.isEmpty(objet.url)}" th:href="${objet.url}" class="btn btn-link" target="_blank">Voir</a></td>
                 <td>
                     <span th:if="${objet.estPrit}" th:text="${objet.estPrit}"></span>
-                    <form th:if="!${objet.estPrit}" action="/prendre" method="post">
-                        <input type="hidden" name="idListe" th:value="${liste.idListe}">
-                        <input type="hidden" name="idObjet" th:value="${objet.idObjet}">
-                        <button class="btn btn-warning btn-sm">J'offre ça !</button>
-                    </form>
+                    <button th:if="!${objet.estPrit}" class="btn btn-warning btn-sm"
+                            th:onclick="openModal(/*[[${objet.titre}]]*/, /*[[${liste.idListe}]]*/, /*[[${objet.idObjet}]]*/)">
+                        J'offre ça !
+                    </button>
                 </td>
                 <td th:text="${objet.pseudoDetenteur}"></td>
             </tr>
@@ -79,5 +92,28 @@
         <p class="text-muted" th:if="${liste.listeObjet.size()} == 0">Aucun objet dans la liste</p>
     </div>
 </main>
+
+<!-- Modale -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Êtes-vous sûr de vouloir offrir cet objet ?
+            </div>
+            <div class="modal-footer">
+                <form id="modalForm" method="post">
+                    <input type="hidden" name="idListe">
+                    <input type="hidden" name="idObjet">
+                    <button type="submit" class="btn btn-primary">Oui</button>
+                </form>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
