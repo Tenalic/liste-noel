@@ -85,12 +85,14 @@
         <thead class="table-secondary">
         <tr>
             <th>Nom liste</th>
+            <th>Proprietaire</th>
             <th>Action</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="listeFavoris: ${listesFavoris}">
             <td><h5 class="h5" th:text="${listeFavoris.nomListe}"></h5></td>
+            <td><h5 class="h5" th:text="${listeFavoris.proprietaire}"></h5></td>
             <td><form action="/selectionner-liste" method="post"> <input type="hidden"
                                                                          id="listeFavoris" name="listeFavoris"
                                                                          th:value="${listeFavoris.idListe}">
