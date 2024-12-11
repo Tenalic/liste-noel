@@ -47,7 +47,6 @@
         </div>
         <div class="mb-3">
             <span class="fw-bold">Partager :</span>
-            <button class="btn btn-outline-primary btn-sm" onclick="navigator.clipboard.writeText('${liste.urlPartage}')">Copier le lien</button>
             <span class="text-muted" th:text="${liste.urlPartage}"></span>
         </div>
         <table class="table table-hover">
@@ -64,7 +63,7 @@
             <tr th:each="objet : ${liste.listeObjet}">
                 <td th:text="${objet.titre}"></td>
                 <td th:text="${objet.description}"></td>
-                <td><a th:href="${objet.url}" class="btn btn-link" target="_blank">Voir</a></td>
+                <td><a th:if="${objet.url != null and !#strings.isEmpty(objet.url)}" th:href="${objet.url}" class="btn btn-link" target="_blank">Voir</a></td>
                 <td>
                     <span th:if="${objet.estPrit}" th:text="${objet.estPrit}"></span>
                     <form th:if="!${objet.estPrit}" action="/prendre" method="post">

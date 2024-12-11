@@ -40,9 +40,9 @@
                 <button class="btn btn-primary">Actualiser</button>
             </form>
         </div>
-        <div class="my-3">
-            <h5>Partager la liste :</h5>
-            <p class="text-muted" th:text="${liste.urlPartage}"></p>
+        <div class="mb-3">
+            <span class="fw-bold">Partager :</span>
+            <span class="text-muted" th:text="${liste.urlPartage}"></span>
         </div>
         <table class="table table-bordered table-striped">
             <thead class="table-secondary">
@@ -56,7 +56,7 @@
             <tr th:each="objet: ${liste.listeObjet}">
                 <td th:text="${objet.titre}"></td>
                 <td th:text="${objet.description}"></td>
-                <td><a target="_blank" th:href="${objet.url}" class="btn btn-link">Voir</a></td>
+                <td><a th:if="${objet.url != null and !#strings.isEmpty(objet.url)}" target="_blank" th:href="${objet.url}" class="btn btn-link">Voir</a></td>
             </tr>
             </tbody>
         </table>
