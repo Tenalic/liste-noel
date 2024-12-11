@@ -62,17 +62,21 @@
         <tbody>
         <tr th:each="liste: ${listes}">
             <td><h5 class="h5" th:text="${liste.nomListe}"></h5></td>
-            <td><form action="/selectionner-liste" method="post"> <input type="hidden"
-                                                                  id="idListe" name="idListe"
-                                                                  th:value="${liste.idListe}">
-                <div>
-                    <button class="btn btn-success">Selectionner</button>
-            </form></td>
+            <td>
+                <form action="/selectionner-liste" method="post"><input type="hidden"
+                                                                        id="idListe" name="idListe"
+                                                                        th:value="${liste.idListe}">
+                    <div>
+                        <button class="btn btn-success">Selectionner</button>
+                    </div>
+                </form>
+            </td>
         </tr>
         </tbody>
     </table>
     <div th:if="${listes.size()} == 0">Aucunne liste
-        disponible</div>
+        disponible
+    </div>
 </div>
 
 <div align="center" th:if="${listesFavoris}">
@@ -93,12 +97,14 @@
         <tr th:each="listeFavoris: ${listesFavoris}">
             <td><h5 class="h5" th:text="${listeFavoris.nomListe}"></h5></td>
             <td><h5 class="h5" th:text="${listeFavoris.proprietaire}"></h5></td>
-            <td><form action="/selectionner-liste" method="post"> <input type="hidden"
-                                                                         id="listeFavoris" name="listeFavoris"
-                                                                         th:value="${listeFavoris.idListe}">
-                <div>
-                    <button class="btn btn-success">Selectionner</button>
-            </form></td>
+            <td>
+                <form action="/selectionner-liste" method="post"><input type="hidden"
+                                                                        id="listeFavoris" name="listeFavoris"
+                                                                        th:value="${listeFavoris.idListe}">
+                    <div>
+                        <button class="btn btn-success">Selectionner</button>
+                </form>
+            </td>
         </tr>
         </tbody>
     </table>
