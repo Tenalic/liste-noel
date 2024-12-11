@@ -51,7 +51,9 @@
         <div class="col-sm">Objet dans la liste :</div>
         <div class="col-sm" th:text="${liste.nomListe}"></div>
     </h1>
-    </h1>
+    <form action="/liste" method="get">
+        <button class="btn btn-secondary">Retour</button>
+    </form>
     <form action="/consulter-liste" method="get">
         <button class="btn btn-primary">Actualiser</button>
     </form>
@@ -77,7 +79,8 @@
         <tr th:each="objet: ${liste.listeObjet}">
             <td><h5 class="h5" th:text="${objet.titre}"></h5></td>
             <td><h5 class="h5" th:text="${objet.description}"></h5></td>
-            <td><h5 class="h5" th:text="${objet.url}"></h5></td>
+            <td><a target=”_blank”
+                    th:href="${objet.url}" class="btn btn-link">voir</a></td>
             <td><h5 th:if="${objet.estPrit}" class="h5" th:text="${objet.estPrit}"></h5>
                 <form th:if="!${objet.estPrit}" action="/prendre" method="post">
                     <div class="form-group row">

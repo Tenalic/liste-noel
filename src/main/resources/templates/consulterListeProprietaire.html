@@ -49,6 +49,9 @@
 <div align="center" th:if="${liste}">
     <h1 class="h1"><div class="col-sm">Objet dans ma liste :</div>
         <div class="col-sm" th:text="${liste.nomListe}"></div></h1>
+    <form action="/liste" method="get">
+        <button class="btn btn-secondary">Retour</button>
+    </form>
     <form action="/consulter-liste" method="get">
         <button class="btn btn-primary">actualiser</button>
     </form>
@@ -66,7 +69,8 @@
         <tr th:each="objet: ${liste.listeObjet}">
             <td><h5 class="h5" th:text="${objet.titre}"></h5></td>
             <td><h5 class="h5" th:text="${objet.description}"></h5></td>
-            <td><h5 class="h5" th:text="${objet.url}"></h5></td>
+            <td><a target=”_blank”
+                    th:href="${objet.url}" class="btn btn-link">voir</a></td>
         </tr>
         </tbody>
     </table>
