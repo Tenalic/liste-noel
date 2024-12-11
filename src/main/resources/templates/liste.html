@@ -2,46 +2,44 @@
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" content="maximum-scale=1.0, initial-scale=1.0, width=device-width" name="viewport">
-    <title>Bienvenue</title>
+    <title>Mes listes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
 </head>
 <body>
-<div class="collapse" id="navbarToggleExternalContent" data-bs-theme="dark">
+<header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="navbar-collapse" id="main_nav">
-            <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="/connexion">Connexion</a></li>
-                <li class="nav-item"><a class="nav-link" href="/inscription">Inscription</a></li>
-                <li class="nav-item"><a class="nav-link" href="/welcome">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="/liste">Mes listes</a></li>
-                <li class="nav-item"><a class="nav-link" href="/cgu">Conditions Générales d'Utilisation</a></li>
-                <li class="nav-item"><a class="nav-link" href="/politique-confidentialite">Politique de
-                    Confidentialité</a></li>
-                <li class="nav-item"><a class="nav-link" href="/politique-securite">Politique de Sécurité</a></li>
-                <li class="nav-item"><a class="nav-link" href="/deconnexion">Deconnexion</a></li>
-            </ul>
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/liste">Liste</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarToggleExternalContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="/connexion">Connexion</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/inscription">Inscription</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/welcome">Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/liste">Mes listes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/cgu">CGU</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/politique-confidentialite">Confidentialité</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/politique-securite">Sécurité</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/deconnexion">Déconnexion</a></li>
+                </ul>
+            </div>
         </div>
     </nav>
-</div>
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</nav>
+</header>
 
 <div align="center" th:if="${listes}">
     <h1 class="h1">Mes listes</h1>
     <form action="/liste" method="get">
-        <button class="btn btn-primary">actualiser</button>
+        <button class="btn btn-primary">Actualiser</button>
     </form>
 
     <table class="table table-bordered table-striped">
         <thead class="table-secondary">
         <tr>
-            <th>Nom liste</th>
+            <th>Nom de la liste</th>
             <th>Action</th>
         </tr>
         </thead>
@@ -49,31 +47,30 @@
         <tr th:each="liste: ${listes}">
             <td><h5 class="h5" th:text="${liste.nomListe}"></h5></td>
             <td>
-                <form action="/selectionner-liste" method="post"><input type="hidden" id="idListe" name="idListe" th:value="${liste.idListe}">
+                <form action="/selectionner-liste" method="post">
+                    <input type="hidden" id="idListe" name="idListe" th:value="${liste.idListe}">
                     <div>
-                        <button class="btn btn-success">Selectionner</button>
+                        <button class="btn btn-success">Sélectionner</button>
                     </div>
                 </form>
             </td>
         </tr>
         </tbody>
     </table>
-    <div th:if="${listes.size()} == 0">Aucunne liste
-        disponible
-    </div>
+    <div th:if="${listes.size()} == 0">Aucune liste disponible</div>
 </div>
 
 <div align="center" th:if="${listesFavoris}">
     <h1 class="h1">Mes favoris</h1>
     <form action="/liste" method="get">
-        <button class="btn btn-primary">actualiser</button>
+        <button class="btn btn-primary">Actualiser</button>
     </form>
 
     <table class="table table-bordered table-striped">
         <thead class="table-secondary">
         <tr>
-            <th>Nom liste</th>
-            <th>Proprietaire</th>
+            <th>Nom de la liste</th>
+            <th>Propriétaire</th>
             <th>Action</th>
         </tr>
         </thead>
@@ -82,15 +79,17 @@
             <td><h5 class="h5" th:text="${listeFavoris.nomListe}"></h5></td>
             <td><h5 class="h5" th:text="${listeFavoris.proprietaire}"></h5></td>
             <td>
-                <form action="/selectionner-liste" method="post"><input type="hidden" id="listeFavoris" name="listeFavoris" th:value="${listeFavoris.idListe}">
+                <form action="/selectionner-liste" method="post">
+                    <input type="hidden" id="listeFavoris" name="listeFavoris" th:value="${listeFavoris.idListe}">
                     <div>
-                        <button class="btn btn-success">Selectionner</button>
-                </div></form>
+                        <button class="btn btn-success">Sélectionner</button>
+                    </div>
+                </form>
             </td>
         </tr>
         </tbody>
     </table>
-    <div th:if="${listesFavoris.size()} == 0">Aucunne liste favorite enregistrer</div>
+    <div th:if="${listesFavoris.size()} == 0">Aucune liste favorite enregistrée</div>
 </div>
 
 <div align="center">
@@ -99,13 +98,14 @@
         <div class="card-body">
             <form action="/creer-liste" method="post">
                 <div class="form-group row">
-                    <label class="col-sm-4 col-form-label">Nom liste</label> <input type="text" name="nomListe" class="col-sm-10 form-control" id="nomListe" required>
+                    <label class="col-sm-4 col-form-label">Nom de la liste</label>
+                    <input type="text" name="nomListe" class="col-sm-10 form-control" id="nomListe" required>
                 </div>
                 <div th:if="${erreur}">
-                    <p class="alert alert-danger" th:text="${erreur} ?: ${erreur}"></p>
+                    <p class="alert alert-danger" th:text="${erreur}"></p>
                 </div>
 
-                <button class="btn btn-success">Creer liste</button>
+                <button class="btn btn-success">Créer la liste</button>
             </form>
         </div>
     </div>

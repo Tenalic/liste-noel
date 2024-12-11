@@ -1,87 +1,84 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" content="maximum-scale=1.0, initial-scale=1.0, width=device-width" name="viewport">
-    <title>Bienvenue</title>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, initial-scale=1.0">
+    <title>Consulter liste</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
 </head>
 <body>
-<div class="collapse" id="navbarToggleExternalContent" data-bs-theme="dark">
+<header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="navbar-collapse" id="main_nav">
-            <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="/connexion">Connexion</a></li>
-                <li class="nav-item"><a class="nav-link" href="/inscription">Inscription</a></li>
-                <li class="nav-item"><a class="nav-link" href="/welcome">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="/liste">Mes listes</a></li>
-                <li class="nav-item"><a class="nav-link" href="/cgu">Conditions Générales d'Utilisation</a></li>
-                <li class="nav-item"><a class="nav-link" href="/politique-confidentialite">Politique de
-                    Confidentialité</a></li>
-                <li class="nav-item"><a class="nav-link" href="/politique-securite">Politique de Sécurité</a></li>
-                <li class="nav-item"><a class="nav-link" href="/deconnexion">Deconnexion</a></li>
-            </ul>
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/liste">Liste</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarToggleExternalContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="/connexion">Connexion</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/inscription">Inscription</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/welcome">welcome</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/liste">Mes listes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/cgu">CGU</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/politique-confidentialite">Confidentialité</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/politique-securite">Sécurité</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/deconnexion">Déconnexion</a></li>
+                </ul>
+            </div>
         </div>
     </nav>
-</div>
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+</header>
+
+<main class="container my-4">
+    <div class="text-center" th:if="${liste}">
+        <h1 class="display-4 mb-4">Liste : <span th:text="${liste.nomListe}"></span></h1>
+        <div class="d-flex justify-content-center gap-3 mb-3">
+            <form action="/liste" method="get">
+                <button class="btn btn-secondary">Retour</button>
+            </form>
+            <form action="/consulter-liste" method="get">
+                <button class="btn btn-primary">Actualiser</button>
+            </form>
+            <form action="/ajouter-favoris" method="post">
+                <input type="hidden" name="idListeFavoris" th:value="${liste.idListe}">
+                <button class="btn btn-success">Ajouter favoris</button>
+            </form>
+        </div>
+        <div class="mb-3">
+            <span class="fw-bold">Partager :</span>
+            <button class="btn btn-outline-primary btn-sm" onclick="navigator.clipboard.writeText('${liste.urlPartage}')">Copier le lien</button>
+            <span class="text-muted" th:text="${liste.urlPartage}"></span>
+        </div>
+        <table class="table table-hover">
+            <thead class="table-dark sticky-top">
+            <tr>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>Url</th>
+                <th>Est pris</th>
+                <th>Détenteur</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="objet : ${liste.listeObjet}">
+                <td th:text="${objet.titre}"></td>
+                <td th:text="${objet.description}"></td>
+                <td><a th:href="${objet.url}" class="btn btn-link" target="_blank">Voir</a></td>
+                <td>
+                    <span th:if="${objet.estPrit}" th:text="${objet.estPrit}"></span>
+                    <form th:if="!${objet.estPrit}" action="/prendre" method="post">
+                        <input type="hidden" name="idListe" th:value="${liste.idListe}">
+                        <input type="hidden" name="idObjet" th:value="${objet.idObjet}">
+                        <button class="btn btn-warning btn-sm">J'offre ça !</button>
+                    </form>
+                </td>
+                <td th:text="${objet.pseudoDetenteur}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <p class="text-muted" th:if="${liste.listeObjet.size()} == 0">Aucun objet dans la liste</p>
     </div>
-</nav>
-
-<div align="center" th:if="${liste}">
-    <h1 class="h1">
-        <div class="col-sm">Objet dans la liste :</div>
-        <div class="col-sm" th:text="${liste.nomListe}"></div>
-    </h1>
-    <form action="/liste" method="get">
-        <button class="btn btn-secondary">Retour</button>
-    </form>
-    <form action="/consulter-liste" method="get">
-        <button class="btn btn-primary">Actualiser</button>
-    </form>
-    <form action="/ajouter-favoris" method="post">
-        <input type="hidden" id="idListeFavoris" name="idListeFavoris" th:value="${liste.idListe}">
-        <button class="btn btn-primary">Ajouter aux favoris</button>
-    </form>
-    Partager la liste :
-    <h5 class="h5" th:text="${liste.urlPartage}"></h5>
-    <table class="table table-bordered table-striped">
-        <thead class="table-secondary">
-        <tr>
-            <th scope="col">Titre</th>
-            <th scope="col">Description</th>
-            <th scope="col">Url</th>
-            <th scope="col">Est prit</th>
-            <th scope="col">Detenteur</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="objet: ${liste.listeObjet}">
-            <td><h5 class="h5" th:text="${objet.titre}"></h5></td>
-            <td><h5 class="h5" th:text="${objet.description}"></h5></td>
-            <td><a target="”_blank”" th:href="${objet.url}" class="btn btn-link">voir</a></td>
-            <td><h5 th:if="${objet.estPrit}" class="h5" th:text="${objet.estPrit}"></h5>
-                <form th:if="!${objet.estPrit}" action="/prendre" method="post">
-                    <div class="form-group row">
-                        <input type="hidden" id="idListe" name="idListe" th:value="${liste.idListe}">
-                        <input type="hidden" id="idObjet" name="idObjet" th:value="${objet.idObjet}">
-                    </div>
-                    <button class="btn btn-success">J'offre ça !</button>
-                </form>
-            </td>
-            <td><h5 class="h5" th:text="${objet.pseudoDetenteur}"></h5></td>
-        </tr>
-        </tbody>
-    </table>
-    <div th:if="${liste.listeObjet.size()} == 0">Aucun objet dans la liste</div>
-</div>
-
-<script type="text/javascript">
-
-</script>
+</main>
 </body>
 </html>
