@@ -8,6 +8,7 @@ import sc.liste.noel.liste_noel.Utile.mapper.ListeMapper;
 import sc.liste.noel.liste_noel.dao.entity.FavorisDao;
 import sc.liste.noel.liste_noel.dao.entity.ListeDao;
 import sc.liste.noel.liste_noel.dao.entity.ObjetDao;
+import sc.liste.noel.liste_noel.dao.repo.CompteRepo;
 import sc.liste.noel.liste_noel.dao.repo.FavorisRepo;
 import sc.liste.noel.liste_noel.dao.repo.ListeRepo;
 import sc.liste.noel.liste_noel.dao.repo.ObjetRepo;
@@ -28,6 +29,9 @@ public class ListeServiceImpl implements ListeServiceInterface {
 
     @Autowired
     private FavorisRepo favorisRepo;
+
+    @Autowired
+    private CompteRepo compteRepo;
 
     @Value("${base_url}")
     private String baseUrl;
@@ -108,7 +112,14 @@ public class ListeServiceImpl implements ListeServiceInterface {
             }
         }
 
-        return ListeMapper.daosToDtos(list);
+        return transcoEmailToPPseudo(ListeMapper.daosToDtos(list));
+    }
+
+    private List<ListeDto> transcoEmailToPPseudo(List<ListeDto> list){
+        for(ListeDto listeDto : list) {
+            listeDto.setProprietaire(compteRepo.findByEmail(listeDto.getProprietaire()).getPseudo());
+        }
+        return list;
     }
 
     @Transactional
