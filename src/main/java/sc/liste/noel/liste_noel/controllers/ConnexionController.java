@@ -15,6 +15,7 @@ import sc.liste.noel.liste_noel.constante.Constantes;
 import sc.liste.noel.liste_noel.constante.ConstantesSession;
 import sc.liste.noel.liste_noel.dto.CompteDto;
 import sc.liste.noel.liste_noel.service.CompteServiceInterface;
+import sc.liste.noel.liste_noel.service.impl.MailService;
 
 import java.util.Optional;
 
@@ -23,6 +24,8 @@ public class ConnexionController {
 
     private static final Logger LOGGER = LogManager.getLogger(ConnexionController.class);
 
+    @Autowired
+    private MailService mailService;
     @Autowired
     private CompteServiceInterface compteService;
 
