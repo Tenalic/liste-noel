@@ -14,28 +14,22 @@ public class MailService {
     @Value("${usernameEmail}")
     private String usernameEmail;
 
-    @Value("${password_email_p1}")
-    private String password_email_p1;
-    @Value("${password_email_p2}")
-    private String password_email_p2;
-    @Value("${password_email_p3}")
-    private String password_email_p3;
-    @Value("${password_email_p4}")
-    private String password_email_p4;
+    @Value("${password_email}")
+    private String password_email;
+    @Value("${host_email}")
+    private String host_email;
 
     private Session session;
 
     public void sendEmail(String destinataire, String sujet, String contenu) {
-        // provide sender's email ID
-        String from = usernameEmail;
 
         if(session == null) {
-            // provide account credentials
             final String username = usernameEmail;
-            final String password = password_email_p1 + " " + password_email_p2 + " " + password_email_p3 + " " + password_email_p4;
+            final String password = password_email;
 
             // provide host address
-            String host = "smtp.gmail.com";
+            //String host = "smtp.gmail.com";
+            String host = host_email;
 
             // configure SMTP details
             Properties props = new Properties();
@@ -60,7 +54,7 @@ public class MailService {
             // create a MimeMessage object
             Message message = new MimeMessage(session);
             // set From email field
-            message.setFrom(new InternetAddress(from));
+            message.setFrom(new InternetAddress(usernameEmail));
             // set To email field
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(destinataire));
             // set email subject field
