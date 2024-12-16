@@ -5,6 +5,27 @@
     <title>Mes listes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
+    <script>
+        function openModal(titre, idListe, text, action) {
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            const modalForm = document.getElementById('modalForm');
+
+            modalTitle.textContent = `Vous souhaitez ${text} "${titre}" ?`;
+            modalBody.textContent = `Êtes-vous sûr de vouloir ${text} "${titre}" ?`;
+            modalForm.action = action; // Le formulaire envoie à l'URL prévue
+            modalForm.querySelector('[name="idListeFavoris"]').value = idListe;
+
+            const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            modal.show();
+        }
+    </script>
+    <script>
+        function toggleCreateSection() {
+            const section = document.getElementById('createSection');
+            section.classList.toggle('d-none'); // Ajoute ou enlève la classe 'd-none' pour masquer/afficher
+        }
+    </script>
 </head>
 <body>
 <header>
@@ -59,6 +80,27 @@
         <p class="text-muted" th:if="${listes.size()} == 0">Aucune liste disponible</p>
     </div>
 
+    <div class="text-center">
+        <!-- Bouton pour afficher/cacher la section -->
+        <button class="btn btn-secondary mb-3" onclick="toggleCreateSection()">Créer une nouvelle liste</button>
+
+        <!-- Section à afficher ou masquer -->
+        <div id="createSection" class="card mx-auto d-none" style="max-width: 500px;">
+            <div class="card-body">
+                <form action="/creer-liste" method="post">
+                    <div class="mb-3">
+                        <label for="nomListe" class="form-label">Nom de la liste</label>
+                        <input type="text" name="nomListe" class="form-control" id="nomListe" required>
+                    </div>
+                    <div th:if="${erreur}">
+                        <p class="alert alert-danger" th:text="${erreur}"></p>
+                    </div>
+                    <button class="btn btn-success">Créer la liste</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div class="text-center" th:if="${listesFavoris}">
         <h1 class="display-4 mb-4">Mes favoris</h1>
         <form action="/liste" method="get" class="mb-3">
@@ -82,6 +124,11 @@
                         <input type="hidden" name="listeFavoris" th:value="${listeFavoris.idListe}">
                         <button class="btn btn-success">Sélectionner</button>
                     </form>
+                    <button class="btn btn-danger btn-sm"
+                            th:onclick="openModal(/*[[${listeFavoris.nomListe}]]*/, /*[[${listeFavoris.idListe}]]*/ , /*[['supprimer de vos favoris la liste']]*/, /*[['/supprimer-favoris']]*/)">
+                        Supprimer
+                    </button>
+
                 </td>
             </tr>
             </tbody>
@@ -89,24 +136,30 @@
         <p class="text-muted" th:if="${listesFavoris.size()} == 0">Aucune liste favorite enregistrée</p>
     </div>
 
-    <div class="text-center">
-        <h1 class="display-4 mb-4">Créer une nouvelle liste</h1>
-        <div class="card mx-auto" style="max-width: 500px;">
-            <div class="card-body">
-                <form action="/creer-liste" method="post">
-                    <div class="mb-3">
-                        <label for="nomListe" class="form-label">Nom de la liste</label>
-                        <input type="text" name="nomListe" class="form-control" id="nomListe" required>
-                    </div>
-                    <div th:if="${erreur}">
-                        <p class="alert alert-danger" th:text="${erreur}"></p>
-                    </div>
-                    <button class="btn btn-success">Créer la liste</button>
+
+</main>
+
+
+<!-- Modale -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer">
+                <form id="modalForm" method="post">
+                    <input type="hidden" name="idListeFavoris">
+                    <button type="submit" class="btn btn-primary">Oui</button>
                 </form>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
             </div>
         </div>
     </div>
-</main>
+</div>
+
 
 </body>
 </html>

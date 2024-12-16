@@ -20,6 +20,7 @@ public interface ListeServiceInterface {
     List<ListeDto> getFavorisList(String email);
 
     void ajouterFavoris(Long idListe, String email);
+    void supprimerFavoris(Long idListe, String email);
 
 
 }

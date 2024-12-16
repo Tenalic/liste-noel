@@ -131,6 +131,17 @@ public class ListeServiceImpl implements ListeServiceInterface {
             favorisDao.setEmail(email);
             favorisDao.setIdListe(idListe);
             favorisRepo.save(favorisDao);
+
         }
     }
+
+    @Transactional
+    @Override
+    public void supprimerFavoris(Long idListe, String email) {
+        FavorisDao favorisDaoList = favorisRepo.findByEmailAndIdListe(email, idListe);
+        if (favorisDaoList != null) {
+            favorisRepo.delete(favorisDaoList);
+        }
+    }
+
 }
