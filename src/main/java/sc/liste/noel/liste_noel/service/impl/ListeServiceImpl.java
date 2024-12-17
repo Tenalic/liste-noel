@@ -161,7 +161,7 @@ public class ListeServiceImpl implements ListeServiceInterface {
 
             ListeDao listeDao = listeRepo.findByIdListe(objetDao.getIdListe());
 
-            String bodyEmail = "L'objet " + objetDao.getTitre() + " : " + objetDao.getDescription()
+            String bodyEmail = "L'objet " + objetDao.getTitre() + " : " + objetDao.getDescription() + " " + objetDao.getUrl()
                     + " a été supprimé de la liste " + listeDao.getNomListe()
                     + " qui fait partie de vos favoris";
             String sujetEmail = "Objet supprimé de la liste : " + listeDao.getNomListe();
@@ -175,6 +175,35 @@ public class ListeServiceImpl implements ListeServiceInterface {
             objetRepo.delete(objetDao);
         }
 
+    }
+
+    @Transactional
+    @Override
+    public void modifierObjet(Long idObjet, String titreUpdate, String descriptionUpdate, String urlUpdate) {
+
+        ObjetDao objetDao = objetRepo.findByIdObjet(idObjet);
+
+        if (objetDao != null) {
+
+            ListeDao listeDao = listeRepo.findByIdListe(objetDao.getIdListe());
+
+            String bodyEmail = "L'objet " + objetDao.getTitre() + " : " + objetDao.getDescription() + " - " + objetDao.getUrl()
+                    + " a été modifier dans la liste " + listeDao.getNomListe()
+                    + " qui fait partie de vos favoris. Voici les nouvelles informations, " + titreUpdate + " : " + descriptionUpdate + " - " + urlUpdate;
+            String sujetEmail = "Objet modifié dans la liste : " + listeDao.getNomListe();
+
+            List<FavorisDao> favorisDaoList = favorisRepo.findByIdListe(listeDao.getIdListe());
+
+            for (FavorisDao favorisDao : favorisDaoList) {
+                mailService.sendEmail(favorisDao.getEmail(), sujetEmail, bodyEmail);
+            }
+
+            objetDao.setTitre(titreUpdate);
+            objetDao.setDescription(descriptionUpdate);
+            objetDao.setUrl(urlUpdate);
+
+            objetRepo.save(objetDao);
+        }
     }
 
 }

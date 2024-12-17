@@ -28,6 +28,26 @@
             const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
             modal.show();
         }
+
+        function openModalUpdate(titre, idObjet, text, action, titreObjet, description, url) {
+            const modalTitleUpdate = document.getElementById('modalTitleUpdate');
+            const modalBodyUpdate = document.getElementById('modalBodyUpdate');
+            const modalFormUpdate = document.getElementById('modalFormUpdate');
+
+
+
+            modalTitleUpdate.textContent = `Vous souhaitez ${text} "${titre}" ?`;
+            modalBodyUpdate.textContent = `Vous pouvez ${text} cet objet avec les champs ci-dessous`;
+            modalFormUpdate.action = action; // Le formulaire envoie à l'URL prévue
+            modalFormUpdate.querySelector('[name="idListe"]').value = idListe;
+            modalFormUpdate.querySelector('[name="idObjet"]').value = idObjet;
+            modalFormUpdate.querySelector('[name="titreUpdate"]').value = titreObjet;
+            modalFormUpdate.querySelector('[name="descriptionUpdate"]').value = description;
+            modalFormUpdate.querySelector('[name="urlUpdate"]').value = url;
+
+            const modalUpdate = new bootstrap.Modal(document.getElementById('confirmModalUpdate'));
+            modalUpdate.show();
+        }
     </script>
 </head>
 <body>
@@ -91,7 +111,8 @@
                             <div class="row mb-3">
                                 <label for="description" class="col-sm-4 col-form-label">Description</label>
                                 <div class="col-sm-8">
-                                    <textarea type="text" name="description" class="form-control" id="description"></textarea>
+                                    <textarea type="text" name="description" class="form-control"
+                                              id="description"></textarea>
                                 </div>
                             </div>
                             <div class="row mb-3">
@@ -126,6 +147,10 @@
                 <td><a th:if="${objet.url != null and !#strings.isEmpty(objet.url)}" target="_blank"
                        th:href="${objet.url}" class="btn btn-link">Voir</a></td>
                 <td>
+                    <button class="btn btn-primary btn-sm"
+                            th:onclick="openModalUpdate(/*[[${objet.titre}]]*/, /*[[${objet.idObjet}]]*/ , /*[['modifier']]*/, /*[['/modifier-objet']]*/ , /*[[${objet.titre}]]*/ , /*[[${objet.description}]]*/ , /*[[${objet.url}]]*/)">
+                        Modifier
+                    </button>
                     <button class="btn btn-danger btn-sm"
                             th:onclick="openModal(/*[[${objet.titre}]]*/, /*[[${objet.idObjet}]]*/ , /*[['supprimer']]*/, /*[['/supprimer-objet']]*/)">
                         Supprimer
@@ -161,6 +186,48 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="confirmModalUpdate" tabindex="-1" aria-labelledby="modalTitleUpdate" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitleUpdate"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!-- Body -->
+            <div class="modal-body">
+                <p id="modalBodyUpdate" class="text-muted"></p>
+                <form id="modalFormUpdate" method="post">
+                    <input type="hidden" name="idListe">
+                    <input type="hidden" name="idObjet">
+                    <!-- Titre -->
+                    <div class="mb-3">
+                        <label for="titreUpdate" class="form-label">Titre</label>
+                        <input type="text" name="titreUpdate" class="form-control" id="titreUpdate" required>
+                    </div>
+                    <!-- Description -->
+                    <div class="mb-3">
+                        <label for="descriptionUpdate" class="form-label">Description</label>
+                        <textarea name="descriptionUpdate" class="form-control" id="descriptionUpdate" rows="3"></textarea>
+                    </div>
+                    <!-- URL -->
+                    <div class="mb-3">
+                        <label for="urlUpdate" class="form-label">Url</label>
+                        <input type="text" name="urlUpdate" class="form-control" id="urlUpdate">
+                    </div>
+                </form>
+            </div>
+            <!-- Footer -->
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" form="modalFormUpdate">Valider</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 </body>
 </html>

@@ -274,6 +274,29 @@ public class ListeController {
         }
         return "redirect:consulter-liste";
     }
+    @PostMapping("/modifier-objet")
+    public String modifierObjet(Model model, HttpSession session,
+                                   @RequestParam(value = "idObjet", required = true) String idObjet,
+                                   @RequestParam(value = "titreUpdate", required = true) String titreUpdate,
+                                   @RequestParam(value = "descriptionUpdate", required = false) String descriptionUpdate,
+                                   @RequestParam(value = "urlUpdate", required = false) String urlUpdate  ) {
+        String email = (String) session.getAttribute(ConstantesSession.EMAIL);
+
+        if (email == null) {
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
+            return "redirect:connexion";
+        }
+
+        Utils.getSessionErrorMessage(session, model);
+
+        try {
+            listeServiceInterface.modifierObjet(Long.valueOf(idObjet), titreUpdate, descriptionUpdate, urlUpdate);
+        } catch (Exception e) {
+            LOGGER.error("", e);
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
+        }
+        return "redirect:consulter-liste";
+    }
 
 
 }
