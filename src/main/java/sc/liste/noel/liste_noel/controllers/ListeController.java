@@ -37,11 +37,11 @@ public class ListeController {
         }
         Utils.getSessionErrorMessage(session, model);
 
-        List<ListeDto> listDeListeDto = listeServiceInterface.getListeOfEmail(email);
+        List<ListeDto> listDeListeDto = listeServiceInterface.getListesOfEmail(email);
 
         model.addAttribute(ConstantesSession.LISTES, listDeListeDto);
 
-        List<ListeDto> listDeListeDtoFavoris = listeServiceInterface.getFavorisList(email);
+        List<ListeDto> listDeListeDtoFavoris = listeServiceInterface.getListeFavorisOfEmail(email);
 
         model.addAttribute(ConstantesSession.LISTES_FAVORIS, listDeListeDtoFavoris);
 
@@ -165,7 +165,7 @@ public class ListeController {
         }
         Utils.getSessionErrorMessage(session, model);
         try {
-            listeServiceInterface.ajouterObjet(titre, url, description, idListe, email);
+            listeServiceInterface.ajouterObjetDansUneListe(titre, url, description, idListe, email);
         } catch (Exception e) {
             LOGGER.error("", e);
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
@@ -220,16 +220,16 @@ public class ListeController {
         }
         Utils.getSessionErrorMessage(session, model);
         try {
-            listeServiceInterface.ajouterFavoris(Long.valueOf(idListe), email);
+            listeServiceInterface.ajouterFavori(Long.valueOf(idListe), email);
         } catch (Exception e) {
             LOGGER.error("", e);
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
         }
         return "redirect:consulter-liste";
     }
-    @PostMapping("/supprimer-favoris")
-    public String supprimerFavoris(Model model, HttpSession session,
-                               @RequestParam(value = "idListeFavoris", required = true) String idListe) {
+    @PostMapping("/supprimer-favori")
+    public String supprimerFavori(Model model, HttpSession session,
+                                  @RequestParam(value = "idListeFavoris", required = true) String idListe) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
         if (email == null) {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
@@ -237,7 +237,28 @@ public class ListeController {
         }
         Utils.getSessionErrorMessage(session, model);
         try {
-            listeServiceInterface.supprimerFavoris(Long.valueOf(idListe), email);
+            listeServiceInterface.supprimerFavori(Long.valueOf(idListe), email);
+        } catch (Exception e) {
+            LOGGER.error("", e);
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
+        }
+        return "redirect:consulter-liste";
+    }
+
+    @PostMapping("/supprimer-objet")
+    public String supprimerObjet(Model model, HttpSession session,
+                                   @RequestParam(value = "idObjet", required = true) String idObjet) {
+        String email = (String) session.getAttribute(ConstantesSession.EMAIL);
+
+        if (email == null) {
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
+            return "redirect:connexion";
+        }
+
+        Utils.getSessionErrorMessage(session, model);
+
+        try {
+            listeServiceInterface.supprimerObjet(Long.valueOf(idObjet), email);
         } catch (Exception e) {
             LOGGER.error("", e);
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());

@@ -3,13 +3,18 @@ package sc.liste.noel.liste_noel.service.impl;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import sc.liste.noel.liste_noel.ressource.CompteRessource;
 
 import java.util.Properties;
 
 @Service
 public class MailService {
+
+    private static final Logger LOGGER = LogManager.getLogger(MailService.class);
 
     @Value("${usernameEmail}")
     private String usernameEmail;
@@ -65,7 +70,8 @@ public class MailService {
             // send the email message
             Transport.send(message);
 
-            System.out.println("Email Message Sent Successfully!");
+            LOGGER.info("Email Message Sent Successfully to " + destinataire + " with the subject : " + sujet);
+
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }

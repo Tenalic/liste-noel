@@ -8,19 +8,21 @@ public interface ListeServiceInterface {
 
     ListeDto creerListe(String proprietaire, String nomListe);
 
-    List<ListeDto> getListeOfEmail(String email);
+    List<ListeDto> getListesOfEmail(String email);
 
     ListeDto getListeById(Long id);
 
-    void ajouterObjet(String titre, String url, String description, String idListe, String proprietaire);
+    void ajouterObjetDansUneListe(String titre, String url, String description, String idListe, String proprietaire);
 
     void prendreUnObjet(String idListe, String idObjet, String personne, String pseudo);
     void nePlusPrendreUnObjet(String idObjet);
 
-    List<ListeDto> getFavorisList(String email);
+    List<ListeDto> getListeFavorisOfEmail(String email);
 
-    void ajouterFavoris(Long idListe, String email);
-    void supprimerFavoris(Long idListe, String email);
+    void ajouterFavori(Long idListe, String email);
+    void supprimerFavori(Long idListe, String email);
+
+    void supprimerObjet(Long idObjet, String email);
 
 
 }

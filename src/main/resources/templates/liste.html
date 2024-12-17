@@ -58,6 +58,27 @@
             <button class="btn btn-primary">Actualiser</button>
         </form>
 
+        <div class="text-center">
+            <!-- Bouton pour afficher/cacher la section -->
+            <button class="btn btn-success mb-3" onclick="toggleCreateSection()">Créer une nouvelle liste</button>
+
+            <!-- Section à afficher ou masquer -->
+            <div id="createSection" class="card mx-auto d-none" style="max-width: 500px;">
+                <div class="card-body">
+                    <form action="/creer-liste" method="post">
+                        <div class="mb-3">
+                            <label for="nomListe" class="form-label">Nom de la liste</label>
+                            <input type="text" name="nomListe" class="form-control" id="nomListe" required>
+                        </div>
+                        <div th:if="${erreur}">
+                            <p class="alert alert-danger" th:text="${erreur}"></p>
+                        </div>
+                        <button class="btn btn-success">Créer la liste</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <table class="table table-hover">
             <thead class="table-dark">
             <tr>
@@ -78,27 +99,6 @@
             </tbody>
         </table>
         <p class="text-muted" th:if="${listes.size()} == 0">Aucune liste disponible</p>
-    </div>
-
-    <div class="text-center">
-        <!-- Bouton pour afficher/cacher la section -->
-        <button class="btn btn-secondary mb-3" onclick="toggleCreateSection()">Créer une nouvelle liste</button>
-
-        <!-- Section à afficher ou masquer -->
-        <div id="createSection" class="card mx-auto d-none" style="max-width: 500px;">
-            <div class="card-body">
-                <form action="/creer-liste" method="post">
-                    <div class="mb-3">
-                        <label for="nomListe" class="form-label">Nom de la liste</label>
-                        <input type="text" name="nomListe" class="form-control" id="nomListe" required>
-                    </div>
-                    <div th:if="${erreur}">
-                        <p class="alert alert-danger" th:text="${erreur}"></p>
-                    </div>
-                    <button class="btn btn-success">Créer la liste</button>
-                </form>
-            </div>
-        </div>
     </div>
 
     <div class="text-center" th:if="${listesFavoris}">
@@ -125,7 +125,7 @@
                         <button class="btn btn-success">Sélectionner</button>
                     </form>
                     <button class="btn btn-danger btn-sm"
-                            th:onclick="openModal(/*[[${listeFavoris.nomListe}]]*/, /*[[${listeFavoris.idListe}]]*/ , /*[['supprimer de vos favoris la liste']]*/, /*[['/supprimer-favoris']]*/)">
+                            th:onclick="openModal(/*[[${listeFavoris.nomListe}]]*/, /*[[${listeFavoris.idListe}]]*/ , /*[['supprimer de vos favoris la liste']]*/, /*[['/supprimer-favori']]*/)">
                         Supprimer
                     </button>
 

@@ -17,7 +17,6 @@ import sc.liste.noel.liste_noel.service.ListeServiceInterface;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ListeServiceImpl implements ListeServiceInterface {
@@ -36,6 +35,9 @@ public class ListeServiceImpl implements ListeServiceInterface {
     @Value("${base_url}")
     private String baseUrl;
 
+    @Autowired
+    private MailService mailService;
+
     @Override
     public ListeDto creerListe(String proprietaire, String nomListe) {
 
@@ -52,7 +54,7 @@ public class ListeServiceImpl implements ListeServiceInterface {
     }
 
     @Override
-    public List<ListeDto> getListeOfEmail(String email) {
+    public List<ListeDto> getListesOfEmail(String email) {
         List<ListeDao> listeDaoList = listeRepo.findByProprietaire(email);
         return ListeMapper.daosToDtos(listeDaoList);
     }
@@ -66,7 +68,7 @@ public class ListeServiceImpl implements ListeServiceInterface {
     }
 
     @Override
-    public void ajouterObjet(String titre, String url, String description, String idListe, String proprietaire) {
+    public void ajouterObjetDansUneListe(String titre, String url, String description, String idListe, String proprietaire) {
         ObjetDao objetDao = new ObjetDao();
         objetDao.setDescription(description);
         objetDao.setIdListe(Long.valueOf(idListe));
@@ -97,7 +99,7 @@ public class ListeServiceImpl implements ListeServiceInterface {
     }
 
 
-    public List<ListeDto> getFavorisList(String email) {
+    public List<ListeDto> getListeFavorisOfEmail(String email) {
         List<FavorisDao> favorisDaoList = favorisRepo.findByEmail(email);
 
         if (favorisDaoList == null) {
@@ -115,8 +117,8 @@ public class ListeServiceImpl implements ListeServiceInterface {
         return transcoEmailToPPseudo(ListeMapper.daosToDtos(list));
     }
 
-    private List<ListeDto> transcoEmailToPPseudo(List<ListeDto> list){
-        for(ListeDto listeDto : list) {
+    private List<ListeDto> transcoEmailToPPseudo(List<ListeDto> list) {
+        for (ListeDto listeDto : list) {
             listeDto.setProprietaire(compteRepo.findByEmail(listeDto.getProprietaire()).getPseudo());
         }
         return list;
@@ -124,7 +126,7 @@ public class ListeServiceImpl implements ListeServiceInterface {
 
     @Transactional
     @Override
-    public void ajouterFavoris(Long idListe, String email) {
+    public void ajouterFavori(Long idListe, String email) {
         FavorisDao favorisDaoList = favorisRepo.findByEmailAndIdListe(email, idListe);
         if (favorisDaoList == null) {
             FavorisDao favorisDao = new FavorisDao();
@@ -137,11 +139,37 @@ public class ListeServiceImpl implements ListeServiceInterface {
 
     @Transactional
     @Override
-    public void supprimerFavoris(Long idListe, String email) {
+    public void supprimerFavori(Long idListe, String email) {
         FavorisDao favorisDaoList = favorisRepo.findByEmailAndIdListe(email, idListe);
         if (favorisDaoList != null) {
             favorisRepo.delete(favorisDaoList);
         }
+    }
+
+    @Transactional
+    @Override
+    public void supprimerObjet(Long idObjet, String email) {
+
+        ObjetDao objetDao = objetRepo.findByIdObjet(idObjet);
+
+        if (objetDao != null) {
+
+            ListeDao listeDao = listeRepo.findByIdListe(objetDao.getIdListe());
+
+            String bodyEmail = "L'objet " + objetDao.getTitre() + " : " + objetDao.getDescription()
+                    + " a été supprimé de la liste " + listeDao.getNomListe()
+                    + " qui fait partie de vos favoris";
+            String sujetEmail = "Objet supprimé de la liste : " + listeDao.getNomListe();
+
+            List<FavorisDao> favorisDaoList = favorisRepo.findByIdListe(listeDao.getIdListe());
+
+            for (FavorisDao favorisDao : favorisDaoList) {
+                mailService.sendEmail(favorisDao.getEmail(), sujetEmail, bodyEmail);
+            }
+
+            objetRepo.delete(objetDao);
+        }
+
     }
 
 }
