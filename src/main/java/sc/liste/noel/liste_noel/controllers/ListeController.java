@@ -35,6 +35,12 @@ public class ListeController {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
             return "redirect:connexion";
         }
+
+        Long idShared = (Long) session.getAttribute(Constantes.SHARED_LISTE);
+        if(idShared != null) {
+            return "redirect:consulter-liste";
+        }
+
         Utils.getSessionErrorMessage(session, model);
 
         List<ListeDto> listDeListeDto = listeServiceInterface.getListesOfEmail(email);

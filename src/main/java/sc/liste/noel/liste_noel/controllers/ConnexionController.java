@@ -45,7 +45,7 @@ public class ConnexionController {
         Utils.getSessionErrorMessage(session, model);
 
         if (session.getAttribute(ConstantesSession.EMAIL) != null) {
-            return "redirect:consulter-liste";
+            return "redirect:liste";
         }
 
         return "connexion";
@@ -60,8 +60,12 @@ public class ConnexionController {
                 session.setMaxInactiveInterval(14400);
                 session.setAttribute(ConstantesSession.EMAIL, email);
                 session.setAttribute(ConstantesSession.PSEUDO, compteDto.getPseudo());
-                //mailService.sendEmail(email, "Bienvenu sur alwaysdata", "Bienvenu sur alwaysdata");
-                return "redirect:consulter-liste";
+                Long idShared = (Long) session.getAttribute(Constantes.SHARED_LISTE);
+                if(idShared != null) {
+                    return "redirect:consulter-liste";
+                } else {
+                    return "redirect:liste";
+                }
             } else {
                 Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_FAIL_KEY, langue));
             }
