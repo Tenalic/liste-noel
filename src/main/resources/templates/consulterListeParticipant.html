@@ -48,7 +48,7 @@
 
 <main class="container my-4">
     <div class="text-center" th:if="${liste}">
-        <h1 class="display-4 mb-4">Liste : <span th:text="${liste.nomListe}"></span></h1>
+        <h1 class="display-4 mb-4">Liste : <span class="text-primary" th:text="${liste.nomListe}"></span></h1>
         <div class="d-flex justify-content-center gap-3 mb-3">
             <form action="/liste" method="get">
                 <button class="btn btn-secondary">Retour</button>
