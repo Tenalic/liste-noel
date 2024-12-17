@@ -117,6 +117,11 @@ public class ListeServiceImpl implements ListeServiceInterface {
         return transcoEmailToPPseudo(ListeMapper.daosToDtos(list));
     }
 
+    public boolean checkifListeInFavoris(Long idListe, String email) {
+        return favorisRepo.findByEmailAndIdListe(email, idListe) != null;
+    }
+
+
     private List<ListeDto> transcoEmailToPPseudo(List<ListeDto> list) {
         for (ListeDto listeDto : list) {
             listeDto.setProprietaire(compteRepo.findByEmail(listeDto.getProprietaire()).getPseudo());

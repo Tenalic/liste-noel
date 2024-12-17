@@ -56,9 +56,13 @@
             <form action="/consulter-liste" method="get">
                 <button class="btn btn-primary">Actualiser</button>
             </form>
-            <form action="/ajouter-favoris" method="post">
+            <form th:if="!${estFavori}" action="/ajouter-favori" method="post">
                 <input type="hidden" name="idListeFavoris" th:value="${liste.idListe}">
-                <button class="btn btn-success">Ajouter favoris</button>
+                <button class="btn btn-success">Ajouter aux favoris</button>
+            </form>
+            <form th:if="${estFavori}" action="/supprimer-favori" method="post">
+                <input type="hidden" name="idListeFavoris" th:value="${liste.idListe}">
+                <button class="btn btn-danger">Supprimer des favoris</button>
             </form>
         </div>
         <div class="mb-3">

@@ -19,6 +19,8 @@ public interface ListeServiceInterface {
 
     List<ListeDto> getListeFavorisOfEmail(String email);
 
+    boolean checkifListeInFavoris(Long idListe, String email);
+
     void ajouterFavori(Long idListe, String email);
     void supprimerFavori(Long idListe, String email);
 

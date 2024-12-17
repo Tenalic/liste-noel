@@ -124,6 +124,9 @@ public class ListeController {
         if (email.equals(Optional.ofNullable(listeDto).map(ListeDto::getProprietaire).orElse(null))) {
             return "consulterListeProprietaire";
         } else {
+            // ajouter valeur est dans favoris
+            boolean estDansFavoris = listeServiceInterface.checkifListeInFavoris(idListe, email);
+            model.addAttribute(ConstantesSession.IS_FAVORI, estDansFavoris);
             return "consulterListeParticipant";
         }
     }
@@ -216,7 +219,7 @@ public class ListeController {
         return "redirect:consulter-liste";
     }
 
-    @PostMapping("/ajouter-favoris")
+    @PostMapping("/ajouter-favori")
     public String ajouterFavoris(Model model, HttpSession session,
                                @RequestParam(value = "idListeFavoris", required = true) String idListe) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
