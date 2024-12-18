@@ -51,6 +51,11 @@ public class InscriptionController {
             return "redirect:inscription";
         }
 
+        if(!Utils.isValidEmail(email)) {
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.EMAIL_NON_ACCEPTE_KEY, langue));
+            return "redirect:inscription";
+        }
+
         if (!confirmationNewPassword.equals(password)) {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.MDP_NOT_EQUALS_KEY, langue));
             return "redirect:inscription";

@@ -6,8 +6,12 @@ import sc.liste.noel.liste_noel.constante.Constantes;
 import sc.liste.noel.liste_noel.constante.ConstantesSession;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
+
+    private static Pattern pattern = Pattern.compile("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");
 
     public static boolean aMessageErreur(String messageErreur) {
         if (messageErreur != null && !"".equals(messageErreur)) {
@@ -68,6 +72,8 @@ public class Utils {
                     (langue == Constantes.CODE_ANGLAIS ? Constantes.COMPTE_ERROR_EN : Constantes.COMPTE_ERROR_FR);
             case Constantes.PASSWORD_DIFFERENT_KEY ->
                     (langue == Constantes.CODE_ANGLAIS ? Constantes.PASSWORD_DIFFERENT_EN : Constantes.PASSWORD_DIFFERENT_FR);
+            case Constantes.EMAIL_NON_ACCEPTE_KEY ->
+                    Constantes.EMAIL_NON_ACCEPTE_FR;
             default ->
                     (langue == Constantes.CODE_ANGLAIS ? Constantes.MESSAGE_DEFAUT_EN : Constantes.MESSAGE_DEFAUT_FR);
         };
@@ -81,5 +87,9 @@ public class Utils {
         };
     }
 
+    public static boolean isValidEmail(String email) {
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
 
 }

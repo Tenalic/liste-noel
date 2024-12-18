@@ -17,6 +17,7 @@ import sc.liste.noel.liste_noel.service.ListeServiceInterface;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ListeServiceImpl implements ListeServiceInterface {
@@ -138,7 +139,6 @@ public class ListeServiceImpl implements ListeServiceInterface {
             favorisDao.setEmail(email);
             favorisDao.setIdListe(idListe);
             favorisRepo.save(favorisDao);
-
         }
     }
 
@@ -163,14 +163,13 @@ public class ListeServiceImpl implements ListeServiceInterface {
 
             String bodyEmail = "L'objet " + objetDao.getTitre() + " : " + objetDao.getDescription() + " " + objetDao.getUrl()
                     + " a été supprimé de la liste " + listeDao.getNomListe()
-                    + " qui fait partie de vos favoris";
+                    + " qui fait partie de vos favoris" + " consulter la liste : "
+                    + ListeMapper.buildUrlPartage(baseUrl, listeDao.getIdListe());;
             String sujetEmail = "Objet supprimé de la liste : " + listeDao.getNomListe();
 
             List<FavorisDao> favorisDaoList = favorisRepo.findByIdListe(listeDao.getIdListe());
 
-            for (FavorisDao favorisDao : favorisDaoList) {
-                mailService.sendEmail(favorisDao.getEmail(), sujetEmail, bodyEmail);
-            }
+            envoyerEmailToListe(getListeOfEmailFromListeFavorisDao(favorisDaoList), bodyEmail, sujetEmail);
 
             objetRepo.delete(objetDao);
         }
@@ -189,20 +188,33 @@ public class ListeServiceImpl implements ListeServiceInterface {
 
             String bodyEmail = "L'objet " + objetDao.getTitre() + " : " + objetDao.getDescription() + " - " + objetDao.getUrl()
                     + " a été modifier dans la liste " + listeDao.getNomListe()
-                    + " qui fait partie de vos favoris. Voici les nouvelles informations, " + titreUpdate + " : " + descriptionUpdate + " - " + urlUpdate;
+                    + " qui fait partie de vos favoris. Voici les nouvelles informations, " + titreUpdate + " : " + descriptionUpdate + " - " + urlUpdate + " consulter la liste : "
+                    + ListeMapper.buildUrlPartage(baseUrl, listeDao.getIdListe());
             String sujetEmail = "Objet modifié dans la liste : " + listeDao.getNomListe();
 
             List<FavorisDao> favorisDaoList = favorisRepo.findByIdListe(listeDao.getIdListe());
 
-            for (FavorisDao favorisDao : favorisDaoList) {
-                mailService.sendEmail(favorisDao.getEmail(), sujetEmail, bodyEmail);
-            }
+            envoyerEmailToListe(getListeOfEmailFromListeFavorisDao(favorisDaoList), bodyEmail, sujetEmail);
 
             objetDao.setTitre(titreUpdate);
             objetDao.setDescription(descriptionUpdate);
             objetDao.setUrl(urlUpdate);
 
             objetRepo.save(objetDao);
+        }
+    }
+
+    private List<String> getListeOfEmailFromListeFavorisDao(List<FavorisDao> favorisDaoList) {
+        return Optional.ofNullable(favorisDaoList)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(FavorisDao::getEmail)
+                .toList();
+    }
+
+    private void envoyerEmailToListe(List<String> listOfEmail,String body, String subject) {
+        for(String email : listOfEmail) {
+            mailService.sendEmail(email, subject, body);
         }
     }
 

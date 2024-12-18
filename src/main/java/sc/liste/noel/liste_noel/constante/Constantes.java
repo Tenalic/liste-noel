@@ -23,6 +23,8 @@ public class Constantes {
     public static final String MDP_NOT_EQUALS_FR = "Les mots de passe ne correspondent pas";
     public static final String MDP_NOT_EQUALS_EN = "The passwords do not match";
     public static final String CGU_NON_ACCEPTE_KEY = "cguNonAccepte";
+    public static final String EMAIL_NON_ACCEPTE_KEY = "emailMalForme";
+    public static final String EMAIL_NON_ACCEPTE_FR = "L'email n'est pas correct, il doit être du style : \"user@example.com\"";
     public static final String CGU_NON_ACCEPTE_FR = "Vous devez accepter les conditions générale d’utilisation pour vous inscrire";
     public static final String CGU_NON_ACCEPTE_EN = "You must accepte the term of use to register";
     public static final String NEW_MDP_NOT_EQUALS_KEY = "newMdpNotEquals";
