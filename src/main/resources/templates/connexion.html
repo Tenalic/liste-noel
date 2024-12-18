@@ -48,12 +48,14 @@
                             <input type="password" name="password" class="form-control" id="password" required>
                         </div>
                         <div th:if="${erreur}" class="alert alert-danger text-center" role="alert" th:text="${erreur}"></div>
+                        <div th:if="${message}" class="alert alert-primary text-center" role="alert" th:text="${erreur}"></div>
                         <div class="text-center">
                             <button type="submit" class="btn btn-success">Se connecter</button>
                         </div>
                     </form>
                 </div>
                 <div class="card-footer text-center">
+                    <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Mot de passe oublié ?</a><br>
                     <a href="/inscription" class="text-decoration-none">Pas de compte ? Inscrivez-vous ici</a>
                 </div>
             </div>
@@ -64,5 +66,30 @@
 <footer class="mt-auto bg-dark text-white text-center py-3">
     <p class="mb-0">&copy; 2024 Liste. Tous droits réservés.</p>
 </footer>
+
+<!-- Modale de mot de passe oublié -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="forgotPasswordModalLabel">Mot de passe oublié</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/mot-de-passe-oublie" method="post">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Saisissez votre email</label>
+                        <input type="email" name="email" class="form-control" id="emailForgot" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Envoyer</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

@@ -96,5 +96,25 @@ public class ConnexionController {
         return "contact";
     }
 
+    @PostMapping(value = {"mot-de-passe-oublie"})
+    public String motDePasseOublie(Model model, HttpSession session, @RequestParam(value = "email", required = true) String email) {
+
+        Integer langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
+
+        if(!Utils.isValidEmail(email)) {
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.EMAIL_NON_ACCEPTE_KEY, langue));
+            return "redirect:inscription";
+        }
+
+        try {
+            compteService.genererMotDePasseEtEnvoyer(email);
+            Utils.setSessionInfoMessage(session, "Si un compte avec l'email " + email + " existe, vous devriez avoir reçu un nouveau mot de passe.");
+        } catch (Exception e) {
+            LOGGER.log(Level.ERROR, e);
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
+        }
+        return "redirect:connexion";
+    }
+
 
 }

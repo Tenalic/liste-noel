@@ -1,6 +1,10 @@
 package sc.liste.noel.liste_noel.Utile;
 
 import jakarta.servlet.http.HttpSession;
+import org.passay.CharacterData;
+import org.passay.CharacterRule;
+import org.passay.EnglishCharacterData;
+import org.passay.PasswordGenerator;
 import org.springframework.ui.Model;
 import sc.liste.noel.liste_noel.constante.Constantes;
 import sc.liste.noel.liste_noel.constante.ConstantesSession;
@@ -13,6 +17,8 @@ public class Utils {
 
     private static Pattern pattern = Pattern.compile("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");
 
+    public static final String ERROR_CODE = "ERRONEOUS_SPECIAL_CHARS";
+
     public static boolean aMessageErreur(String messageErreur) {
         if (messageErreur != null && !"".equals(messageErreur)) {
             return true;
@@ -22,6 +28,10 @@ public class Utils {
 
     public static void setSessionErrorMessage(HttpSession session, String messageErreur) {
         session.setAttribute(ConstantesSession.ERREUR, messageErreur);
+    }
+
+    public static void setSessionInfoMessage(HttpSession session, String messageInfo) {
+        session.setAttribute(ConstantesSession.INFO, messageInfo);
     }
 
     public static void getSessionErrorMessage(HttpSession session, Model model) {
@@ -90,6 +100,37 @@ public class Utils {
     public static boolean isValidEmail(String email) {
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
+    }
+
+    public static String generatePassayPassword() {
+        PasswordGenerator gen = new PasswordGenerator();
+        CharacterData lowerCaseChars = EnglishCharacterData.LowerCase;
+        CharacterRule lowerCaseRule = new CharacterRule(lowerCaseChars);
+        lowerCaseRule.setNumberOfCharacters(2);
+
+        CharacterData upperCaseChars = EnglishCharacterData.UpperCase;
+        CharacterRule upperCaseRule = new CharacterRule(upperCaseChars);
+        upperCaseRule.setNumberOfCharacters(2);
+
+        CharacterData digitChars = EnglishCharacterData.Digit;
+        CharacterRule digitRule = new CharacterRule(digitChars);
+        digitRule.setNumberOfCharacters(2);
+
+        CharacterData specialChars = new CharacterData() {
+            public String getErrorCode() {
+                return ERROR_CODE;
+            }
+
+            public String getCharacters() {
+                return "!@#$%^&*()_+";
+            }
+        };
+        CharacterRule splCharRule = new CharacterRule(specialChars);
+        splCharRule.setNumberOfCharacters(2);
+
+        String password = gen.generatePassword(10, splCharRule, lowerCaseRule,
+                upperCaseRule, digitRule);
+        return password;
     }
 
 }

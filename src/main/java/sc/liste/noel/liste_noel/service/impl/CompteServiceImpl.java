@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sc.liste.noel.liste_noel.Utile.PasswordUtils;
+import sc.liste.noel.liste_noel.Utile.Utils;
 import sc.liste.noel.liste_noel.Utile.mapper.CompteMapper;
 import sc.liste.noel.liste_noel.dao.entity.CompteDao;
 import sc.liste.noel.liste_noel.dao.repo.CompteRepo;
@@ -32,6 +33,9 @@ public class CompteServiceImpl implements CompteServiceInterface {
 
     @Value("${salt}")
     private String salt;
+
+    @Autowired
+    private MailService mailService;
 
     private final Map<String, TokenDto> tokenValideMap = new HashMap<>();
 
@@ -101,6 +105,18 @@ public class CompteServiceImpl implements CompteServiceInterface {
         return false;
     }
 
+    private boolean forceUpdatePassword(String email, String newPassword) {
+        CompteDao compteDao = compteRepo.findByEmail(email);
+        if (compteDao != null) {
+            compteDao.setPassword(PasswordUtils.generateSecurePassword(newPassword, salt));
+            compteDao.setNbModificationMdp(compteDao.getNbModificationMdp() + 1);
+            compteDao.setDateDerniereModificationMdp(LocalDateTime.now());
+            compteRepo.save(compteDao);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public TokenDto getTokenDtoByEmail(String cossy) {
 
@@ -133,6 +149,16 @@ public class CompteServiceImpl implements CompteServiceInterface {
                 throw new CompteNotFoundException("Aucun compte ne correspond a ce token");
             }
             throw new TokenExpiredException("Le token n'est plus valide");
+        }
+    }
+
+    @Override
+    public void genererMotDePasseEtEnvoyer(String email) {
+        String newMdp = Utils.generatePassayPassword();
+        boolean isUpdate = forceUpdatePassword(email, newMdp);
+        if (isUpdate) {
+            String body = "Votre mot de passe a été réinitialisé, voici votre nouveau mot de passe, vous pourrez le modifier une fois connecté : " + newMdp;
+            mailService.sendEmail(email, "Mot de passe modifié", body);
         }
     }
 }

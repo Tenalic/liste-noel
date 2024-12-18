@@ -87,4 +87,6 @@ public interface CompteServiceInterface {
      */
     TokenDto getTokenDtoByToken(String token) throws CompteNotFoundException, TokenExpiredException;
 
+    void genererMotDePasseEtEnvoyer(String email);
+
 }

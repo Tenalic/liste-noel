@@ -5,6 +5,7 @@ public class ConstantesSession {
 	public static String EMAIL = "email";
 	public static String IS_FAVORI = "estFavori";
 	public static String PSEUDO = "pseudo";
+	public static String INFO = "message";
 	public static String LISTE = "liste";
 	public static String ID_LISTE = "id_liste";
 
