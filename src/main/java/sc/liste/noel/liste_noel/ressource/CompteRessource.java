@@ -197,4 +197,14 @@ public class CompteRessource {
         }
     }
 
+    @GetMapping("/activate")
+    public String activateAccount(@RequestParam("userId") String email, @RequestParam("key") String key) {
+        boolean activated = compteService.activateUser(email, key);
+        if (activated) {
+            return "Votre compte a été activé avec succès.";
+        } else {
+            return "Le lien d'activation est invalide ou a expiré.";
+        }
+    }
+
 }

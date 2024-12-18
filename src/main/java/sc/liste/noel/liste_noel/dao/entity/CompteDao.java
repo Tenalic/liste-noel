@@ -35,6 +35,11 @@ public class CompteDao {
 
     @Column(name = "pseudo")
     private String pseudo;
+    @Column(name = "email_verified")
+    private Boolean emailVerified;
+
+    @Column(name = "activation_key")
+    private String activationKey;
 
     public CompteDao() {
         super();
@@ -51,7 +56,7 @@ public class CompteDao {
         this.cguAccepted = cguAccepted;
     }
 
-    public CompteDao(String email, String password, boolean cguAccepted, String pseudo) {
+    public CompteDao(String email, String password, boolean cguAccepted, String pseudo, String activationKey) {
         super();
         this.email = email;
         this.password = password;
@@ -61,6 +66,8 @@ public class CompteDao {
         this.setDateDerniereConnexion(LocalDateTime.now());
         this.cguAccepted = cguAccepted;
         this.pseudo = pseudo;
+        this.emailVerified = false;
+        this.activationKey = activationKey;
     }
 
     public CompteDao(String email, String password, Integer initInteger) {
@@ -168,5 +175,21 @@ public class CompteDao {
 
     public void setPseudo(String pseudo) {
         this.pseudo = pseudo;
+    }
+
+    public Boolean getEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(Boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+
+    public String getActivationKey() {
+        return activationKey;
+    }
+
+    public void setActivationKey(String activationKey) {
+        this.activationKey = activationKey;
     }
 }

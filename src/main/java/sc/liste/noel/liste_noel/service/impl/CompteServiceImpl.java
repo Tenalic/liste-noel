@@ -1,5 +1,6 @@
 package sc.liste.noel.liste_noel.service.impl;
 
+import com.fasterxml.uuid.Generators;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ import java.util.Optional;
 
 @Service
 public class CompteServiceImpl implements CompteServiceInterface {
+
+    @Value("${base_url}")
+    private String baseUrl;
 
     private static final int DURABILITE_TOKEN = 24;
 
@@ -76,8 +80,26 @@ public class CompteServiceImpl implements CompteServiceInterface {
     }
 
     @Override
-    public boolean creationCompte(String cossy, String password, boolean cguAccepted, String pseudo) {
-        compteRepo.save(new CompteDao(cossy, PasswordUtils.generateSecurePassword(password, salt), cguAccepted, pseudo));
+    public boolean creationCompte(String email, String password, boolean cguAccepted, String pseudo) {
+        String activationkey = Generators.timeBasedEpochGenerator().generate().toString();
+        compteRepo.save(new CompteDao(email, PasswordUtils.generateSecurePassword(password, salt), cguAccepted, pseudo, activationkey));
+        String url = baseUrl + "/compte/activate?userId=" + email + "&key=" + activationkey;
+        String body = "Bonjour,\n" +
+                "\n" +
+                "Merci d'avoir créé un compte sur notre plateforme. Nous sommes ravis de vous accueillir parmi nous !\n" +
+                "\n" +
+                "Voici les détails de votre compte :\n" +
+                "\n" +
+                "Nom de compte : " + email +"\n" +
+                "Pour activer votre compte, veuillez cliquer sur le lien ci-dessous :\n" +
+                url + "\n" +
+                "\n" +
+                "Si vous n'avez pas créé ce compte, veuillez ignorer cet email.\n" +
+                "\n" +
+                "Nous vous remercions de votre confiance et restons à votre disposition pour toute question.\n" +
+                "\n" +
+                "Cordialement,";
+        mailService.sendEmail(email, "Confirmation de création de compte", body);
         return true;
     }
 
@@ -160,5 +182,19 @@ public class CompteServiceImpl implements CompteServiceInterface {
             String body = "Votre mot de passe a été réinitialisé, voici votre nouveau mot de passe, vous pourrez le modifier une fois connecté : " + newMdp;
             mailService.sendEmail(email, "Mot de passe modifié", body);
         }
+    }
+
+    @Override
+    public boolean activateUser(String email, String activationKey) {
+        CompteDao compte = compteRepo.findByEmail(email);
+        if (compte != null) {
+            if (compte.getActivationKey().equals(activationKey) && !compte.getEmailVerified()) {
+                compte.setEmailVerified(true);
+                compte.setActivationKey(null); // Optionnel : pour éviter une réutilisation
+                compteRepo.save(compte);
+                return true;
+            }
+        }
+        return false;
     }
 }

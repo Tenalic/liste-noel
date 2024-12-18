@@ -98,7 +98,7 @@ public class ConnexionController {
 
         Integer langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
 
-        if (!Utils.isValidEmail(email)) {
+        if (Utils.isInvalidEmail(email)) {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.EMAIL_NON_ACCEPTE_KEY, langue));
             return "redirect:inscription";
         }

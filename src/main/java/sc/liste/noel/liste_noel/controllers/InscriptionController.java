@@ -50,7 +50,7 @@ public class InscriptionController {
             return "redirect:inscription";
         }
 
-        if(!Utils.isValidEmail(email)) {
+        if(Utils.isInvalidEmail(email)) {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.EMAIL_NON_ACCEPTE_KEY, langue));
             return "redirect:inscription";
         }

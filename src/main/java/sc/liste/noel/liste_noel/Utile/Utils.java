@@ -102,9 +102,9 @@ public class Utils {
         };
     }
 
-    public static boolean isValidEmail(String email) {
+    public static boolean isInvalidEmail(String email) {
         Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
+        return !matcher.matches();
     }
 
     public static String generatePassayPassword() {

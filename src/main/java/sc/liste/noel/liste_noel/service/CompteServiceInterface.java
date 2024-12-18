@@ -89,4 +89,5 @@ public interface CompteServiceInterface {
 
     void genererMotDePasseEtEnvoyer(String email);
 
+    boolean activateUser(String email, String key);
 }
