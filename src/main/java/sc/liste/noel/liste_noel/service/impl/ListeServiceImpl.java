@@ -163,7 +163,7 @@ public class ListeServiceImpl implements ListeServiceInterface {
 
             String bodyEmail = "L'objet " + objetDao.getTitre() + " : " + objetDao.getDescription() + " " + objetDao.getUrl()
                     + " a été supprimé de la liste " + listeDao.getNomListe()
-                    + " qui fait partie de vos favoris" + " consulter la liste : "
+                    + " qui fait partie de vos favoris" + " consulter la liste : \n\n"
                     + ListeMapper.buildUrlPartage(baseUrl, listeDao.getIdListe());;
             String sujetEmail = "Objet supprimé de la liste : " + listeDao.getNomListe();
 
@@ -187,8 +187,8 @@ public class ListeServiceImpl implements ListeServiceInterface {
             ListeDao listeDao = listeRepo.findByIdListe(objetDao.getIdListe());
 
             String bodyEmail = "L'objet " + objetDao.getTitre() + " : " + objetDao.getDescription() + " - " + objetDao.getUrl()
-                    + " a été modifier dans la liste " + listeDao.getNomListe()
-                    + " qui fait partie de vos favoris. Voici les nouvelles informations, " + titreUpdate + " : " + descriptionUpdate + " - " + urlUpdate + " consulter la liste : "
+                    + " a été modifié dans la liste " + listeDao.getNomListe()
+                    + " qui fait partie de vos favoris.\n\n Voici les nouvelles informations :\n\n " + titreUpdate + " : " + descriptionUpdate + " - " + urlUpdate + " consulter la liste : "
                     + ListeMapper.buildUrlPartage(baseUrl, listeDao.getIdListe());
             String sujetEmail = "Objet modifié dans la liste : " + listeDao.getNomListe();
 
