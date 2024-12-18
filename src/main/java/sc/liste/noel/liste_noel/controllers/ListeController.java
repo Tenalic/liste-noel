@@ -31,11 +31,6 @@ public class ListeController {
     public String getListe(Model model, HttpSession session) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
 
-        /*if (email == null) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
-            return "redirect:connexion";
-        }*/
-
         Long idShared = (Long) session.getAttribute(Constantes.SHARED_LISTE);
         if(idShared != null) {
             return "redirect:consulter-liste";

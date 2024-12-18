@@ -20,36 +20,14 @@
         }
     </script>
 </head>
-<body>
-<header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/welcome">Liste</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarToggleExternalContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="/connexion">Connexion</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/inscription">Inscription</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/welcome">Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/liste">Mes listes</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/modifier-password">Modifier mon mot de passe</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/cgu">CGU</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/politique-confidentialite">Confidentialité</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/politique-securite">Sécurité</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/deconnexion">Déconnexion</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-</header>
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="fragments/header :: header"></div>
 
 <main class="container my-5 text-center">
     <h1 class="display-4 mb-4">Organisez et partagez votre liste de Noël en toute simplicité !</h1>
     <img class="img-fluid mb-4" src="/images/noel-cadeau.jpg" alt="Liste de cadeaux de Noël : gérez vos idées simplement">
     <div class="card mx-auto" style="max-width: 600px;">
-        <div class="card-body">
+        <div th:if="!${connected}" class="card-body">
             <p class="mb-4">Bienvenue sur notre site, votre outil parfait pour gérer vos <strong>listes de cadeaux</strong>, qu'il s'agisse de <strong>cadeaux de Noël</strong>, d'anniversaires ou d'autres occasions spéciales. Inscrivez-vous dès aujourd'hui pour une expérience simplifiée et conviviale.</p>
 
             <form action="/connexion" method="get" class="mb-3">
@@ -62,13 +40,17 @@
                 <button class="btn btn-secondary">Inscription</button>
             </form>
         </div>
+        <div th:if="${connected}" class="card-body">
+            <p class="mb-4">Bienvenue sur notre site, votre outil parfait pour gérer vos <strong>listes de cadeaux</strong>, qu'il s'agisse de <strong>cadeaux de Noël</strong>, d'anniversaires ou d'autres occasions spéciales.</p>
+            <p class="mt-4">Découvrez nos fonctionnalités pour <a href="/liste">gérer vos listes de cadeaux</a>, ou consultez <a href="/politique-confidentialite">notre politique de confidentialité</a>.</p>
+        </div>
     </div>
 
     <form action="/contact" method="get" class="mt-4">
         <button class="btn btn-outline-secondary">Contact</button>
     </form>
 
-    <p class="mt-4">Découvrez nos fonctionnalités pour <a href="/liste">gérer vos listes de cadeaux</a>, ou consultez <a href="/politique-confidentialite">notre politique de confidentialité</a>.</p>
+    <p th:if="!${connected}" class="mt-4">Découvrez nos fonctionnalités pour <a href="/liste">gérer vos listes de cadeaux</a>, ou consultez <a href="/politique-confidentialite">notre politique de confidentialité</a>.</p>
 </main>
 </body>
 </html>

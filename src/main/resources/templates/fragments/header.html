@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="header">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/welcome">Accueil</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarToggleExternalContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li th:if="!${connected}" class="nav-item"><a class="nav-link" href="/connexion">Connexion</a></li>
+                    <li th:if="!${connected}" class="nav-item"><a class="nav-link" href="/inscription">Inscription</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/welcome">Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/liste">Mes listes</a></li>
+                    <li th:if="${connected}" class="nav-item"><a class="nav-link" href="/modifier-password">Modifier mon mot de passe</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/cgu">CGU</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/politique-confidentialite">Confidentialité</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/politique-securite">Sécurité</a></li>
+                    <li th:if="${connected}" class="nav-item"><a class="nav-link" href="/deconnexion">Déconnexion</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+</body>
+</html>

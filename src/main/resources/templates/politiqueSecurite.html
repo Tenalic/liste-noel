@@ -6,30 +6,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
 </head>
-<body>
-<header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/welcome">Liste</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarToggleExternalContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="/connexion">Connexion</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/inscription">Inscription</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/welcome">welcome</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/liste">Mes listes</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/cgu">CGU</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/politique-confidentialite">Confidentialité</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/politique-securite">Sécurité</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/deconnexion">Déconnexion</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-</header>
-
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="fragments/header :: header"></div>
 <div class="container mt-5">
     <div align="center">
         <form action="/cgu" method="get">

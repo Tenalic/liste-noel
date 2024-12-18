@@ -7,29 +7,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
 </head>
 <body class="d-flex flex-column min-vh-100">
-<header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/welcome">Liste</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarToggleExternalContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="/connexion">Connexion</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/inscription">Inscription</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/welcome">Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/liste">Mes listes</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/cgu">CGU</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/politique-confidentialite">Confidentialité</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/politique-securite">Sécurité</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/deconnexion">Déconnexion</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-</header>
-
+<div th:replace="fragments/header :: header"></div>
+<!-- Le reste de votre contenu -->
 <main class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -48,7 +27,7 @@
                             <input type="password" name="password" class="form-control" id="password" required>
                         </div>
                         <div th:if="${erreur}" class="alert alert-danger text-center" role="alert" th:text="${erreur}"></div>
-                        <div th:if="${message}" class="alert alert-primary text-center" role="alert" th:text="${erreur}"></div>
+                        <div th:if="${message}" class="alert alert-primary text-center" role="alert" th:text="${message}"></div>
                         <div class="text-center">
                             <button type="submit" class="btn btn-success">Se connecter</button>
                         </div>
@@ -66,30 +45,5 @@
 <footer class="mt-auto bg-dark text-white text-center py-3">
     <p class="mb-0">&copy; 2024 Liste. Tous droits réservés.</p>
 </footer>
-
-<!-- Modale de mot de passe oublié -->
-<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="forgotPasswordModalLabel">Mot de passe oublié</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="/mot-de-passe-oublie" method="post">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Saisissez votre email</label>
-                        <input type="email" name="email" class="form-control" id="emailForgot" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Envoyer</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 </body>
 </html>
