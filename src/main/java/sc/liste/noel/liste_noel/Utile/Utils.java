@@ -9,7 +9,6 @@ import org.springframework.ui.Model;
 import sc.liste.noel.liste_noel.constante.Constantes;
 import sc.liste.noel.liste_noel.constante.ConstantesSession;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,8 +18,8 @@ public class Utils {
 
     public static final String ERROR_CODE = "ERRONEOUS_SPECIAL_CHARS";
 
-    public static boolean aMessageErreur(String messageErreur) {
-        if (messageErreur != null && !"".equals(messageErreur)) {
+    public static boolean aMessage(String message) {
+        if (message != null && !"".equals(message)) {
             return true;
         }
         return false;
@@ -34,12 +33,18 @@ public class Utils {
         session.setAttribute(ConstantesSession.INFO, messageInfo);
     }
 
-    public static void getSessionErrorMessage(HttpSession session, Model model) {
+    public static void setupModel(HttpSession session, Model model) {
         String messageErreur = (String) session.getAttribute(ConstantesSession.ERREUR);
-        if (aMessageErreur(messageErreur)) {
+        if (aMessage(messageErreur)) {
             session.removeAttribute(ConstantesSession.ERREUR);
             model.addAttribute(ConstantesSession.ERREUR, messageErreur);
         }
+        String info = (String) session.getAttribute(ConstantesSession.INFO);
+        if (aMessage(info)) {
+            session.removeAttribute(ConstantesSession.INFO);
+            model.addAttribute(ConstantesSession.INFO, info);
+        }
+        model.addAttribute(ConstantesSession.CONNECTED, session.getAttribute(ConstantesSession.EMAIL) != null);
     }
 
     public static String getMessage(String keyMessage, int langue) {

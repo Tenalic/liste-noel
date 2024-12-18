@@ -31,25 +31,21 @@ public class ListeController {
     public String getListe(Model model, HttpSession session) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
 
-        if (email == null) {
+        /*if (email == null) {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
             return "redirect:connexion";
-        }
+        }*/
 
         Long idShared = (Long) session.getAttribute(Constantes.SHARED_LISTE);
         if(idShared != null) {
             return "redirect:consulter-liste";
         }
 
-        Utils.getSessionErrorMessage(session, model);
-
         List<ListeDto> listDeListeDto = listeServiceInterface.getListesOfEmail(email);
-
         model.addAttribute(ConstantesSession.LISTES, listDeListeDto);
-
         List<ListeDto> listDeListeDtoFavoris = listeServiceInterface.getListeFavorisOfEmail(email);
-
         model.addAttribute(ConstantesSession.LISTES_FAVORIS, listDeListeDtoFavoris);
+        Utils.setupModel(session, model);
 
         return "liste";
     }
@@ -77,7 +73,7 @@ public class ListeController {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
             return "redirect:connexion";
         }
-        Utils.getSessionErrorMessage(session, model);
+        Utils.setupModel(session, model);
         try {
             listeServiceInterface.creerListe(email, nomListe);
         } catch (Exception e) {
@@ -108,7 +104,7 @@ public class ListeController {
             return "redirect:liste";
         }
 
-        Utils.getSessionErrorMessage(session, model);
+        Utils.setupModel(session, model);
         ListeDto listeDto;
 
         try {
@@ -121,7 +117,9 @@ public class ListeController {
             return "redirect:liste";
         }
 
-        if (email.equals(Optional.ofNullable(listeDto).map(ListeDto::getProprietaire).orElse(null))) {
+        Utils.setupModel(session, model);
+
+        if (email.equals(Optional.of(listeDto).map(ListeDto::getProprietaire).orElse(null))) {
             return "consulterListeProprietaire";
         } else {
             // ajouter valeur est dans favoris
@@ -140,7 +138,7 @@ public class ListeController {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
             return "redirect:connexion";
         }
-        Utils.getSessionErrorMessage(session, model);
+        Utils.setupModel(session, model);
         ListeDto listeDto;
         try {
             String id = idListe == null ? idListeFavoris : idListe;
@@ -172,7 +170,7 @@ public class ListeController {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
             return "redirect:connexion";
         }
-        Utils.getSessionErrorMessage(session, model);
+        Utils.setupModel(session, model);
         try {
             listeServiceInterface.ajouterObjetDansUneListe(titre, url, description, idListe, email);
         } catch (Exception e) {
@@ -192,7 +190,7 @@ public class ListeController {
             return "redirect:connexion";
         }
         String pseudo = (String) session.getAttribute(ConstantesSession.PSEUDO);
-        Utils.getSessionErrorMessage(session, model);
+        Utils.setupModel(session, model);
         try {
             listeServiceInterface.prendreUnObjet(idListe, idObjet, email, pseudo);
         } catch (Exception e) {
@@ -209,7 +207,7 @@ public class ListeController {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
             return "redirect:connexion";
         }
-        Utils.getSessionErrorMessage(session, model);
+        Utils.setupModel(session, model);
         try {
             listeServiceInterface.nePlusPrendreUnObjet(idObjet);
         } catch (Exception e) {
@@ -227,7 +225,6 @@ public class ListeController {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
             return "redirect:connexion";
         }
-        Utils.getSessionErrorMessage(session, model);
         try {
             listeServiceInterface.ajouterFavori(Long.valueOf(idListe), email);
         } catch (Exception e) {
@@ -244,7 +241,6 @@ public class ListeController {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
             return "redirect:connexion";
         }
-        Utils.getSessionErrorMessage(session, model);
         try {
             listeServiceInterface.supprimerFavori(Long.valueOf(idListe), email);
         } catch (Exception e) {
@@ -263,8 +259,6 @@ public class ListeController {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
             return "redirect:connexion";
         }
-
-        Utils.getSessionErrorMessage(session, model);
 
         try {
             listeServiceInterface.supprimerObjet(Long.valueOf(idObjet), email);
@@ -286,8 +280,6 @@ public class ListeController {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
             return "redirect:connexion";
         }
-
-        Utils.getSessionErrorMessage(session, model);
 
         try {
             listeServiceInterface.modifierObjet(Long.valueOf(idObjet), titreUpdate, descriptionUpdate, urlUpdate);

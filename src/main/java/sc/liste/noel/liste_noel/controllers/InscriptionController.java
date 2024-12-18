@@ -30,8 +30,7 @@ public class InscriptionController {
         if (session.getAttribute(ConstantesSession.EMAIL) != null) {
             return "redirect:consulter-liste";
         }
-        Utils.getSessionErrorMessage(session, model);
-
+        Utils.setupModel(session, model);
         Integer langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
         return (langue == Constantes.CODE_FRANCAIS ? "inscription" : "inscriptionEN");
     }
@@ -77,15 +76,15 @@ public class InscriptionController {
     @GetMapping("/modifier-password")
     public String modifierPasswordGet(String password, Model model, HttpSession session) {
 
-        String cossy = (String) session.getAttribute(ConstantesSession.EMAIL);
+        String email = (String) session.getAttribute(ConstantesSession.EMAIL);
         int langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
 
 
-        if (cossy == null) {
+        if (email == null) {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, langue));
             return "redirect:connexion";
         }
-        Utils.getSessionErrorMessage(session, model);
+        Utils.setupModel(session, model);
 
         return (langue == Constantes.CODE_FRANCAIS ? "updatePassword" : "updatePasswordEN");
     }
@@ -96,11 +95,11 @@ public class InscriptionController {
                                        @RequestParam(value = "confirmationNewPassword", required = true) String confirmationNewPassword,
                                        String password, Model model, HttpSession session) {
 
-        String cossy = (String) session.getAttribute(ConstantesSession.EMAIL);
+        String email = (String) session.getAttribute(ConstantesSession.EMAIL);
         int langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
 
 
-        if (cossy == null) {
+        if (email == null) {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, langue));
             return "redirect:connexion";
         }
@@ -111,33 +110,37 @@ public class InscriptionController {
         }
 
         CompteResponse compteResponse = compteRessource
-                .updatePassword(cossy, oldPassword, newPassword, secretService.getMySecret(), langue).getBody();
+                .updatePassword(email, oldPassword, newPassword, secretService.getMySecret(), langue).getBody();
 
-        assert compteResponse != null;
         if (compteResponse.getCodeRetour() == Constantes.RETOUR_API_OK) {
             model.addAttribute(ConstantesSession.SUCCES, compteResponse.getMessageRetour());
         } else {
             model.addAttribute(ConstantesSession.ERREUR, compteResponse.getMessageRetour());
         }
 
+        Utils.setupModel(session, model);
+
         return (langue == Constantes.CODE_FRANCAIS ? "updatePassword" : "updatePasswordEN");
     }
 
     @GetMapping("/cgu")
-    public String getCGU(HttpSession session) {
+    public String getCGU(HttpSession session, Model model) {
         int langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
+        Utils.setupModel(session, model);
         return (langue == Constantes.CODE_FRANCAIS ? "cgu" : "cguEN");
     }
 
     @GetMapping("/politique-confidentialite")
-    public String getPolitiqueConfidentialite(HttpSession session) {
+    public String getPolitiqueConfidentialite(HttpSession session, Model model) {
         int langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
+        Utils.setupModel(session, model);
         return (langue == Constantes.CODE_FRANCAIS ? "politiqueConfidentialite" : "politiqueConfidentialiteEN");
     }
 
     @GetMapping("/politique-securite")
-    public String getPolitiqueSecurite(HttpSession session) {
+    public String getPolitiqueSecurite(HttpSession session, Model model) {
         int langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
+        Utils.setupModel(session, model);
         return (langue == Constantes.CODE_FRANCAIS ? "politiqueSecurite" : "politiqueSecuriteEN");
     }
 }

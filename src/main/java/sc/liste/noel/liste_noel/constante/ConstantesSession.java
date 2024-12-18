@@ -10,6 +10,7 @@ public class ConstantesSession {
 	public static String ID_LISTE = "id_liste";
 
 	public static String ERREUR = "erreur";
+	public static String CONNECTED = "connected";
 
 	public static String SUCCES = "succes";
 

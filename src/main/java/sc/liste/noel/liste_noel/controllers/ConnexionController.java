@@ -29,24 +29,20 @@ public class ConnexionController {
     @Autowired
     private CompteServiceInterface compteService;
 
-    @GetMapping(value = {"", "/", "welcome"})
-    public String redirectGet() {
-        return "redirect:ma-liste-de-cadeau";
-    }
-
-    @GetMapping(value = {"ma-liste-de-cadeau"})
-    public String welcomeGet() {
+    @GetMapping(value = {"", "/", "welcome", "ma-liste-de-cadeau"})
+    public String redirectGet(Model model, HttpSession session) {
+        Utils.setupModel(session, model);
         return "welcome";
     }
 
     @GetMapping(value = {"connexion"})
     public String connexionGet(Model model, HttpSession session) {
 
-        Utils.getSessionErrorMessage(session, model);
-
         if (session.getAttribute(ConstantesSession.EMAIL) != null) {
             return "redirect:liste";
         }
+
+        Utils.setupModel(session, model);
 
         return "connexion";
     }
@@ -61,7 +57,7 @@ public class ConnexionController {
                 session.setAttribute(ConstantesSession.EMAIL, email);
                 session.setAttribute(ConstantesSession.PSEUDO, compteDto.getPseudo());
                 Long idShared = (Long) session.getAttribute(Constantes.SHARED_LISTE);
-                if(idShared != null) {
+                if (idShared != null) {
                     return "redirect:consulter-liste";
                 } else {
                     return "redirect:liste";
@@ -93,6 +89,7 @@ public class ConnexionController {
 
     @GetMapping(value = {"contact"})
     public String contactGet(Model model, HttpSession session) {
+        Utils.setupModel(session, model);
         return "contact";
     }
 
@@ -101,7 +98,7 @@ public class ConnexionController {
 
         Integer langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
 
-        if(!Utils.isValidEmail(email)) {
+        if (!Utils.isValidEmail(email)) {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.EMAIL_NON_ACCEPTE_KEY, langue));
             return "redirect:inscription";
         }
