@@ -1,1 +1,1 @@
-# liste-noel
+urlBdd=<url de la bdd> userBdd=<nom utilisateur> passwordBdd=<mot de passe utilisateur> salt=<clé génération mdp> base_url=<url de l'hébergeur> username_email=<user email> password_email=<mdp email> host_email=<host email>
