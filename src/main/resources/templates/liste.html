@@ -28,7 +28,7 @@
     </script>
 </head>
 <body class="d-flex flex-column min-vh-100">
-<div th:replace="fragments/header :: header"></div>
+<div th:replace="~{fragments/header :: header}"></div>
 
 <main class="container my-4">
     <div class="text-center" th:if="${listes}">

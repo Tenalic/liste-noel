@@ -31,11 +31,6 @@ public class ListeController {
     public String getListe(Model model, HttpSession session) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
 
-        Long idShared = (Long) session.getAttribute(Constantes.SHARED_LISTE);
-        if(idShared != null) {
-            return "redirect:consulter-liste";
-        }
-
         List<ListeDto> listDeListeDto = listeServiceInterface.getListesOfEmail(email);
         model.addAttribute(ConstantesSession.LISTES, listDeListeDto);
         List<ListeDto> listDeListeDtoFavoris = listeServiceInterface.getListeFavorisOfEmail(email);
@@ -51,12 +46,12 @@ public class ListeController {
 
         session.setAttribute(Constantes.SHARED_LISTE, Long.valueOf(idListe));
 
-        String email = (String) session.getAttribute(ConstantesSession.EMAIL);
+        /*String email = (String) session.getAttribute(ConstantesSession.EMAIL);
 
         if (email == null) {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
             return "redirect:connexion";
-        }
+        }*/
 
         return "redirect:consulter-liste";
     }
@@ -81,14 +76,16 @@ public class ListeController {
     @GetMapping("/consulter-liste")
     public String consulterListeGet(Model model, HttpSession session) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
-        if (email == null) {
+        /*if (email == null) {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
             return "redirect:connexion";
-        }
+        }*/
 
         Long idShared = (Long) session.getAttribute(Constantes.SHARED_LISTE);
         if(idShared != null) {
-            session.removeAttribute(Constantes.SHARED_LISTE);
+            if(email != null){
+                session.removeAttribute(Constantes.SHARED_LISTE);
+            }
             session.setAttribute(ConstantesSession.ID_LISTE, idShared);
         }
 
@@ -99,7 +96,6 @@ public class ListeController {
             return "redirect:liste";
         }
 
-        Utils.setupModel(session, model);
         ListeDto listeDto;
 
         try {
@@ -114,11 +110,14 @@ public class ListeController {
 
         Utils.setupModel(session, model);
 
-        if (email.equals(Optional.of(listeDto).map(ListeDto::getProprietaire).orElse(null))) {
+        if (email != null && email.equals(Optional.of(listeDto).map(ListeDto::getProprietaire).orElse(null))) {
             return "consulterListeProprietaire";
         } else {
             // ajouter valeur est dans favoris
-            boolean estDansFavoris = listeServiceInterface.checkifListeInFavoris(idListe, email);
+            boolean estDansFavoris = false;
+            if(email != null) {
+                estDansFavoris = listeServiceInterface.checkifListeInFavoris(idListe, email);
+            }
             model.addAttribute(ConstantesSession.IS_FAVORI, estDansFavoris);
             return "consulterListeParticipant";
         }

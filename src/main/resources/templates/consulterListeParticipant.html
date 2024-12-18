@@ -23,12 +23,12 @@
     </script>
 </head>
 <body class="d-flex flex-column min-vh-100">
-<div th:replace="fragments/header :: header"></div>
+<div th:replace="~{fragments/header :: header}"></div>
 
 <main class="container my-4">
     <div class="text-center" th:if="${liste}">
         <h1 class="display-4 mb-4">Liste : <span class="text-primary" th:text="${liste.nomListe}"></span></h1>
-        <div class="d-flex justify-content-center gap-3 mb-3">
+        <div th:if="${connected}" class="d-flex justify-content-center gap-3 mb-3">
             <form action="/liste" method="get">
                 <button class="btn btn-secondary">Retour</button>
             </form>
@@ -44,6 +44,21 @@
                 <button class="btn btn-danger">Supprimer des favoris</button>
             </form>
         </div>
+        <div th:if="!${connected}" class="d-flex justify-content-center gap-3 mb-3">
+            <form action="/liste" method="get">
+                <button class="btn btn-secondary">Retour</button>
+            </form>
+            <form action="/consulter-liste" method="get">
+                <button class="btn btn-primary">Actualiser</button>
+            </form>
+            <form action="/connexion" method="get" class="mb-3">
+                <button class="btn btn-primary">Connexion</button>
+            </form>
+            <form action="/inscription" method="get">
+                <button class="btn btn-secondary">Inscription</button>
+            </form>
+        </div>
+        <div th:if="!${connected}" class="alert alert-primary text-center" role="alert">Connectez vous pour indiquer les objets que vous souhaitez offrir</div>
         <div class="mb-3">
             <span class="fw-bold">Partager :</span>
             <span class="text-muted" th:text="${liste.urlPartage}"></span>
@@ -65,14 +80,16 @@
                 <td><a th:if="${objet.url != null and !#strings.isEmpty(objet.url)}" th:href="${objet.url}" class="btn btn-link" target="_blank">Voir</a></td>
                 <td>
                     <span th:if="${objet.estPrit and objet.detenteur != email}" >Objet déjà offert</span>
-                    <button th:if="!${objet.estPrit}" class="btn btn-warning btn-sm"
-                            th:onclick="openModal(/*[[${objet.titre}]]*/, /*[[${liste.idListe}]]*/, /*[[${objet.idObjet}]]*/ , /*[['offrir']]*/, /*[['/prendre']]*/)">
-                        J'offre ça
-                    </button>
-                    <button th:if="${objet.estPrit and objet.detenteur eq email}" class="btn btn-danger btn-sm"
-                            th:onclick="openModal(/*[[${objet.titre}]]*/, /*[[${liste.idListe}]]*/, /*[[${objet.idObjet}]]*/  , /*[['ne plus offrir']]*/, /*[['/ne-plus-prendre']]*/)">
-                        Je n'offre plus ça
-                    </button>
+                    <div th:if="${connected}">
+                        <button th:if="!${objet.estPrit}" class="btn btn-warning btn-sm"
+                                th:onclick="openModal(/*[[${objet.titre}]]*/, /*[[${liste.idListe}]]*/, /*[[${objet.idObjet}]]*/ , /*[['offrir']]*/, /*[['/prendre']]*/)">
+                            J'offre ça
+                        </button>
+                        <button th:if="${objet.estPrit and objet.detenteur eq email}" class="btn btn-danger btn-sm"
+                                th:onclick="openModal(/*[[${objet.titre}]]*/, /*[[${liste.idListe}]]*/, /*[[${objet.idObjet}]]*/  , /*[['ne plus offrir']]*/, /*[['/ne-plus-prendre']]*/)">
+                            Je n'offre plus ça
+                        </button>
+                    </div>
                 </td>
                 <td th:text="${objet.pseudoDetenteur}"></td>
             </tr>
