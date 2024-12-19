@@ -8,13 +8,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import sc.liste.noel.liste_noel.Utile.Utils;
+import sc.liste.noel.liste_noel.constante.CheminConstante;
 import sc.liste.noel.liste_noel.constante.Constantes;
 import sc.liste.noel.liste_noel.constante.ConstantesSession;
+import sc.liste.noel.liste_noel.constante.NomPageConstante;
 import sc.liste.noel.liste_noel.dto.response.CompteResponse;
 import sc.liste.noel.liste_noel.ressource.CompteRessource;
 import sc.liste.noel.liste_noel.service.SecretServiceInterface;
 
 import java.util.Optional;
+import static sc.liste.noel.liste_noel.constante.CheminConstante.REDIRECT;
+import static sc.liste.noel.liste_noel.constante.CheminConstante.CONSULTER_LISTE;
+import static sc.liste.noel.liste_noel.constante.NomPageConstante.UPDATE_PASSWORD;
+import static sc.liste.noel.liste_noel.constante.NomPageConstante.CGU;
+import static sc.liste.noel.liste_noel.constante.NomPageConstante.POLITIQUE_CONFIDENTIALITE;
+import static sc.liste.noel.liste_noel.constante.NomPageConstante.POLITIQUE_SECURITE;
+import static sc.liste.noel.liste_noel.constante.NomPageConstante.INSCRIPTION;
+
 
 @Controller
 public class InscriptionController {
@@ -28,11 +38,10 @@ public class InscriptionController {
     @GetMapping("/inscription")
     public String inscriptionGet(Model model, HttpSession session) {
         if (session.getAttribute(ConstantesSession.EMAIL) != null) {
-            return "redirect:consulter-liste";
+            return REDIRECT + CONSULTER_LISTE;
         }
         Utils.setupModel(session, model);
-        Integer langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
-        return (langue == Constantes.CODE_FRANCAIS ? "inscription" : "inscriptionEN");
+        return INSCRIPTION;
     }
 
     @PostMapping("/inscription")
@@ -43,34 +52,33 @@ public class InscriptionController {
                                   @RequestParam(value = "pseudo", required = true) String pseudo,
                                   Model model, HttpSession session) {
 
-        Integer langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
 
         if (!cgu) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CGU_NON_ACCEPTE_KEY, langue));
-            return "redirect:inscription";
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CGU_NON_ACCEPTE_KEY, Constantes.CODE_FRANCAIS));
+            return REDIRECT + CheminConstante.INSCRIPTION;
         }
 
         if(Utils.isInvalidEmail(email)) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.EMAIL_NON_ACCEPTE_KEY, langue));
-            return "redirect:inscription";
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.EMAIL_NON_ACCEPTE_KEY, Constantes.CODE_FRANCAIS));
+            return REDIRECT + CheminConstante.INSCRIPTION;
         }
 
         if (!confirmationNewPassword.equals(password)) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.MDP_NOT_EQUALS_KEY, langue));
-            return "redirect:inscription";
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.MDP_NOT_EQUALS_KEY, Constantes.CODE_FRANCAIS));
+            return REDIRECT + CheminConstante.INSCRIPTION;
         }
 
-        CompteResponse compteResponse = compteRessource.creerCompte(email, password, secretService.getMySecret(), langue, cgu, pseudo)
+        CompteResponse compteResponse = compteRessource.creerCompte(email, password, secretService.getMySecret(), Constantes.CODE_FRANCAIS, cgu, pseudo)
                 .getBody();
-        assert compteResponse != null;
+
         if (compteResponse.getCodeRetour() != 0) {
             Utils.setSessionErrorMessage(session, compteResponse.getMessageRetour());
-            return "redirect:inscription";
+            return REDIRECT + CheminConstante.INSCRIPTION;
         }
 
         session.setAttribute(ConstantesSession.EMAIL, email);
 
-        return "redirect:consulter-liste";
+        return REDIRECT + CONSULTER_LISTE;
     }
 
     @GetMapping("/modifier-password")
@@ -82,11 +90,11 @@ public class InscriptionController {
 
         if (email == null) {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, langue));
-            return "redirect:connexion";
+            return REDIRECT + CheminConstante.CONNEXION;
         }
         Utils.setupModel(session, model);
 
-        return (langue == Constantes.CODE_FRANCAIS ? "updatePassword" : "updatePasswordEN");
+        return UPDATE_PASSWORD;
     }
 
     @PostMapping("/modifier-password")
@@ -101,12 +109,12 @@ public class InscriptionController {
 
         if (email == null) {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, langue));
-            return "redirect:connexion";
+            return REDIRECT + CheminConstante.CONNEXION;
         }
 
         if (!confirmationNewPassword.equals(newPassword)) {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.NEW_MDP_NOT_EQUALS_KEY, langue));
-            return "redirect:modifier-password";
+            return REDIRECT + CheminConstante.MODIFIER_PASSWORD;
         }
 
         CompteResponse compteResponse = compteRessource
@@ -120,27 +128,24 @@ public class InscriptionController {
 
         Utils.setupModel(session, model);
 
-        return (langue == Constantes.CODE_FRANCAIS ? "updatePassword" : "updatePasswordEN");
+        return UPDATE_PASSWORD;
     }
 
     @GetMapping("/cgu")
-    public String getCGU(HttpSession session, Model model) {
-        int langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
+    public String cguGet(HttpSession session, Model model) {
         Utils.setupModel(session, model);
-        return (langue == Constantes.CODE_FRANCAIS ? "cgu" : "cguEN");
+        return CGU;
     }
 
     @GetMapping("/politique-confidentialite")
-    public String getPolitiqueConfidentialite(HttpSession session, Model model) {
-        int langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
+    public String politiqueConfidentialiteGet(HttpSession session, Model model) {
         Utils.setupModel(session, model);
-        return (langue == Constantes.CODE_FRANCAIS ? "politiqueConfidentialite" : "politiqueConfidentialiteEN");
+        return POLITIQUE_CONFIDENTIALITE;
     }
 
     @GetMapping("/politique-securite")
-    public String getPolitiqueSecurite(HttpSession session, Model model) {
-        int langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
+    public String politiqueSecuriteGet(HttpSession session, Model model) {
         Utils.setupModel(session, model);
-        return (langue == Constantes.CODE_FRANCAIS ? "politiqueSecurite" : "politiqueSecuriteEN");
+        return POLITIQUE_SECURITE;
     }
 }
