@@ -4,8 +4,6 @@ import sc.liste.noel.liste_noel.dao.entity.ObjetDao;
 import sc.liste.noel.liste_noel.dto.ObjetDto;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class ObjetMapper {
@@ -17,17 +15,41 @@ public class ObjetMapper {
         }
         List<ObjetDto> objetDtoList = new ArrayList<>();
         for(ObjetDao objetDao : objetDaoList) {
-            ObjetDto objetDto = new ObjetDto();
-            objetDto.setDescription(objetDao.getDescription());
-            objetDto.setDetenteur(objetDao.getDetenteur());
-            objetDto.setPseudoDetenteur(objetDao.getPseudoDetenteur());
-            objetDto.setUrl(objetDao.getUrl());
-            objetDto.setEstPrit(objetDao.getEstPrit());
-            objetDto.setTitre(objetDao.getTitre());
-            objetDto.setIdObjet(objetDao.getIdObjet());
+            ObjetDto objetDto = daoToDto(objetDao);
             objetDtoList.add(objetDto);
         }
         objetDtoList.sort(((o1, o2) -> Math.toIntExact(o1.getIdObjet() - o2.getIdObjet()))); // trie part Id croissant
         return objetDtoList;
+    }
+
+    private static ObjetDto daoToDto(ObjetDao objetDao) {
+        ObjetDto objetDto = new ObjetDto();
+        objetDto.setDescription(objetDao.getDescription());
+        objetDto.setDetenteur(objetDao.getDetenteur());
+        objetDto.setPseudoDetenteur(objetDao.getPseudoDetenteur());
+        objetDto.setUrl(objetDao.getUrl());
+        objetDto.setEstPrit(objetDao.getEstPrit());
+        objetDto.setTitre(objetDao.getTitre());
+        objetDto.setIdObjet(objetDao.getIdObjet());
+        // FIXME : faire ça proprement
+        objetDto.setValuePriorite(objetDao.getPrioriteValue());
+        objetDto.setPriorite(transcoPriorite(objetDao.getPrioriteValue()));
+        return objetDto;
+    }
+
+    public static String transcoPriorite(Integer value) {
+        switch (value) {
+            case 1 :
+                return "Tres forte";
+            case 2 :
+                return "Forte";
+            case 3 :
+                return "Neutre";
+            case 4 :
+                return "Faible";
+            case 5 :
+                return "Tres faible";
+        }
+        return "NULL";
     }
 }

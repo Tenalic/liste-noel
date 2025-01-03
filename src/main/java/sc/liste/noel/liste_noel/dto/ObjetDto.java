@@ -18,6 +18,9 @@ public class ObjetDto implements Serializable {
 
     private String pseudoDetenteur;
 
+    private String priorite;
+    private Integer valuePriorite;
+
     public ObjetDto() {
     }
 
@@ -75,5 +78,21 @@ public class ObjetDto implements Serializable {
 
     public void setPseudoDetenteur(String pseudoDetenteur) {
         this.pseudoDetenteur = pseudoDetenteur;
+    }
+
+    public String getPriorite() {
+        return priorite;
+    }
+
+    public void setPriorite(String priorite) {
+        this.priorite = priorite;
+    }
+
+    public Integer getValuePriorite() {
+        return valuePriorite;
+    }
+
+    public void setValuePriorite(Integer valuePriorite) {
+        this.valuePriorite = valuePriorite;
     }
 }

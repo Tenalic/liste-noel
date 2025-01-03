@@ -22,9 +22,10 @@ public class ObjetDao {
     private Boolean estPrit;
     @Column(name = "detenteur")
     private String detenteur;
-
     @Column(name = "pseudo_detenteur")
     private String pseudoDetenteur;
+    @Column(name = "priorite", nullable = false)
+    private Integer prioriteValue;
 
     public ObjetDao() {
     }
@@ -91,5 +92,13 @@ public class ObjetDao {
 
     public void setPseudoDetenteur(String pseudoDetenteur) {
         this.pseudoDetenteur = pseudoDetenteur;
+    }
+
+    public Integer getPrioriteValue() {
+        return prioriteValue;
+    }
+
+    public void setPrioriteValue(Integer prioriteValue) {
+        this.prioriteValue = prioriteValue;
     }
 }

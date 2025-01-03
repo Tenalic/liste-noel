@@ -29,7 +29,7 @@
             modal.show();
         }
 
-        function openModalUpdate(titre, idObjet, text, action, titreObjet, description, url) {
+        function openModalUpdate(titre, idObjet, text, action, titreObjet, description, url, priorite) {
             const modalTitleUpdate = document.getElementById('modalTitleUpdate');
             const modalBodyUpdate = document.getElementById('modalBodyUpdate');
             const modalFormUpdate = document.getElementById('modalFormUpdate');
@@ -44,6 +44,7 @@
             modalFormUpdate.querySelector('[name="titreUpdate"]').value = titreObjet;
             modalFormUpdate.querySelector('[name="descriptionUpdate"]').value = description;
             modalFormUpdate.querySelector('[name="urlUpdate"]').value = url;
+            modalFormUpdate.querySelector('[name="prioriteUpdate"]').value = priorite; // Définit la priorité sélectionnée
 
             const modalUpdate = new bootstrap.Modal(document.getElementById('confirmModalUpdate'));
             modalUpdate.show();
@@ -98,6 +99,18 @@
                                     <input type="text" name="url" class="form-control" id="url">
                                 </div>
                             </div>
+                            <div class="row mb-3">
+                                <label for="priorite" class="col-sm-4 col-form-label">Priorité</label>
+                                <div class="col-sm-8">
+                                    <select name="priorite" class="form-select" id="priorite" required>
+                                        <option value="1">Très forte</option>
+                                        <option value="2">Forte</option>
+                                        <option value="3" selected>Neutre</option>
+                                        <option value="4">Faible</option>
+                                        <option value="5">Très faible</option>
+                                    </select>
+                                </div>
+                            </div>
                             <input type="hidden" id="idListe" name="idListe" th:value="${liste.idListe}">
                             <div th:if="${erreur}" class="alert alert-danger" th:text="${erreur}"></div>
                             <div class="text-center">
@@ -114,6 +127,7 @@
                 <th scope="col">Titre</th>
                 <th scope="col">Description</th>
                 <th scope="col">Url</th>
+                <th scope="col">Priorité</th>
                 <th scope="col">Action</th>
             </tr>
             </thead>
@@ -123,9 +137,10 @@
                 <td th:text="${objet.description}"></td>
                 <td><a th:if="${objet.url != null and !#strings.isEmpty(objet.url)}" target="_blank"
                        th:href="${objet.url}" class="btn btn-link">Voir</a></td>
+                <td th:text="${objet.priorite}"></td>
                 <td>
                     <button class="btn btn-primary btn-sm"
-                            th:onclick="openModalUpdate(/*[[${objet.titre}]]*/, /*[[${objet.idObjet}]]*/ , /*[['modifier']]*/, /*[['/modifier-objet']]*/ , /*[[${objet.titre}]]*/ , /*[[${objet.description}]]*/ , /*[[${objet.url}]]*/)">
+                            th:onclick="openModalUpdate(/*[[${objet.titre}]]*/, /*[[${objet.idObjet}]]*/ , /*[['modifier']]*/, /*[['/modifier-objet']]*/ , /*[[${objet.titre}]]*/ , /*[[${objet.description}]]*/ , /*[[${objet.url}]]*/ , /*[[${objet.valuePriorite}]]*/)">
                         Modifier
                     </button>
                     <button class="btn btn-danger btn-sm"
@@ -192,6 +207,18 @@
                     <div class="mb-3">
                         <label for="urlUpdate" class="form-label">Url</label>
                         <input type="text" name="urlUpdate" class="form-control" id="urlUpdate">
+                    </div>
+
+                    <!-- Priorité -->
+                    <div class="mb-3">
+                        <label for="prioriteUpdate" class="form-label">Priorité</label>
+                        <select name="prioriteUpdate" class="form-select" id="prioriteUpdate" required>
+                            <option value="1">Très forte</option>
+                            <option value="2">Forte</option>
+                            <option value="3">Neutre</option>
+                            <option value="4">Faible</option>
+                            <option value="5">Très faible</option>
+                        </select>
                     </div>
                 </form>
             </div>

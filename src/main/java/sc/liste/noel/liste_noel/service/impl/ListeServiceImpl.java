@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sc.liste.noel.liste_noel.Utile.mapper.ListeMapper;
+import sc.liste.noel.liste_noel.Utile.mapper.ObjetMapper;
 import sc.liste.noel.liste_noel.dao.entity.FavorisDao;
 import sc.liste.noel.liste_noel.dao.entity.ListeDao;
 import sc.liste.noel.liste_noel.dao.entity.ObjetDao;
@@ -69,13 +70,14 @@ public class ListeServiceImpl implements ListeServiceInterface {
     }
 
     @Override
-    public void ajouterObjetDansUneListe(String titre, String url, String description, String idListe, String proprietaire) {
+    public void ajouterObjetDansUneListe(String titre, String url, String description, String idListe, String proprietaire, int priorite) {
         ObjetDao objetDao = new ObjetDao();
         objetDao.setDescription(description);
         objetDao.setIdListe(Long.valueOf(idListe));
         objetDao.setTitre(titre);
         objetDao.setEstPrit(false);
         objetDao.setUrl(url);
+        objetDao.setPrioriteValue(priorite);
         objetRepo.save(objetDao);
     }
 
@@ -178,7 +180,7 @@ public class ListeServiceImpl implements ListeServiceInterface {
 
     @Transactional
     @Override
-    public void modifierObjet(Long idObjet, String titreUpdate, String descriptionUpdate, String urlUpdate) {
+    public void modifierObjet(Long idObjet, String titreUpdate, String descriptionUpdate, String urlUpdate, int prioriteUpdate) {
 
         ObjetDao objetDao = objetRepo.findByIdObjet(idObjet);
 
@@ -188,7 +190,7 @@ public class ListeServiceImpl implements ListeServiceInterface {
 
             String bodyEmail = "L'objet " + objetDao.getTitre() + " : " + objetDao.getDescription() + " - " + objetDao.getUrl()
                     + " a été modifié dans la liste " + listeDao.getNomListe()
-                    + " qui fait partie de vos favoris.\n\n Voici les nouvelles informations :\n\n " + titreUpdate + " : " + descriptionUpdate + " - " + urlUpdate + " consulter la liste : "
+                    + " qui fait partie de vos favoris.\n\n Voici les nouvelles informations :\n\n " + titreUpdate + " : " + descriptionUpdate + " - " + urlUpdate + " " + ObjetMapper.transcoPriorite(prioriteUpdate) + " \n\n consulter la liste : "
                     + ListeMapper.buildUrlPartage(baseUrl, listeDao.getIdListe());
             String sujetEmail = "Objet modifié dans la liste : " + listeDao.getNomListe();
 
@@ -199,6 +201,7 @@ public class ListeServiceImpl implements ListeServiceInterface {
             objetDao.setTitre(titreUpdate);
             objetDao.setDescription(descriptionUpdate);
             objetDao.setUrl(urlUpdate);
+            objetDao.setPrioriteValue(prioriteUpdate);
 
             objetRepo.save(objetDao);
         }

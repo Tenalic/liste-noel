@@ -28,4 +28,22 @@ CREATE TABLE liste_noel.objet
 
 ALTER TABLE liste_noel.objet ADD COLUMN pseudo_detenteur character varying(320);
 
+CREATE TABLE liste_noel.ref_priorite (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    value INT NOT NULL,
+    libelle VARCHAR(50) NOT NULL
+);
 
+ALTER TABLE liste_noel.ref_priorite
+ADD CONSTRAINT unique_value UNIQUE (value);
+
+INSERT INTO liste_noel.ref_priorite (id, value, libelle) VALUES
+(1,1, 'Tres forte'),
+(2,2, 'Forte'),
+(3,3, 'Neutre'),
+(4,4, 'Faible'),
+(5,5, 'Tres faible');
+
+ALTER TABLE liste_noel.objet
+ADD COLUMN priorite INT,
+ADD CONSTRAINT fk_priorite FOREIGN KEY (priorite) REFERENCES liste_noel.ref_priorite(value);

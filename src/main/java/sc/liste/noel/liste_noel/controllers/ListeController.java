@@ -46,6 +46,7 @@ public class ListeController {
 
         session.setAttribute(Constantes.SHARED_LISTE, Long.valueOf(idListe));
 
+        // Pour pouvoir voir sans être connecté une liste
         /*String email = (String) session.getAttribute(ConstantesSession.EMAIL);
 
         if (email == null) {
@@ -158,6 +159,7 @@ public class ListeController {
                                @RequestParam(value = "titre", required = true) String titre,
                                @RequestParam(value = "url", required = false) String url,
                                @RequestParam(value = "description", required = false) String description,
+                               @RequestParam(value = "priorite", required = true) String priorite,
                                @RequestParam(value = "idListe", required = true) String idListe) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
         if (email == null) {
@@ -166,7 +168,7 @@ public class ListeController {
         }
         Utils.setupModel(session, model);
         try {
-            listeServiceInterface.ajouterObjetDansUneListe(titre, url, description, idListe, email);
+            listeServiceInterface.ajouterObjetDansUneListe(titre, url, description, idListe, email, Integer.parseInt(priorite));
         } catch (Exception e) {
             LOGGER.error("", e);
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
@@ -267,6 +269,7 @@ public class ListeController {
                                    @RequestParam(value = "idObjet", required = true) String idObjet,
                                    @RequestParam(value = "titreUpdate", required = true) String titreUpdate,
                                    @RequestParam(value = "descriptionUpdate", required = false) String descriptionUpdate,
+                                   @RequestParam(value = "prioriteUpdate", required = false) String prioriteUpdate,
                                    @RequestParam(value = "urlUpdate", required = false) String urlUpdate  ) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
 
@@ -276,7 +279,7 @@ public class ListeController {
         }
 
         try {
-            listeServiceInterface.modifierObjet(Long.valueOf(idObjet), titreUpdate, descriptionUpdate, urlUpdate);
+            listeServiceInterface.modifierObjet(Long.valueOf(idObjet), titreUpdate, descriptionUpdate, urlUpdate, Integer.parseInt(prioriteUpdate));
         } catch (Exception e) {
             LOGGER.error("", e);
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());

@@ -12,7 +12,7 @@ public interface ListeServiceInterface {
 
     ListeDto getListeById(Long id);
 
-    void ajouterObjetDansUneListe(String titre, String url, String description, String idListe, String proprietaire);
+    void ajouterObjetDansUneListe(String titre, String url, String description, String idListe, String proprietaire, int priorite);
 
     void prendreUnObjet(String idListe, String idObjet, String personne, String pseudo);
     void nePlusPrendreUnObjet(String idObjet);
@@ -25,7 +25,7 @@ public interface ListeServiceInterface {
     void supprimerFavori(Long idListe, String email);
 
     void supprimerObjet(Long idObjet, String email);
-    void modifierObjet(Long idObjet, String titreUpdate, String descriptionUpdate, String urlUpdate);
+    void modifierObjet(Long idObjet, String titreUpdate, String descriptionUpdate, String urlUpdate, int prioriteUpdate);
 
 
 }

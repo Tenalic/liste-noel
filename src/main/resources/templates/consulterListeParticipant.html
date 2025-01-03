@@ -69,6 +69,7 @@
                 <th>Titre</th>
                 <th>Description</th>
                 <th>Url</th>
+                <th>Priorité</th>
                 <th>Est pris</th>
                 <th>Détenteur</th>
             </tr>
@@ -78,6 +79,7 @@
                 <td th:text="${objet.titre}"></td>
                 <td th:text="${objet.description}"></td>
                 <td><a th:if="${objet.url != null and !#strings.isEmpty(objet.url)}" th:href="${objet.url}" class="btn btn-link" target="_blank">Voir</a></td>
+                <td th:text="${objet.priorite}"></td>
                 <td>
                     <span th:if="${objet.estPrit and objet.detenteur != email and connected}" >Objet déjà offert</span>
                     <span th:if="!${connected}" >Connectez vous pour savoir si l'objet est déjà offert !</span>
