@@ -15,10 +15,13 @@ import sc.liste.noel.liste_noel.constante.Constantes;
 import sc.liste.noel.liste_noel.constante.ConstantesSession;
 import sc.liste.noel.liste_noel.constante.NomPageConstante;
 import sc.liste.noel.liste_noel.dto.ListeDto;
+import sc.liste.noel.liste_noel.dto.ObjetDto;
 import sc.liste.noel.liste_noel.service.ListeServiceInterface;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+
 import static sc.liste.noel.liste_noel.constante.CheminConstante.REDIRECT;
 
 
@@ -70,12 +73,12 @@ public class ListeController {
     }
 
     @GetMapping("/consulter-liste")
-    public String consulterListeGet(Model model, HttpSession session) {
+    public String consulterListeGet(Model model, HttpSession session, @RequestParam(value = "triPriorite", required = false, defaultValue = "asc") String triPriorite) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
 
         Long idShared = (Long) session.getAttribute(Constantes.SHARED_LISTE);
-        if(idShared != null) {
-            if(email != null){
+        if (idShared != null) {
+            if (email != null) {
                 session.removeAttribute(Constantes.SHARED_LISTE);
             }
             session.setAttribute(ConstantesSession.ID_LISTE, idShared);
@@ -91,6 +94,15 @@ public class ListeController {
 
         try {
             listeDto = listeServiceInterface.getListeById(idListe);
+
+            // Tri basé sur la priorité
+            if ("asc".equalsIgnoreCase(triPriorite)) {
+                listeDto.getListeObjet().sort(Comparator.comparing(ObjetDto::getValuePriorite));
+            } else if ("desc".equalsIgnoreCase(triPriorite)) {
+                listeDto.getListeObjet().sort(Comparator.comparing(ObjetDto::getValuePriorite).reversed());
+            }
+
+            model.addAttribute("triPriorite", triPriorite);
             model.addAttribute(ConstantesSession.LISTE, listeDto);
             model.addAttribute(ConstantesSession.EMAIL, email);
         } catch (Exception e) {
@@ -106,7 +118,7 @@ public class ListeController {
         } else {
             // ajouter valeur est dans favoris
             boolean estDansFavoris = false;
-            if(email != null) {
+            if (email != null) {
                 estDansFavoris = listeServiceInterface.checkifListeInFavoris(idListe, email);
             }
             model.addAttribute(ConstantesSession.IS_FAVORI, estDansFavoris);
@@ -149,6 +161,7 @@ public class ListeController {
                                @RequestParam(value = "titre", required = true) String titre,
                                @RequestParam(value = "url", required = false) String url,
                                @RequestParam(value = "description", required = false) String description,
+                               @RequestParam(value = "priorite", required = false) String priorite,
                                @RequestParam(value = "idListe", required = true) String idListe) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
         if (email == null) {
@@ -157,7 +170,7 @@ public class ListeController {
         }
         Utils.setupModel(session, model);
         try {
-            listeServiceInterface.ajouterObjetDansUneListe(titre, url, description, idListe, email);
+            listeServiceInterface.ajouterObjetDansUneListe(titre, url, description, idListe, email, Integer.parseInt(priorite));
         } catch (Exception e) {
             LOGGER.error("", e);
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
@@ -184,9 +197,10 @@ public class ListeController {
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
-@PostMapping("/ne-plus-prendre")
+
+    @PostMapping("/ne-plus-prendre")
     public String nePlusPrendreUnObjet(Model model, HttpSession session,
-                               @RequestParam(value = "idObjet", required = true) String idObjet) {
+                                       @RequestParam(value = "idObjet", required = true) String idObjet) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
         if (email == null) {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
@@ -204,7 +218,7 @@ public class ListeController {
 
     @PostMapping("/ajouter-favori")
     public String ajouterFavoris(Model model, HttpSession session,
-                               @RequestParam(value = "idListeFavoris", required = true) String idListe) {
+                                 @RequestParam(value = "idListeFavoris", required = true) String idListe) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
         if (email == null) {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
@@ -218,6 +232,7 @@ public class ListeController {
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
+
     @PostMapping("/supprimer-favori")
     public String supprimerFavori(Model model, HttpSession session,
                                   @RequestParam(value = "idListeFavoris", required = true) String idListe) {
@@ -237,7 +252,7 @@ public class ListeController {
 
     @PostMapping("/supprimer-objet")
     public String supprimerObjet(Model model, HttpSession session,
-                                   @RequestParam(value = "idObjet", required = true) String idObjet) {
+                                 @RequestParam(value = "idObjet", required = true) String idObjet) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
 
         if (email == null) {
@@ -253,12 +268,14 @@ public class ListeController {
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
+
     @PostMapping("/modifier-objet")
     public String modifierObjet(Model model, HttpSession session,
-                                   @RequestParam(value = "idObjet", required = true) String idObjet,
-                                   @RequestParam(value = "titreUpdate", required = true) String titreUpdate,
-                                   @RequestParam(value = "descriptionUpdate", required = false) String descriptionUpdate,
-                                   @RequestParam(value = "urlUpdate", required = false) String urlUpdate  ) {
+                                @RequestParam(value = "idObjet", required = true) String idObjet,
+                                @RequestParam(value = "titreUpdate", required = true) String titreUpdate,
+                                @RequestParam(value = "descriptionUpdate", required = false) String descriptionUpdate,
+                                @RequestParam(value = "prioriteUpdate", required = false) String prioriteUpdate,
+                                @RequestParam(value = "urlUpdate", required = false) String urlUpdate) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
 
         if (email == null) {
@@ -267,7 +284,7 @@ public class ListeController {
         }
 
         try {
-            listeServiceInterface.modifierObjet(Long.valueOf(idObjet), titreUpdate, descriptionUpdate, urlUpdate);
+            listeServiceInterface.modifierObjet(Long.valueOf(idObjet), titreUpdate, descriptionUpdate, urlUpdate, Integer.parseInt(prioriteUpdate));
         } catch (Exception e) {
             LOGGER.error("", e);
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());

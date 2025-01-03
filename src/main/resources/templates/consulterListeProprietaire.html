@@ -49,6 +49,14 @@
             const modalUpdate = new bootstrap.Modal(document.getElementById('confirmModalUpdate'));
             modalUpdate.show();
         }
+
+        function toggleSort() {
+        const currentSort = new URLSearchParams(window.location.search).get('triPriorite') || 'asc';
+        const newSort = currentSort === 'asc' ? 'desc' : 'asc';
+        const params = new URLSearchParams(window.location.search);
+        params.set('triPriorite', newSort);
+        window.location.search = params.toString();
+    }
     </script>
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -127,7 +135,10 @@
                 <th scope="col">Titre</th>
                 <th scope="col">Description</th>
                 <th scope="col">Url</th>
-                <th scope="col">Priorité</th>
+                <th scope="col" onclick="toggleSort()" style="cursor: pointer;">
+                    Priorité <span class="sort-indicator" th:if="${triPriorite == 'asc'}">▲</span>
+                    <span class="sort-indicator" th:if="${triPriorite == 'desc'}">▼</span>
+                </th>
                 <th scope="col">Action</th>
             </tr>
             </thead>
