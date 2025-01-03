@@ -19,6 +19,14 @@ import sc.liste.noel.liste_noel.service.impl.MailService;
 
 import java.util.Optional;
 
+import static sc.liste.noel.liste_noel.constante.CheminConstante.REDIRECT;
+import static sc.liste.noel.liste_noel.constante.CheminConstante.CONSULTER_LISTE;
+import static sc.liste.noel.liste_noel.constante.CheminConstante.INSCRIPTION;
+import static sc.liste.noel.liste_noel.constante.CheminConstante.LISTE;
+import static sc.liste.noel.liste_noel.constante.NomPageConstante.WELCOME;
+import static sc.liste.noel.liste_noel.constante.NomPageConstante.CONNEXION;
+import static sc.liste.noel.liste_noel.constante.NomPageConstante.CONTACT;
+
 @Controller
 public class ConnexionController {
 
@@ -30,21 +38,22 @@ public class ConnexionController {
     private CompteServiceInterface compteService;
 
     @GetMapping(value = {"", "/", "welcome", "ma-liste-de-cadeau"})
-    public String redirectGet(Model model, HttpSession session) {
+    public String welcomeGet(Model model, HttpSession session) {
         Utils.setupModel(session, model);
-        return "welcome";
+        return WELCOME;
     }
 
     @GetMapping(value = {"connexion"})
     public String connexionGet(Model model, HttpSession session) {
 
+        // Si utilisateur déjà connecté
         if (session.getAttribute(ConstantesSession.EMAIL) != null) {
-            return "redirect:liste";
+            return REDIRECT + LISTE;
         }
 
         Utils.setupModel(session, model);
 
-        return "connexion";
+        return CONNEXION;
     }
 
     @PostMapping("/connexion")
@@ -58,9 +67,9 @@ public class ConnexionController {
                 session.setAttribute(ConstantesSession.PSEUDO, compteDto.getPseudo());
                 Long idShared = (Long) session.getAttribute(Constantes.SHARED_LISTE);
                 if (idShared != null) {
-                    return "redirect:consulter-liste";
+                    return REDIRECT + CONSULTER_LISTE;
                 } else {
-                    return "redirect:liste";
+                    return REDIRECT + LISTE;
                 }
             } else {
                 Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_FAIL_KEY, langue));
@@ -69,11 +78,11 @@ public class ConnexionController {
             LOGGER.log(Level.ERROR, e);
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, langue) + " : " + e.getMessage());
         }
-        return "redirect:connexion";
+        return REDIRECT + CONNEXION;
     }
 
     @GetMapping("/deconnexion")
-    public String deconnexion(String password, Model model, HttpSession session) {
+    public String deconnexionGet(Model model, HttpSession session) {
         try {
             String email = (String) session.getAttribute(ConstantesSession.EMAIL);
             if (email != null) {
@@ -84,23 +93,23 @@ public class ConnexionController {
         }
         session.setAttribute(ConstantesSession.EMAIL, null);
         session.removeAttribute(ConstantesSession.ID_LISTE);
-        return "redirect:connexion";
+        return REDIRECT + CONNEXION;
     }
 
     @GetMapping(value = {"contact"})
     public String contactGet(Model model, HttpSession session) {
         Utils.setupModel(session, model);
-        return "contact";
+        return CONTACT;
     }
 
     @PostMapping(value = {"mot-de-passe-oublie"})
-    public String motDePasseOublie(Model model, HttpSession session, @RequestParam(value = "email", required = true) String email) {
+    public String motDePasseOubliePost(Model model, HttpSession session, @RequestParam(value = "email", required = true) String email) {
 
         Integer langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
 
         if (Utils.isInvalidEmail(email)) {
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.EMAIL_NON_ACCEPTE_KEY, langue));
-            return "redirect:inscription";
+            return REDIRECT + INSCRIPTION;
         }
 
         try {
@@ -110,7 +119,7 @@ public class ConnexionController {
             LOGGER.log(Level.ERROR, e);
             Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
         }
-        return "redirect:connexion";
+        return REDIRECT + CONNEXION;
     }
 
 

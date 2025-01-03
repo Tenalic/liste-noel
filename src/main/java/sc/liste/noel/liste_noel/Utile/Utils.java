@@ -14,10 +14,16 @@ import java.util.regex.Pattern;
 
 public class Utils {
 
-    private static Pattern pattern = Pattern.compile("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");
+    private static Pattern emailPattern = Pattern.compile("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");
 
     public static final String ERROR_CODE = "ERRONEOUS_SPECIAL_CHARS";
 
+    /**
+     * Vérifie si le string n'est pas null ou si elle n'est pas vide
+     *
+     * @param message : string à verifier
+     * @return boolean
+     */
     public static boolean aMessage(String message) {
         if (message != null && !"".equals(message)) {
             return true;
@@ -25,28 +31,59 @@ public class Utils {
         return false;
     }
 
+    /**
+     * Ajoute dans la session le message avec comme clé celle des erreurs
+     *
+     * @param session       : HttpSession
+     * @param messageErreur : message à mettre dans la session
+     */
     public static void setSessionErrorMessage(HttpSession session, String messageErreur) {
         session.setAttribute(ConstantesSession.ERREUR, messageErreur);
     }
 
+    /**
+     * Ajoute dans la session le message avec comme clé celle des messages
+     *
+     * @param session     : HttpSession
+     * @param messageInfo : message à mettre dans la session
+     */
     public static void setSessionInfoMessage(HttpSession session, String messageInfo) {
         session.setAttribute(ConstantesSession.INFO, messageInfo);
     }
 
+    /**
+     * Fonction pour mettre dans le modèle les éléments communs à toutes les pages.
+     *
+     * @param session : HttpSession
+     * @param model   : Model
+     */
     public static void setupModel(HttpSession session, Model model) {
+
+        // Recupère les éventuels messages d'erreurs
         String messageErreur = (String) session.getAttribute(ConstantesSession.ERREUR);
         if (aMessage(messageErreur)) {
             session.removeAttribute(ConstantesSession.ERREUR);
             model.addAttribute(ConstantesSession.ERREUR, messageErreur);
         }
+
+        // Recupère les éventuels messages d'infos
         String info = (String) session.getAttribute(ConstantesSession.INFO);
         if (aMessage(info)) {
             session.removeAttribute(ConstantesSession.INFO);
             model.addAttribute(ConstantesSession.INFO, info);
         }
+
+        // boolean pour savoir si l'utilisateur est connecté ou non
         model.addAttribute(ConstantesSession.CONNECTED, session.getAttribute(ConstantesSession.EMAIL) != null);
     }
 
+    /**
+     * Récupère le message associé à la clé dans la langue demandée
+     *
+     * @param keyMessage : clé du message souhaité
+     * @param langue     : langue souhaité
+     * @return le message
+     */
     public static String getMessage(String keyMessage, int langue) {
         return switch (keyMessage) {
             case Constantes.CGU_NON_ACCEPTE_KEY ->
@@ -87,13 +124,18 @@ public class Utils {
                     (langue == Constantes.CODE_ANGLAIS ? Constantes.COMPTE_ERROR_EN : Constantes.COMPTE_ERROR_FR);
             case Constantes.PASSWORD_DIFFERENT_KEY ->
                     (langue == Constantes.CODE_ANGLAIS ? Constantes.PASSWORD_DIFFERENT_EN : Constantes.PASSWORD_DIFFERENT_FR);
-            case Constantes.EMAIL_NON_ACCEPTE_KEY ->
-                    Constantes.EMAIL_NON_ACCEPTE_FR;
+            case Constantes.EMAIL_NON_ACCEPTE_KEY -> Constantes.EMAIL_NON_ACCEPTE_FR;
             default ->
                     (langue == Constantes.CODE_ANGLAIS ? Constantes.MESSAGE_DEFAUT_EN : Constantes.MESSAGE_DEFAUT_FR);
         };
     }
 
+    /**
+     * Convertie la string représentant la langue en code entier
+     *
+     * @param langue : langue à transco
+     * @return code langue
+     */
     public static int transcoLangue(String langue) {
         return switch (langue) {
             case "Français" -> Constantes.CODE_FRANCAIS;
@@ -102,11 +144,22 @@ public class Utils {
         };
     }
 
+    /**
+     * Vérifie si l'email a l'apparence d'un vrai email
+     *
+     * @param email : email à verifier
+     * @return boolean
+     */
     public static boolean isInvalidEmail(String email) {
-        Matcher matcher = pattern.matcher(email);
+        Matcher matcher = emailPattern.matcher(email);
         return !matcher.matches();
     }
 
+    /**
+     * Utilisé pour générer un mot de passe oublié
+     *
+     * @return : mot de passe
+     */
     public static String generatePassayPassword() {
         PasswordGenerator gen = new PasswordGenerator();
         CharacterData lowerCaseChars = EnglishCharacterData.LowerCase;
