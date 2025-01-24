@@ -40,15 +40,15 @@ public class ObjetMapper {
     public static String transcoPriorite(Integer value) {
         switch (value) {
             case 1 :
-                return "Tres forte";
+                return "❤\uFE0F❤\uFE0F❤\uFE0F❤\uFE0F❤\uFE0F";
             case 2 :
-                return "Forte";
+                return "❤\uFE0F❤\uFE0F❤\uFE0F❤\uFE0F";
             case 3 :
-                return "Neutre";
+                return "❤\uFE0F❤\uFE0F❤\uFE0F";
             case 4 :
-                return "Faible";
+                return "❤\uFE0F❤\uFE0F";
             case 5 :
-                return "Tres faible";
+                return "❤\uFE0F";
         }
         return "NULL";
     }

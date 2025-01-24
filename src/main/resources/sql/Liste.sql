@@ -31,18 +31,18 @@ ALTER TABLE liste_noel.objet ADD COLUMN pseudo_detenteur character varying(320);
 CREATE TABLE liste_noel.ref_priorite (
     id INT AUTO_INCREMENT PRIMARY KEY,
     value INT NOT NULL,
-    libelle VARCHAR(50) NOT NULL
+    libelle VARCHAR(100) NOT NULL
 );
 
 ALTER TABLE liste_noel.ref_priorite
 ADD CONSTRAINT unique_value UNIQUE (value);
 
 INSERT INTO liste_noel.ref_priorite (id, value, libelle) VALUES
-(1,1, 'Tres forte'),
-(2,2, 'Forte'),
-(3,3, 'Neutre'),
-(4,4, 'Faible'),
-(5,5, 'Tres faible');
+(1,1, '❤️❤️❤️❤️❤️'),
+(2,2, '❤️❤️❤️❤️'),
+(3,3, '❤️❤️❤️'),
+(4,4, '❤️❤️'),
+(5,5, '❤️');
 
 ALTER TABLE liste_noel.objet
 ADD COLUMN priorite INT,
