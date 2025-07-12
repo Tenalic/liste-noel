@@ -3,11 +3,11 @@ package sc.liste.noel.liste_noel.service.impl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import jakarta.xml.bind.DatatypeConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sc.liste.noel.liste_noel.service.JwtTokenInterface;
 
+import java.util.Base64;
 import java.util.Date;
 
 @Service
@@ -31,7 +31,7 @@ public class JwtTokenImpl implements JwtTokenInterface {
 
     public String getUsernameFromToken(String token) {
         Claims claims = Jwts.parser()
-                .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
+                .setSigningKey(Base64.getDecoder().decode(SECRET_KEY))
                 .parseClaimsJws(token).getBody();
         return claims.getSubject();
     }
