@@ -34,7 +34,6 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.8</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -63,11 +62,10 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Mail -->
+        <!-- Mail (via starter Boot) -->
         <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>jakarta.mail</artifactId>
-            <version>2.0.1</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
         <!-- Utilitaires -->
@@ -94,6 +92,7 @@
             <version>1.5.16</version>
         </dependency>
     </dependencies>
+
 
     <build>
         <plugins>
