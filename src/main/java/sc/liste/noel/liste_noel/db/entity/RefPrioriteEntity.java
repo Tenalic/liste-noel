@@ -1,11 +1,11 @@
-package sc.liste.noel.liste_noel.dao.entity;
+package sc.liste.noel.liste_noel.db.entity;
 
 
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "ref_priorite")
-public class RefPrioriteDao {
+public class RefPrioriteEntity {
 
 
     @Id
@@ -19,7 +19,7 @@ public class RefPrioriteDao {
     @Column(name = "libelle",nullable = false, length = 255)
     private String libelle;
 
-    public RefPrioriteDao() {
+    public RefPrioriteEntity() {
     }
 
     // Getters et setters

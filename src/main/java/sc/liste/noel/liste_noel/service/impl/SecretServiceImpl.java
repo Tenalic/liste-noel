@@ -2,7 +2,7 @@ package sc.liste.noel.liste_noel.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sc.liste.noel.liste_noel.dao.repo.SecretRepo;
+import sc.liste.noel.liste_noel.db.repo.SecretRepo;
 import sc.liste.noel.liste_noel.service.SecretServiceInterface;
 
 import java.util.HashSet;

@@ -1,6 +1,6 @@
 package sc.liste.noel.liste_noel.Utile.mapper;
 
-import sc.liste.noel.liste_noel.dao.entity.ObjetDao;
+import sc.liste.noel.liste_noel.db.entity.ObjetEntity;
 import sc.liste.noel.liste_noel.dto.ObjetDto;
 
 import java.util.ArrayList;
@@ -9,31 +9,31 @@ import java.util.List;
 public class ObjetMapper {
 
 
-    public static List<ObjetDto> daosToDtos(List<ObjetDao> objetDaoList) {
-        if(objetDaoList == null) {
+    public static List<ObjetDto> daosToDtos(List<ObjetEntity> objetEntityList) {
+        if(objetEntityList == null) {
             return null;
         }
         List<ObjetDto> objetDtoList = new ArrayList<>();
-        for(ObjetDao objetDao : objetDaoList) {
-            ObjetDto objetDto = daoToDto(objetDao);
+        for(ObjetEntity objetEntity : objetEntityList) {
+            ObjetDto objetDto = daoToDto(objetEntity);
             objetDtoList.add(objetDto);
         }
         objetDtoList.sort(((o1, o2) -> Math.toIntExact(o1.getIdObjet() - o2.getIdObjet()))); // trie part Id croissant
         return objetDtoList;
     }
 
-    private static ObjetDto daoToDto(ObjetDao objetDao) {
+    private static ObjetDto daoToDto(ObjetEntity objetEntity) {
         ObjetDto objetDto = new ObjetDto();
-        objetDto.setDescription(objetDao.getDescription());
-        objetDto.setDetenteur(objetDao.getDetenteur());
-        objetDto.setPseudoDetenteur(objetDao.getPseudoDetenteur());
-        objetDto.setUrl(objetDao.getUrl());
-        objetDto.setEstPrit(objetDao.getEstPrit());
-        objetDto.setTitre(objetDao.getTitre());
-        objetDto.setIdObjet(objetDao.getIdObjet());
+        objetDto.setDescription(objetEntity.getDescription());
+        objetDto.setDetenteur(objetEntity.getDetenteur());
+        objetDto.setPseudoDetenteur(objetEntity.getPseudoDetenteur());
+        objetDto.setUrl(objetEntity.getUrl());
+        objetDto.setEstPrit(objetEntity.getEstPrit());
+        objetDto.setTitre(objetEntity.getTitre());
+        objetDto.setIdObjet(objetEntity.getIdObjet());
         // FIXME : faire ça proprement
-        objetDto.setValuePriorite(objetDao.getPrioriteValue());
-        objetDto.setPriorite(transcoPriorite(objetDao.getPrioriteValue()));
+        objetDto.setValuePriorite(objetEntity.getPrioriteValue());
+        objetDto.setPriorite(transcoPriorite(objetEntity.getPrioriteValue()));
         return objetDto;
     }
 

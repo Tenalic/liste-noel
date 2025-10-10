@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import sc.liste.noel.liste_noel.Utile.PasswordUtils;
 import sc.liste.noel.liste_noel.Utile.Utils;
 import sc.liste.noel.liste_noel.Utile.mapper.CompteMapper;
-import sc.liste.noel.liste_noel.dao.entity.CompteDao;
-import sc.liste.noel.liste_noel.dao.repo.CompteRepo;
+import sc.liste.noel.liste_noel.db.entity.CompteEntity;
+import sc.liste.noel.liste_noel.db.repo.CompteRepo;
 import sc.liste.noel.liste_noel.dto.CompteDto;
 import sc.liste.noel.liste_noel.dto.TokenDto;
 import sc.liste.noel.liste_noel.exception.CompteNotFoundException;
@@ -55,7 +55,7 @@ public class CompteServiceImpl implements CompteServiceInterface {
 
     @Override
     public CompteDto connexion(String email, String password) {
-        CompteDao compte = compteRepo.findByEmailAndPassword(email, PasswordUtils.generateSecurePassword(password, salt));
+        CompteEntity compte = compteRepo.findByEmailAndPassword(email, PasswordUtils.generateSecurePassword(password, salt));
         if (compte != null) {
             compte.setNbConnexion(compte.getNbConnexion() + 1);
             compte.setDateDerniereConnexion(LocalDateTime.now());
@@ -68,7 +68,7 @@ public class CompteServiceImpl implements CompteServiceInterface {
 
     @Override
     public boolean deconexion(String cossy) {
-        CompteDao compte = compteRepo.findByEmail(cossy);
+        CompteEntity compte = compteRepo.findByEmail(cossy);
         if (compte != null) {
             compte.setNbDeconnexion(compte.getNbDeconnexion() + 1);
             compte.setDateDerniereDeconnexion(LocalDateTime.now());
@@ -82,7 +82,7 @@ public class CompteServiceImpl implements CompteServiceInterface {
     @Override
     public boolean creationCompte(String email, String password, boolean cguAccepted, String pseudo) {
         String activationkey = Generators.timeBasedEpochGenerator().generate().toString();
-        compteRepo.save(new CompteDao(email, PasswordUtils.generateSecurePassword(password, salt), cguAccepted, pseudo, activationkey));
+        compteRepo.save(new CompteEntity(email, PasswordUtils.generateSecurePassword(password, salt), cguAccepted, pseudo, activationkey));
         String url = baseUrl + "/compte/activate?userId=" + email + "&key=" + activationkey;
         String body = "Bonjour,\n" +
                 "\n" +
@@ -115,25 +115,25 @@ public class CompteServiceImpl implements CompteServiceInterface {
 
     @Override
     public boolean updatePassword(String email, String oldPassword, String newPassword) {
-        CompteDao compteDao = compteRepo.findByEmailAndPassword(email,
+        CompteEntity compteEntity = compteRepo.findByEmailAndPassword(email,
                 PasswordUtils.generateSecurePassword(oldPassword, salt));
-        if (compteDao != null) {
-            compteDao.setPassword(PasswordUtils.generateSecurePassword(newPassword, salt));
-            compteDao.setNbModificationMdp(compteDao.getNbModificationMdp() + 1);
-            compteDao.setDateDerniereModificationMdp(LocalDateTime.now());
-            compteRepo.save(compteDao);
+        if (compteEntity != null) {
+            compteEntity.setPassword(PasswordUtils.generateSecurePassword(newPassword, salt));
+            compteEntity.setNbModificationMdp(compteEntity.getNbModificationMdp() + 1);
+            compteEntity.setDateDerniereModificationMdp(LocalDateTime.now());
+            compteRepo.save(compteEntity);
             return true;
         }
         return false;
     }
 
     private boolean forceUpdatePassword(String email, String newPassword) {
-        CompteDao compteDao = compteRepo.findByEmail(email);
-        if (compteDao != null) {
-            compteDao.setPassword(PasswordUtils.generateSecurePassword(newPassword, salt));
-            compteDao.setNbModificationMdp(compteDao.getNbModificationMdp() + 1);
-            compteDao.setDateDerniereModificationMdp(LocalDateTime.now());
-            compteRepo.save(compteDao);
+        CompteEntity compteEntity = compteRepo.findByEmail(email);
+        if (compteEntity != null) {
+            compteEntity.setPassword(PasswordUtils.generateSecurePassword(newPassword, salt));
+            compteEntity.setNbModificationMdp(compteEntity.getNbModificationMdp() + 1);
+            compteEntity.setDateDerniereModificationMdp(LocalDateTime.now());
+            compteRepo.save(compteEntity);
             return true;
         }
         return false;
@@ -186,7 +186,7 @@ public class CompteServiceImpl implements CompteServiceInterface {
 
     @Override
     public boolean activateUser(String email, String activationKey) {
-        CompteDao compte = compteRepo.findByEmail(email);
+        CompteEntity compte = compteRepo.findByEmail(email);
         if (compte != null) {
             if (compte.getActivationKey().equals(activationKey) && !compte.getEmailVerified()) {
                 compte.setEmailVerified(true);

@@ -1,10 +1,10 @@
-package sc.liste.noel.liste_noel.dao.entity;
+package sc.liste.noel.liste_noel.db.entity;
 
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "objet")
-public class ObjetDao {
+public class ObjetEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +27,7 @@ public class ObjetDao {
     @Column(name = "priorite", nullable = false)
     private Integer prioriteValue;
 
-    public ObjetDao() {
+    public ObjetEntity() {
     }
 
     public Long getIdObjet() {

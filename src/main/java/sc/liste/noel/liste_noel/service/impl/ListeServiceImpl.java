@@ -6,13 +6,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sc.liste.noel.liste_noel.Utile.mapper.ListeMapper;
 import sc.liste.noel.liste_noel.Utile.mapper.ObjetMapper;
-import sc.liste.noel.liste_noel.dao.entity.FavorisDao;
-import sc.liste.noel.liste_noel.dao.entity.ListeDao;
-import sc.liste.noel.liste_noel.dao.entity.ObjetDao;
-import sc.liste.noel.liste_noel.dao.repo.CompteRepo;
-import sc.liste.noel.liste_noel.dao.repo.FavorisRepo;
-import sc.liste.noel.liste_noel.dao.repo.ListeRepo;
-import sc.liste.noel.liste_noel.dao.repo.ObjetRepo;
+import sc.liste.noel.liste_noel.db.entity.FavorisEntity;
+import sc.liste.noel.liste_noel.db.entity.ListeEntity;
+import sc.liste.noel.liste_noel.db.entity.ObjetEntity;
+import sc.liste.noel.liste_noel.db.repo.CompteRepo;
+import sc.liste.noel.liste_noel.db.repo.FavorisRepo;
+import sc.liste.noel.liste_noel.db.repo.ListeRepo;
+import sc.liste.noel.liste_noel.db.repo.ObjetRepo;
 import sc.liste.noel.liste_noel.dto.ListeDto;
 import sc.liste.noel.liste_noel.service.ListeServiceInterface;
 
@@ -43,12 +43,12 @@ public class ListeServiceImpl implements ListeServiceInterface {
     @Override
     public ListeDto creerListe(String proprietaire, String nomListe) {
 
-        ListeDao listeDao = new ListeDao();
-        listeDao.setNomListe(nomListe);
-        listeDao.setProprietaire(proprietaire);
+        ListeEntity listeEntity = new ListeEntity();
+        listeEntity.setNomListe(nomListe);
+        listeEntity.setProprietaire(proprietaire);
 
         try {
-            listeRepo.save(listeDao);
+            listeRepo.save(listeEntity);
             return new ListeDto();
         } catch (Exception e) {
             return null;
@@ -57,63 +57,63 @@ public class ListeServiceImpl implements ListeServiceInterface {
 
     @Override
     public List<ListeDto> getListesOfEmail(String email) {
-        List<ListeDao> listeDaoList = listeRepo.findByProprietaire(email);
-        return ListeMapper.daosToDtos(listeDaoList);
+        List<ListeEntity> listeEntityList = listeRepo.findByProprietaire(email);
+        return ListeMapper.daosToDtos(listeEntityList);
     }
 
     @Override
     public ListeDto getListeById(Long id) {
-        ListeDao listeDao = listeRepo.findByIdListe(id);
-        ListeDto listeDto = ListeMapper.daoToDto(listeDao);
+        ListeEntity listeEntity = listeRepo.findByIdListe(id);
+        ListeDto listeDto = ListeMapper.daoToDto(listeEntity);
         listeDto.setUrlPartage(ListeMapper.buildUrlPartage(baseUrl, id));
         return listeDto;
     }
 
     @Override
     public void ajouterObjetDansUneListe(String titre, String url, String description, String idListe, String proprietaire, int priorite) {
-        ObjetDao objetDao = new ObjetDao();
-        objetDao.setDescription(description);
-        objetDao.setIdListe(Long.valueOf(idListe));
-        objetDao.setTitre(titre);
-        objetDao.setEstPrit(false);
-        objetDao.setUrl(url);
-        objetDao.setPrioriteValue(priorite);
-        objetRepo.save(objetDao);
+        ObjetEntity objetEntity = new ObjetEntity();
+        objetEntity.setDescription(description);
+        objetEntity.setIdListe(Long.valueOf(idListe));
+        objetEntity.setTitre(titre);
+        objetEntity.setEstPrit(false);
+        objetEntity.setUrl(url);
+        objetEntity.setPrioriteValue(priorite);
+        objetRepo.save(objetEntity);
     }
 
     @Override
     @Transactional
     public void prendreUnObjet(String idListe, String idObjet, String personne, String pseudo) {
-        ObjetDao objetDao = objetRepo.findByIdObjet(Long.valueOf(idObjet));
-        objetDao.setDetenteur(personne);
-        objetDao.setPseudoDetenteur(pseudo);
-        objetDao.setEstPrit(true);
-        objetRepo.save(objetDao);
+        ObjetEntity objetEntity = objetRepo.findByIdObjet(Long.valueOf(idObjet));
+        objetEntity.setDetenteur(personne);
+        objetEntity.setPseudoDetenteur(pseudo);
+        objetEntity.setEstPrit(true);
+        objetRepo.save(objetEntity);
     }
 
     @Override
     @Transactional
     public void nePlusPrendreUnObjet(String idObjet) {
-        ObjetDao objetDao = objetRepo.findByIdObjet(Long.valueOf(idObjet));
-        objetDao.setDetenteur(null);
-        objetDao.setPseudoDetenteur(null);
-        objetDao.setEstPrit(false);
-        objetRepo.save(objetDao);
+        ObjetEntity objetEntity = objetRepo.findByIdObjet(Long.valueOf(idObjet));
+        objetEntity.setDetenteur(null);
+        objetEntity.setPseudoDetenteur(null);
+        objetEntity.setEstPrit(false);
+        objetRepo.save(objetEntity);
     }
 
 
     public List<ListeDto> getListeFavorisOfEmail(String email) {
-        List<FavorisDao> favorisDaoList = favorisRepo.findByEmail(email);
+        List<FavorisEntity> favorisEntityList = favorisRepo.findByEmail(email);
 
-        if (favorisDaoList == null) {
+        if (favorisEntityList == null) {
             return null;
         }
-        List<ListeDao> list = new ArrayList<>();
+        List<ListeEntity> list = new ArrayList<>();
 
-        for (FavorisDao favorisDao : favorisDaoList) {
-            ListeDao listeDao = listeRepo.findByIdListe(favorisDao.getIdListe());
-            if (listeDao != null) {
-                list.add(listeDao);
+        for (FavorisEntity favorisEntity : favorisEntityList) {
+            ListeEntity listeEntity = listeRepo.findByIdListe(favorisEntity.getIdListe());
+            if (listeEntity != null) {
+                list.add(listeEntity);
             }
         }
 
@@ -135,21 +135,21 @@ public class ListeServiceImpl implements ListeServiceInterface {
     @Transactional
     @Override
     public void ajouterFavori(Long idListe, String email) {
-        FavorisDao favorisDaoList = favorisRepo.findByEmailAndIdListe(email, idListe);
-        if (favorisDaoList == null) {
-            FavorisDao favorisDao = new FavorisDao();
-            favorisDao.setEmail(email);
-            favorisDao.setIdListe(idListe);
-            favorisRepo.save(favorisDao);
+        FavorisEntity favorisEntityList = favorisRepo.findByEmailAndIdListe(email, idListe);
+        if (favorisEntityList == null) {
+            FavorisEntity favorisEntity = new FavorisEntity();
+            favorisEntity.setEmail(email);
+            favorisEntity.setIdListe(idListe);
+            favorisRepo.save(favorisEntity);
         }
     }
 
     @Transactional
     @Override
     public void supprimerFavori(Long idListe, String email) {
-        FavorisDao favorisDaoList = favorisRepo.findByEmailAndIdListe(email, idListe);
-        if (favorisDaoList != null) {
-            favorisRepo.delete(favorisDaoList);
+        FavorisEntity favorisEntityList = favorisRepo.findByEmailAndIdListe(email, idListe);
+        if (favorisEntityList != null) {
+            favorisRepo.delete(favorisEntityList);
         }
     }
 
@@ -157,23 +157,23 @@ public class ListeServiceImpl implements ListeServiceInterface {
     @Override
     public void supprimerObjet(Long idObjet, String email) {
 
-        ObjetDao objetDao = objetRepo.findByIdObjet(idObjet);
+        ObjetEntity objetEntity = objetRepo.findByIdObjet(idObjet);
 
-        if (objetDao != null) {
+        if (objetEntity != null) {
 
-            ListeDao listeDao = listeRepo.findByIdListe(objetDao.getIdListe());
+            ListeEntity listeEntity = listeRepo.findByIdListe(objetEntity.getIdListe());
 
-            String bodyEmail = "L'objet " + objetDao.getTitre() + " : " + objetDao.getDescription() + " " + objetDao.getUrl()
-                    + " a été supprimé de la liste " + listeDao.getNomListe()
+            String bodyEmail = "L'objet " + objetEntity.getTitre() + " : " + objetEntity.getDescription() + " " + objetEntity.getUrl()
+                    + " a été supprimé de la liste " + listeEntity.getNomListe()
                     + " qui fait partie de vos favoris" + " consulter la liste : \n\n"
-                    + ListeMapper.buildUrlPartage(baseUrl, listeDao.getIdListe());;
-            String sujetEmail = "Objet supprimé de la liste : " + listeDao.getNomListe();
+                    + ListeMapper.buildUrlPartage(baseUrl, listeEntity.getIdListe());;
+            String sujetEmail = "Objet supprimé de la liste : " + listeEntity.getNomListe();
 
-            List<FavorisDao> favorisDaoList = favorisRepo.findByIdListe(listeDao.getIdListe());
+            List<FavorisEntity> favorisEntityList = favorisRepo.findByIdListe(listeEntity.getIdListe());
 
-            envoyerEmailToListe(getListeOfEmailFromListeFavorisDao(favorisDaoList), bodyEmail, sujetEmail);
+            envoyerEmailToListe(getListeOfEmailFromListeFavorisDao(favorisEntityList), bodyEmail, sujetEmail);
 
-            objetRepo.delete(objetDao);
+            objetRepo.delete(objetEntity);
         }
 
     }
@@ -182,36 +182,36 @@ public class ListeServiceImpl implements ListeServiceInterface {
     @Override
     public void modifierObjet(Long idObjet, String titreUpdate, String descriptionUpdate, String urlUpdate, int prioriteUpdate) {
 
-        ObjetDao objetDao = objetRepo.findByIdObjet(idObjet);
+        ObjetEntity objetEntity = objetRepo.findByIdObjet(idObjet);
 
-        if (objetDao != null) {
+        if (objetEntity != null) {
 
-            ListeDao listeDao = listeRepo.findByIdListe(objetDao.getIdListe());
+            ListeEntity listeEntity = listeRepo.findByIdListe(objetEntity.getIdListe());
 
-            String bodyEmail = "L'objet " + objetDao.getTitre() + " : " + objetDao.getDescription() + " - " + objetDao.getUrl()
-                    + " a été modifié dans la liste " + listeDao.getNomListe()
+            String bodyEmail = "L'objet " + objetEntity.getTitre() + " : " + objetEntity.getDescription() + " - " + objetEntity.getUrl()
+                    + " a été modifié dans la liste " + listeEntity.getNomListe()
                     + " qui fait partie de vos favoris.\n\n Voici les nouvelles informations :\n\n " + titreUpdate + " : " + descriptionUpdate + " - " + urlUpdate + " " + ObjetMapper.transcoPriorite(prioriteUpdate) + " \n\n consulter la liste : "
-                    + ListeMapper.buildUrlPartage(baseUrl, listeDao.getIdListe());
-            String sujetEmail = "Objet modifié dans la liste : " + listeDao.getNomListe();
+                    + ListeMapper.buildUrlPartage(baseUrl, listeEntity.getIdListe());
+            String sujetEmail = "Objet modifié dans la liste : " + listeEntity.getNomListe();
 
-            List<FavorisDao> favorisDaoList = favorisRepo.findByIdListe(listeDao.getIdListe());
+            List<FavorisEntity> favorisEntityList = favorisRepo.findByIdListe(listeEntity.getIdListe());
 
-            envoyerEmailToListe(getListeOfEmailFromListeFavorisDao(favorisDaoList), bodyEmail, sujetEmail);
+            envoyerEmailToListe(getListeOfEmailFromListeFavorisDao(favorisEntityList), bodyEmail, sujetEmail);
 
-            objetDao.setTitre(titreUpdate);
-            objetDao.setDescription(descriptionUpdate);
-            objetDao.setUrl(urlUpdate);
-            objetDao.setPrioriteValue(prioriteUpdate);
+            objetEntity.setTitre(titreUpdate);
+            objetEntity.setDescription(descriptionUpdate);
+            objetEntity.setUrl(urlUpdate);
+            objetEntity.setPrioriteValue(prioriteUpdate);
 
-            objetRepo.save(objetDao);
+            objetRepo.save(objetEntity);
         }
     }
 
-    private List<String> getListeOfEmailFromListeFavorisDao(List<FavorisDao> favorisDaoList) {
-        return Optional.ofNullable(favorisDaoList)
+    private List<String> getListeOfEmailFromListeFavorisDao(List<FavorisEntity> favorisEntityList) {
+        return Optional.ofNullable(favorisEntityList)
                 .orElse(new ArrayList<>())
                 .stream()
-                .map(FavorisDao::getEmail)
+                .map(FavorisEntity::getEmail)
                 .toList();
     }
 

@@ -1,4 +1,4 @@
-package sc.liste.noel.liste_noel.dao.entity;
+package sc.liste.noel.liste_noel.db.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,7 +7,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "secret")
-public class SecretDao {
+public class SecretEntity {
 	
 	@Id
 	@Column(name = "nom_application")
@@ -16,7 +16,7 @@ public class SecretDao {
 	@Column(name = "secret")
 	private String secret;
 
-	public SecretDao() {
+	public SecretEntity() {
 		super();
 	}
 

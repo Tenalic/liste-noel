@@ -1,12 +1,10 @@
-package sc.liste.noel.liste_noel.dao.entity;
+package sc.liste.noel.liste_noel.db.entity;
 
 import jakarta.persistence.*;
 
-import java.util.List;
-
 @Entity
 @Table(name = "favoris")
-public class FavorisDao {
+public class FavorisEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +17,7 @@ public class FavorisDao {
     @Column(name = "email")
     private String email;
 
-    public FavorisDao() {
+    public FavorisEntity() {
     }
 
     public Long getIdFavoris() {

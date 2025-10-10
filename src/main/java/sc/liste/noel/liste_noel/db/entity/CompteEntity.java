@@ -1,4 +1,4 @@
-package sc.liste.noel.liste_noel.dao.entity;
+package sc.liste.noel.liste_noel.db.entity;
 
 import jakarta.persistence.*;
 
@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "compte")
-public class CompteDao {
+public class CompteEntity {
 
     @Id
     @Column(name = "email")
@@ -28,7 +28,7 @@ public class CompteDao {
     private LocalDateTime dateDerniereModificationMdp;
 
     @OneToMany(mappedBy = "proprietaire")
-    private List<ListeDao> listeDeListeDao;
+    private List<ListeEntity> listeDeListeEntity;
 
     @Column(name = "cgu_accepted")
     private Boolean cguAccepted;
@@ -41,11 +41,11 @@ public class CompteDao {
     @Column(name = "activation_key")
     private String activationKey;
 
-    public CompteDao() {
+    public CompteEntity() {
         super();
     }
 
-    public CompteDao(String email, String password, boolean cguAccepted) {
+    public CompteEntity(String email, String password, boolean cguAccepted) {
         super();
         this.email = email;
         this.password = password;
@@ -56,7 +56,7 @@ public class CompteDao {
         this.cguAccepted = cguAccepted;
     }
 
-    public CompteDao(String email, String password, boolean cguAccepted, String pseudo, String activationKey) {
+    public CompteEntity(String email, String password, boolean cguAccepted, String pseudo, String activationKey) {
         super();
         this.email = email;
         this.password = password;
@@ -70,7 +70,7 @@ public class CompteDao {
         this.activationKey = activationKey;
     }
 
-    public CompteDao(String email, String password, Integer initInteger) {
+    public CompteEntity(String email, String password, Integer initInteger) {
         super();
         this.email = email;
         this.password = password;
@@ -79,7 +79,7 @@ public class CompteDao {
         this.nbModificationMdp = initInteger;
     }
 
-    public CompteDao(String email, String password, Integer nbConnexion, Integer nbDeconnexion, Integer nbModificationMdp) {
+    public CompteEntity(String email, String password, Integer nbConnexion, Integer nbDeconnexion, Integer nbModificationMdp) {
         this.email = email;
         this.password = password;
         this.nbConnexion = nbConnexion;
@@ -161,12 +161,12 @@ public class CompteDao {
         this.cguAccepted = cguAccepted;
     }
 
-    public List<ListeDao> getListeDeListeDao() {
-        return listeDeListeDao;
+    public List<ListeEntity> getListeDeListeDao() {
+        return listeDeListeEntity;
     }
 
-    public void setListeDeListeDao(List<ListeDao> listeDeListeDao) {
-        this.listeDeListeDao = listeDeListeDao;
+    public void setListeDeListeDao(List<ListeEntity> listeDeListeEntity) {
+        this.listeDeListeEntity = listeDeListeEntity;
     }
 
     public String getPseudo() {

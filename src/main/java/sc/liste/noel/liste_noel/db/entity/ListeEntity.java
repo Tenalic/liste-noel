@@ -1,4 +1,4 @@
-package sc.liste.noel.liste_noel.dao.entity;
+package sc.liste.noel.liste_noel.db.entity;
 
 import jakarta.persistence.*;
 
@@ -6,7 +6,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "liste")
-public class ListeDao {
+public class ListeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,9 +17,9 @@ public class ListeDao {
     @Column(name = "nom_liste")
     private String nomListe;
     @OneToMany(mappedBy = "idListe")
-    private List<ObjetDao> objetDaoList;
+    private List<ObjetEntity> objetEntityList;
 
-    public ListeDao() {
+    public ListeEntity() {
     }
 
     public Long getIdListe() {
@@ -38,12 +38,12 @@ public class ListeDao {
         this.proprietaire = proprietaire;
     }
 
-    public List<ObjetDao> getObjetDaoList() {
-        return objetDaoList;
+    public List<ObjetEntity> getObjetDaoList() {
+        return objetEntityList;
     }
 
-    public void setObjetDaoList(List<ObjetDao> objetDaoList) {
-        this.objetDaoList = objetDaoList;
+    public void setObjetDaoList(List<ObjetEntity> objetEntityList) {
+        this.objetEntityList = objetEntityList;
     }
 
     public String getNomListe() {
