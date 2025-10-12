@@ -1,5 +1,6 @@
 package sc.liste.noel.liste_noel.front.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -10,19 +11,21 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sc.liste.noel.liste_noel.front.Utile.Utils;
 import sc.liste.noel.liste_noel.front.constante.Constantes;
 import sc.liste.noel.liste_noel.front.constante.ConstantesSession;
 import sc.liste.noel.liste_noel.front.dto.CompteDto;
 import sc.liste.noel.liste_noel.back.service.CompteServiceInterface;
+import sc.liste.noel.liste_noel.front.service.MessageService;
 import sc.liste.noel.liste_noel.front.service.impl.MailService;
 
+import java.util.Locale;
 import java.util.Optional;
 
-import static sc.liste.noel.liste_noel.front.constante.CheminConstante.REDIRECT;
-import static sc.liste.noel.liste_noel.front.constante.CheminConstante.CONSULTER_LISTE;
-import static sc.liste.noel.liste_noel.front.constante.CheminConstante.INSCRIPTION;
-import static sc.liste.noel.liste_noel.front.constante.CheminConstante.LISTE;
+import static sc.liste.noel.liste_noel.front.constante.CheminConstante.*;
+import static sc.liste.noel.liste_noel.front.constante.Constantes.*;
+import static sc.liste.noel.liste_noel.front.constante.ConstantesSession.ERREUR;
 import static sc.liste.noel.liste_noel.front.constante.NomPageConstante.WELCOME;
 import static sc.liste.noel.liste_noel.front.constante.NomPageConstante.CONNEXION;
 import static sc.liste.noel.liste_noel.front.constante.NomPageConstante.CONTACT;
@@ -36,6 +39,8 @@ public class ConnexionController {
     private MailService mailService;
     @Autowired
     private CompteServiceInterface compteService;
+    @Autowired
+    private MessageService messageService;
 
     @GetMapping(value = {"", "/", "welcome", "ma-liste-de-cadeau"})
     public String welcomeGet(Model model, HttpSession session) {
@@ -44,39 +49,46 @@ public class ConnexionController {
     }
 
     @GetMapping(value = {"connexion"})
-    public String connexionGet(Model model, HttpSession session) {
+    public String connexionGet(HttpSession session) {
 
         // Si utilisateur déjà connecté
         if (session.getAttribute(ConstantesSession.EMAIL) != null) {
             return REDIRECT + LISTE;
         }
 
-        Utils.setupModel(session, model);
-
         return CONNEXION;
     }
 
     @PostMapping("/connexion")
-    public String connexionPost(@RequestParam(value = "email", required = true) String email, @RequestParam(value = "password", required = true) String password, Model model, HttpSession session) {
+    public String connexionPost(@RequestParam(value = "email", required = true) String email
+            , @RequestParam(value = "password", required = true) String password
+            , HttpSession session
+            , RedirectAttributes redirectAttributes
+            , HttpServletRequest request) {
         int langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
+        Locale locale = request.getLocale();
         try {
             CompteDto compteDto = compteService.connexion(email, password);
             if (compteDto != null) {
                 session.setMaxInactiveInterval(14400);
                 session.setAttribute(ConstantesSession.EMAIL, email);
                 session.setAttribute(ConstantesSession.PSEUDO, compteDto.getPseudo());
-                Long idShared = (Long) session.getAttribute(Constantes.SHARED_LISTE);
+
+                Long idShared = (Long) session.getAttribute(SHARED_LISTE);
+
+                // Si l'utilisateur s'est connecté pour consulter une liste qu'on lui a partagée
+                // On le redirige vers la liste
                 if (idShared != null) {
                     return REDIRECT + CONSULTER_LISTE;
                 } else {
                     return REDIRECT + LISTE;
                 }
             } else {
-                Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_FAIL_KEY, langue));
+                redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(CONNEXION_FAIL_KEY, locale));
             }
         } catch (Exception e) {
             LOGGER.log(Level.ERROR, e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, langue) + " : " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale) + " : " + e.getMessage());
         }
         return REDIRECT + CONNEXION;
     }
@@ -117,7 +129,7 @@ public class ConnexionController {
             Utils.setSessionInfoMessage(session, "Si un compte avec l'email " + email + " existe, vous devriez avoir reçu un nouveau mot de passe.");
         } catch (Exception e) {
             LOGGER.log(Level.ERROR, e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
+            Utils.setSessionErrorMessage(session, Utils.getMessage(ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
         }
         return REDIRECT + CONNEXION;
     }

@@ -7,4 +7,5 @@ public class CheminConstante {
     public static String CONNEXION = "connexion";
     public static String INSCRIPTION = "inscription";
     public static String MODIFIER_PASSWORD = "modifier-password";
+    public static final String SHARED_LISTE = "sharedListe";
 }

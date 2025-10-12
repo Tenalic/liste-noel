@@ -1,5 +1,6 @@
 package sc.liste.noel.liste_noel.front.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sc.liste.noel.liste_noel.front.Utile.Utils;
 import sc.liste.noel.liste_noel.front.constante.CheminConstante;
 import sc.liste.noel.liste_noel.front.constante.Constantes;
@@ -17,12 +19,17 @@ import sc.liste.noel.liste_noel.front.constante.NomPageConstante;
 import sc.liste.noel.liste_noel.front.dto.ListeDto;
 import sc.liste.noel.liste_noel.front.dto.ObjetDto;
 import sc.liste.noel.liste_noel.front.service.ListeServiceInterface;
+import sc.liste.noel.liste_noel.front.service.MessageService;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
-import static sc.liste.noel.liste_noel.front.constante.CheminConstante.REDIRECT;
+import static sc.liste.noel.liste_noel.front.constante.CheminConstante.*;
+import static sc.liste.noel.liste_noel.front.constante.Constantes.CODE_FRANCAIS;
+import static sc.liste.noel.liste_noel.front.constante.Constantes.CONNEXION_KEY;
+import static sc.liste.noel.liste_noel.front.constante.ConstantesSession.ERREUR;
 
 
 @Controller
@@ -32,6 +39,9 @@ public class ListeController {
 
     @Autowired
     private ListeServiceInterface listeServiceInterface;
+
+    @Autowired
+    private MessageService messageService;
 
     @GetMapping("/liste")
     public String listeGet(Model model, HttpSession session) {
@@ -50,24 +60,31 @@ public class ListeController {
     @GetMapping("/partage")
     public String partageGet(Model model, HttpSession session, @RequestParam(value = "id", required = true) String idListe) {
 
-        session.setAttribute(Constantes.SHARED_LISTE, Long.valueOf(idListe));
+        session.setAttribute(SHARED_LISTE, Long.valueOf(idListe));
 
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
 
     @PostMapping("/creer-liste")
-    public String creerListePost(Model model, HttpSession session, @RequestParam(value = "nomListe", required = true) String nomListe) {
+    public String creerListePost(HttpSession session
+            , RedirectAttributes redirectAttributes
+            , HttpServletRequest request
+            , @RequestParam(value = "nomListe"
+                    , required = true) String nomListe) {
+
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
+        Locale locale = request.getLocale();
+
         if (email == null) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
-            return REDIRECT + CheminConstante.CONNEXION;
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(CONNEXION_KEY, locale));
+            return REDIRECT + CONNEXION;
         }
-        Utils.setupModel(session, model);
+
         try {
             listeServiceInterface.creerListe(email, nomListe);
         } catch (Exception e) {
             LOGGER.error("", e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, CODE_FRANCAIS) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.LISTE;
     }
@@ -76,10 +93,10 @@ public class ListeController {
     public String consulterListeGet(Model model, HttpSession session, @RequestParam(value = "triPriorite", required = false, defaultValue = "asc") String triPriorite) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
 
-        Long idShared = (Long) session.getAttribute(Constantes.SHARED_LISTE);
+        Long idShared = (Long) session.getAttribute(SHARED_LISTE);
         if (idShared != null) {
             if (email != null) {
-                session.removeAttribute(Constantes.SHARED_LISTE);
+                session.removeAttribute(SHARED_LISTE);
             }
             session.setAttribute(ConstantesSession.ID_LISTE, idShared);
         }
@@ -107,7 +124,7 @@ public class ListeController {
             model.addAttribute(ConstantesSession.EMAIL, email);
         } catch (Exception e) {
             LOGGER.error("", e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, CODE_FRANCAIS) + " : " + e.getMessage());
             return REDIRECT + CheminConstante.LISTE;
         }
 
@@ -132,8 +149,8 @@ public class ListeController {
                                         @RequestParam(value = "listeFavoris", required = false) String idListeFavoris) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
         if (email == null) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
-            return REDIRECT + CheminConstante.CONNEXION;
+            Utils.setSessionErrorMessage(session, Utils.getMessage(CONNEXION_KEY, CODE_FRANCAIS));
+            return REDIRECT + CONNEXION;
         }
         Utils.setupModel(session, model);
         ListeDto listeDto;
@@ -143,7 +160,7 @@ public class ListeController {
             session.setAttribute(ConstantesSession.LISTE, listeDto);
         } catch (Exception e) {
             LOGGER.error("", e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, CODE_FRANCAIS) + " : " + e.getMessage());
             return REDIRECT + CheminConstante.LISTE;
         }
 
@@ -165,15 +182,15 @@ public class ListeController {
                                @RequestParam(value = "idListe", required = true) String idListe) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
         if (email == null) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
-            return REDIRECT + CheminConstante.CONNEXION;
+            Utils.setSessionErrorMessage(session, Utils.getMessage(CONNEXION_KEY, CODE_FRANCAIS));
+            return REDIRECT + CONNEXION;
         }
         Utils.setupModel(session, model);
         try {
             listeServiceInterface.ajouterObjetDansUneListe(titre, url, description, idListe, email, Integer.parseInt(priorite));
         } catch (Exception e) {
             LOGGER.error("", e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, CODE_FRANCAIS) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
@@ -184,8 +201,8 @@ public class ListeController {
                                @RequestParam(value = "idObjet", required = true) String idObjet) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
         if (email == null) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
-            return REDIRECT + CheminConstante.CONNEXION;
+            Utils.setSessionErrorMessage(session, Utils.getMessage(CONNEXION_KEY, CODE_FRANCAIS));
+            return REDIRECT + CONNEXION;
         }
         String pseudo = (String) session.getAttribute(ConstantesSession.PSEUDO);
         Utils.setupModel(session, model);
@@ -193,7 +210,7 @@ public class ListeController {
             listeServiceInterface.prendreUnObjet(idListe, idObjet, email, pseudo);
         } catch (Exception e) {
             LOGGER.error("", e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, CODE_FRANCAIS) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
@@ -203,15 +220,15 @@ public class ListeController {
                                        @RequestParam(value = "idObjet", required = true) String idObjet) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
         if (email == null) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
-            return REDIRECT + CheminConstante.CONNEXION;
+            Utils.setSessionErrorMessage(session, Utils.getMessage(CONNEXION_KEY, CODE_FRANCAIS));
+            return REDIRECT + CONNEXION;
         }
         Utils.setupModel(session, model);
         try {
             listeServiceInterface.nePlusPrendreUnObjet(idObjet);
         } catch (Exception e) {
             LOGGER.error("", e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, CODE_FRANCAIS) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
@@ -221,14 +238,14 @@ public class ListeController {
                                  @RequestParam(value = "idListeFavoris", required = true) String idListe) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
         if (email == null) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
-            return REDIRECT + CheminConstante.CONNEXION;
+            Utils.setSessionErrorMessage(session, Utils.getMessage(CONNEXION_KEY, CODE_FRANCAIS));
+            return REDIRECT + CONNEXION;
         }
         try {
             listeServiceInterface.ajouterFavori(Long.valueOf(idListe), email);
         } catch (Exception e) {
             LOGGER.error("", e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, CODE_FRANCAIS) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
@@ -238,14 +255,14 @@ public class ListeController {
                                   @RequestParam(value = "idListeFavoris", required = true) String idListe) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
         if (email == null) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
-            return REDIRECT + CheminConstante.CONNEXION;
+            Utils.setSessionErrorMessage(session, Utils.getMessage(CONNEXION_KEY, CODE_FRANCAIS));
+            return REDIRECT + CONNEXION;
         }
         try {
             listeServiceInterface.supprimerFavori(Long.valueOf(idListe), email);
         } catch (Exception e) {
             LOGGER.error("", e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, CODE_FRANCAIS) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
@@ -256,15 +273,15 @@ public class ListeController {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
 
         if (email == null) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
-            return REDIRECT + CheminConstante.CONNEXION;
+            Utils.setSessionErrorMessage(session, Utils.getMessage(CONNEXION_KEY, CODE_FRANCAIS));
+            return REDIRECT + CONNEXION;
         }
 
         try {
             listeServiceInterface.supprimerObjet(Long.valueOf(idObjet), email);
         } catch (Exception e) {
             LOGGER.error("", e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, CODE_FRANCAIS) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
@@ -279,15 +296,15 @@ public class ListeController {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
 
         if (email == null) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, Constantes.CODE_FRANCAIS));
-            return REDIRECT + CheminConstante.CONNEXION;
+            Utils.setSessionErrorMessage(session, Utils.getMessage(CONNEXION_KEY, CODE_FRANCAIS));
+            return REDIRECT + CONNEXION;
         }
 
         try {
             listeServiceInterface.modifierObjet(Long.valueOf(idObjet), titreUpdate, descriptionUpdate, urlUpdate, Integer.parseInt(prioriteUpdate));
         } catch (Exception e) {
             LOGGER.error("", e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
+            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, CODE_FRANCAIS) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }

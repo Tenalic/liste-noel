@@ -12,9 +12,8 @@ public class Constantes {
 
     public static final int CODE_ANGLAIS = 2;
 
-    // messages connexion
+    // messages erreurs
     public static final String CONNEXION_KEY = "connexion";
-    public static final String SHARED_LISTE = "sharedListe";
     public static final String CONNEXION_FR = "Vous devez vous connecter";
     public static final String CONNEXION_EN = "You must log in";
     public static final String MESSAGE_DEFAUT_FR = "Message inconnu";
@@ -31,8 +30,8 @@ public class Constantes {
     public static final String NEW_MDP_NOT_EQUALS_FR = "Les nouveaux mots de passe ne correspondent pas";
     public static final String NEW_MDP_NOT_EQUALS_EN = "New passwords do not match";
     public static final String CONNEXION_FAIL_KEY = "connexionFail";
-    public static final String CONNEXION_FAIL_FR = "Cossy ou mot de passe incorrect";
-    public static final String CONNEXION_FAIL_EN = "Incorrect cossy or password";
+    public static final String CONNEXION_FAIL_FR = "Email ou mot de passe incorrect";
+    public static final String CONNEXION_FAIL_EN = "Incorrect email or password";
     public static final String ERREUR_GENERIQUE_KAY = "erreurGenerique";
     public static final String ERREUR_GENERIQUE_FR = "Une erreur est survenue";
     public static final String ERREUR_GENERIQUE_EN = "An error has occurred";
