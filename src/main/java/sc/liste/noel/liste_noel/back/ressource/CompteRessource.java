@@ -1,6 +1,7 @@
 package sc.liste.noel.liste_noel.back.ressource;
 
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -10,11 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sc.liste.noel.liste_noel.front.constante.Constantes;
 import sc.liste.noel.liste_noel.back.dto.CompteResponse;
 import sc.liste.noel.liste_noel.back.service.CompteServiceInterface;
 import sc.liste.noel.liste_noel.back.service.SecretServiceInterface;
 import sc.liste.noel.liste_noel.common.service.MessageService;
+import sc.liste.noel.liste_noel.front.constante.Constantes;
 
 import java.util.Locale;
 
@@ -50,18 +51,13 @@ public class CompteRessource {
             @RequestParam(value = "password") @Size(min = 8) String password,
             @RequestHeader(value = "secret") String secret,
             @RequestParam(value = "pseudo") String pseudo,
-            @RequestParam(value = "cguAccepted") boolean cguAccepted,
+            @RequestParam(value = "cguAccepted") @AssertTrue(message = CGU_NON_ACCEPTE_KEY) boolean cguAccepted,
             @RequestHeader(value = "Accept-Language", required = false, defaultValue = "fr") Locale locale) {
 
         try {
             // Vérification du secret
             if (!secretService.verifierSecret(secret)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new CompteResponse(email, messageService.getMessage(CGU_NON_ACCEPTE_KEY, locale), Constantes.RETOUR_API_KO));
-            }
-
-            // Vérification des CGU
-            if (!cguAccepted) {
-                return ResponseEntity.badRequest().body(new CompteResponse(email, messageService.getMessage(CGU_NON_ACCEPTE_KEY, locale), Constantes.RETOUR_API_KO));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new CompteResponse(email, messageService.getMessage(API_SECRET_INVALID_KEY, locale), Constantes.RETOUR_API_KO));
             }
 
             // Vérification de l'existence du compte
@@ -157,16 +153,16 @@ public class CompteRessource {
     }
 
     @GetMapping("/activate")
-    public String activateAccount(
+    public ResponseEntity<String> activateAccount(
             @RequestParam @NotBlank String email,
             @RequestParam @NotBlank String key,
             @RequestHeader(value = "Accept-Language", required = false, defaultValue = "fr") Locale locale) {
 
         boolean activated = compteService.activateUser(email, key);
         if (activated) {
-            return messageService.getMessage(API_COMPTE_ACTIVATION_SUCCES_KEY, locale);
+            return ResponseEntity.ok(messageService.getMessage(API_COMPTE_ACTIVATION_SUCCES_KEY, locale));
         } else {
-            return messageService.getMessage(API_COMPTE_ACTIVATION_ECHEC_KEY, locale);
+            return ResponseEntity.badRequest().body(messageService.getMessage(API_COMPTE_ACTIVATION_ECHEC_KEY, locale));
         }
     }
 

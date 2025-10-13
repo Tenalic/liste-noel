@@ -1,4 +1,4 @@
-package sc.liste.noel.liste_noel.front.interceptor;
+package sc.liste.noel.liste_noel.front.intercepteur;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
