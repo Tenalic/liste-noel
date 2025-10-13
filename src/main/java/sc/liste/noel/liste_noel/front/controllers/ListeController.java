@@ -27,8 +27,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 import static sc.liste.noel.liste_noel.front.constante.CheminConstante.*;
-import static sc.liste.noel.liste_noel.front.constante.Constantes.CODE_FRANCAIS;
-import static sc.liste.noel.liste_noel.front.constante.Constantes.CONNEXION_KEY;
+import static sc.liste.noel.liste_noel.front.constante.Constantes.*;
 import static sc.liste.noel.liste_noel.front.constante.ConstantesSession.ERREUR;
 
 
@@ -51,14 +50,14 @@ public class ListeController {
         model.addAttribute(ConstantesSession.LISTES, listDeListeDto);
         List<ListeDto> listDeListeDtoFavoris = listeServiceInterface.getListeFavorisOfEmail(email);
         model.addAttribute(ConstantesSession.LISTES_FAVORIS, listDeListeDtoFavoris);
-        Utils.setupModel(session, model);
 
         return NomPageConstante.LISTE;
     }
 
 
     @GetMapping("/partage")
-    public String partageGet(Model model, HttpSession session, @RequestParam(value = "id", required = true) String idListe) {
+    public String partageGet(HttpSession session,
+                             @RequestParam(value = "id") String idListe) {
 
         session.setAttribute(SHARED_LISTE, Long.valueOf(idListe));
 
@@ -69,8 +68,7 @@ public class ListeController {
     public String creerListePost(HttpSession session
             , RedirectAttributes redirectAttributes
             , HttpServletRequest request
-            , @RequestParam(value = "nomListe"
-                    , required = true) String nomListe) {
+            , @RequestParam(value = "nomListe") String nomListe) {
 
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
         Locale locale = request.getLocale();
@@ -84,15 +82,19 @@ public class ListeController {
             listeServiceInterface.creerListe(email, nomListe);
         } catch (Exception e) {
             LOGGER.error("", e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, CODE_FRANCAIS) + " : " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale));
         }
         return REDIRECT + CheminConstante.LISTE;
     }
 
     @GetMapping("/consulter-liste")
-    public String consulterListeGet(Model model, HttpSession session, @RequestParam(value = "triPriorite", required = false, defaultValue = "asc") String triPriorite) {
+    public String consulterListeGet(HttpServletRequest request
+            , RedirectAttributes redirectAttributes
+            , Model model
+            , HttpSession session
+            , @RequestParam(value = "triPriorite", required = false, defaultValue = "asc") String triPriorite) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
-
+        Locale locale = request.getLocale();
         Long idShared = (Long) session.getAttribute(SHARED_LISTE);
         if (idShared != null) {
             if (email != null) {
@@ -124,11 +126,9 @@ public class ListeController {
             model.addAttribute(ConstantesSession.EMAIL, email);
         } catch (Exception e) {
             LOGGER.error("", e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, CODE_FRANCAIS) + " : " + e.getMessage());
-            return REDIRECT + CheminConstante.LISTE;
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale));
+            return REDIRECT + LISTE;
         }
-
-        Utils.setupModel(session, model);
 
         if (email != null && email.equals(Optional.of(listeDto).map(ListeDto::getProprietaire).orElse(null))) {
             return NomPageConstante.CONSULTER_LISTE_PROPRIETAIRE;
@@ -144,15 +144,17 @@ public class ListeController {
     }
 
     @PostMapping("/selectionner-liste")
-    public String selectionnerListePost(Model model, HttpSession session,
+    public String selectionnerListePost(HttpSession session,
                                         @RequestParam(value = "idListe", required = false) String idListe,
-                                        @RequestParam(value = "listeFavoris", required = false) String idListeFavoris) {
+                                        @RequestParam(value = "listeFavoris", required = false) String idListeFavoris
+            , RedirectAttributes redirectAttributes
+            , HttpServletRequest request) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
+        Locale locale = request.getLocale();
         if (email == null) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(CONNEXION_KEY, CODE_FRANCAIS));
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale));
             return REDIRECT + CONNEXION;
         }
-        Utils.setupModel(session, model);
         ListeDto listeDto;
         try {
             String id = idListe == null ? idListeFavoris : idListe;
@@ -160,120 +162,137 @@ public class ListeController {
             session.setAttribute(ConstantesSession.LISTE, listeDto);
         } catch (Exception e) {
             LOGGER.error("", e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, CODE_FRANCAIS) + " : " + e.getMessage());
-            return REDIRECT + CheminConstante.LISTE;
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale));
+            return REDIRECT + LISTE;
         }
 
         if (listeDto == null) {
-            return REDIRECT + CheminConstante.LISTE;
+            return REDIRECT + LISTE;
         }
 
         session.setAttribute(ConstantesSession.ID_LISTE, listeDto.getIdListe());
 
-        return REDIRECT + CheminConstante.CONSULTER_LISTE;
+        return REDIRECT + CONSULTER_LISTE;
     }
 
     @PostMapping("/ajouter-objet")
-    public String ajouterObjet(Model model, HttpSession session,
-                               @RequestParam(value = "titre", required = true) String titre,
+    public String ajouterObjet(HttpSession session,
+                               @RequestParam(value = "titre") String titre,
                                @RequestParam(value = "url", required = false) String url,
                                @RequestParam(value = "description", required = false) String description,
                                @RequestParam(value = "priorite", required = false) String priorite,
-                               @RequestParam(value = "idListe", required = true) String idListe) {
+                               @RequestParam(value = "idListe") String idListe,
+                               RedirectAttributes redirectAttributes,
+                               HttpServletRequest request) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
+        Locale locale = request.getLocale();
         if (email == null) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(CONNEXION_KEY, CODE_FRANCAIS));
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(CONNEXION_KEY, locale));
             return REDIRECT + CONNEXION;
         }
-        Utils.setupModel(session, model);
         try {
             listeServiceInterface.ajouterObjetDansUneListe(titre, url, description, idListe, email, Integer.parseInt(priorite));
         } catch (Exception e) {
             LOGGER.error("", e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, CODE_FRANCAIS) + " : " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
 
     @PostMapping("/prendre")
-    public String prendreObjet(Model model, HttpSession session,
-                               @RequestParam(value = "idListe", required = true) String idListe,
-                               @RequestParam(value = "idObjet", required = true) String idObjet) {
+    public String prendreObjet(HttpSession session,
+                               @RequestParam(value = "idListe") String idListe,
+                               @RequestParam(value = "idObjet") String idObjet,
+                               RedirectAttributes redirectAttributes,
+                               HttpServletRequest request) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
+        Locale locale = request.getLocale();
         if (email == null) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(CONNEXION_KEY, CODE_FRANCAIS));
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(CONNEXION_KEY, locale));
             return REDIRECT + CONNEXION;
         }
         String pseudo = (String) session.getAttribute(ConstantesSession.PSEUDO);
-        Utils.setupModel(session, model);
         try {
             listeServiceInterface.prendreUnObjet(idListe, idObjet, email, pseudo);
         } catch (Exception e) {
             LOGGER.error("", e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, CODE_FRANCAIS) + " : " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
 
     @PostMapping("/ne-plus-prendre")
-    public String nePlusPrendreUnObjet(Model model, HttpSession session,
-                                       @RequestParam(value = "idObjet", required = true) String idObjet) {
+    public String nePlusPrendreUnObjet(HttpSession session
+            , RedirectAttributes redirectAttributes
+            , HttpServletRequest request
+            , @RequestParam(value = "idObjet") String idObjet) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
+        Locale locale = request.getLocale();
         if (email == null) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(CONNEXION_KEY, CODE_FRANCAIS));
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(CONNEXION_KEY, locale));
             return REDIRECT + CONNEXION;
         }
-        Utils.setupModel(session, model);
         try {
             listeServiceInterface.nePlusPrendreUnObjet(idObjet);
         } catch (Exception e) {
             LOGGER.error("", e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, CODE_FRANCAIS) + " : " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
 
     @PostMapping("/ajouter-favori")
-    public String ajouterFavoris(Model model, HttpSession session,
-                                 @RequestParam(value = "idListeFavoris", required = true) String idListe) {
+    public String ajouterFavoris(HttpSession session
+            , @RequestParam(value = "idListeFavoris") String idListe
+            , RedirectAttributes redirectAttributes
+            , HttpServletRequest request) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
+        Locale locale = request.getLocale();
         if (email == null) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(CONNEXION_KEY, CODE_FRANCAIS));
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(CONNEXION_KEY, locale));
             return REDIRECT + CONNEXION;
         }
         try {
             listeServiceInterface.ajouterFavori(Long.valueOf(idListe), email);
         } catch (Exception e) {
             LOGGER.error("", e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, CODE_FRANCAIS) + " : " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
 
     @PostMapping("/supprimer-favori")
-    public String supprimerFavori(Model model, HttpSession session,
-                                  @RequestParam(value = "idListeFavoris", required = true) String idListe) {
+    public String supprimerFavori(HttpSession session,
+                                  @RequestParam(value = "idListeFavoris", required = true) String idListe,
+                                  RedirectAttributes redirectAttributes,
+                                  HttpServletRequest request) {
+
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
+        Locale locale = request.getLocale();
+
         if (email == null) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(CONNEXION_KEY, CODE_FRANCAIS));
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(CONNEXION_KEY, locale));
             return REDIRECT + CONNEXION;
         }
         try {
             listeServiceInterface.supprimerFavori(Long.valueOf(idListe), email);
         } catch (Exception e) {
             LOGGER.error("", e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, CODE_FRANCAIS) + " : " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
 
     @PostMapping("/supprimer-objet")
-    public String supprimerObjet(Model model, HttpSession session,
-                                 @RequestParam(value = "idObjet", required = true) String idObjet) {
+    public String supprimerObjet(HttpSession session
+            , @RequestParam(value = "idObjet") String idObjet
+            , RedirectAttributes redirectAttributes
+            , HttpServletRequest request) {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
+        Locale locale = request.getLocale();
 
         if (email == null) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(CONNEXION_KEY, CODE_FRANCAIS));
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(CONNEXION_KEY, locale));
             return REDIRECT + CONNEXION;
         }
 
@@ -281,22 +300,26 @@ public class ListeController {
             listeServiceInterface.supprimerObjet(Long.valueOf(idObjet), email);
         } catch (Exception e) {
             LOGGER.error("", e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, CODE_FRANCAIS) + " : " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
 
     @PostMapping("/modifier-objet")
-    public String modifierObjet(Model model, HttpSession session,
-                                @RequestParam(value = "idObjet", required = true) String idObjet,
-                                @RequestParam(value = "titreUpdate", required = true) String titreUpdate,
+    public String modifierObjet(HttpSession session,
+                                @RequestParam(value = "idObjet") String idObjet,
+                                @RequestParam(value = "titreUpdate") String titreUpdate,
                                 @RequestParam(value = "descriptionUpdate", required = false) String descriptionUpdate,
                                 @RequestParam(value = "prioriteUpdate", required = false) String prioriteUpdate,
-                                @RequestParam(value = "urlUpdate", required = false) String urlUpdate) {
+                                @RequestParam(value = "urlUpdate", required = false) String urlUpdate,
+                                RedirectAttributes redirectAttributes,
+                                HttpServletRequest request) {
+
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
+        Locale locale = request.getLocale();
 
         if (email == null) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(CONNEXION_KEY, CODE_FRANCAIS));
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(CONNEXION_KEY, locale));
             return REDIRECT + CONNEXION;
         }
 
@@ -304,7 +327,7 @@ public class ListeController {
             listeServiceInterface.modifierObjet(Long.valueOf(idObjet), titreUpdate, descriptionUpdate, urlUpdate, Integer.parseInt(prioriteUpdate));
         } catch (Exception e) {
             LOGGER.error("", e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.ERREUR_GENERIQUE_KAY, CODE_FRANCAIS) + " : " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }

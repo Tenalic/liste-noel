@@ -141,19 +141,16 @@ public class InscriptionController {
 
     @GetMapping("/cgu")
     public String cguGet(HttpSession session, Model model) {
-        Utils.setupModel(session, model);
         return CGU;
     }
 
     @GetMapping("/politique-confidentialite")
     public String politiqueConfidentialiteGet(HttpSession session, Model model) {
-        Utils.setupModel(session, model);
         return POLITIQUE_CONFIDENTIALITE;
     }
 
     @GetMapping("/politique-securite")
     public String politiqueSecuriteGet(HttpSession session, Model model) {
-        Utils.setupModel(session, model);
         return POLITIQUE_SECURITE;
     }
 }
