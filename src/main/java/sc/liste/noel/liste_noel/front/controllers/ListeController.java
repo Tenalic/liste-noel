@@ -11,15 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import sc.liste.noel.liste_noel.front.Utile.Utils;
+import sc.liste.noel.liste_noel.common.service.MessageService;
 import sc.liste.noel.liste_noel.front.constante.CheminConstante;
-import sc.liste.noel.liste_noel.front.constante.Constantes;
 import sc.liste.noel.liste_noel.front.constante.ConstantesSession;
 import sc.liste.noel.liste_noel.front.constante.NomPageConstante;
 import sc.liste.noel.liste_noel.front.dto.ListeDto;
 import sc.liste.noel.liste_noel.front.dto.ObjetDto;
 import sc.liste.noel.liste_noel.front.service.ListeServiceInterface;
-import sc.liste.noel.liste_noel.common.service.MessageService;
 
 import java.util.Comparator;
 import java.util.List;
@@ -27,7 +25,8 @@ import java.util.Locale;
 import java.util.Optional;
 
 import static sc.liste.noel.liste_noel.front.constante.CheminConstante.*;
-import static sc.liste.noel.liste_noel.front.constante.Constantes.*;
+import static sc.liste.noel.liste_noel.front.constante.Constantes.CONNEXION_KEY;
+import static sc.liste.noel.liste_noel.front.constante.Constantes.ERREUR_GENERIQUE_KAY;
 import static sc.liste.noel.liste_noel.front.constante.ConstantesSession.ERREUR;
 
 
