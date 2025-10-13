@@ -100,6 +100,7 @@ public class ConnexionController {
             LOGGER.warn(e);
         }
         session.setAttribute(EMAIL, null);
+        session.setAttribute(CONNECTED, false);
         session.removeAttribute(ConstantesSession.ID_LISTE);
         return REDIRECT + CONNEXION;
     }
