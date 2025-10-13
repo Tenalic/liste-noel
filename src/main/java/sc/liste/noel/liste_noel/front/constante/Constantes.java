@@ -12,7 +12,7 @@ public class Constantes {
     public static final String EMAIL_NON_ACCEPTE_KEY = "emailMalForme";
     public static final String NEW_MDP_NOT_EQUALS_KEY = "newMdpNotEquals";
     public static final String CONNEXION_FAIL_KEY = "connexionFail";
-    public static final String ERREUR_GENERIQUE_KAY = "erreurGenerique";
+    public static final String ERREUR_GENERIQUE_KEY = "erreurGenerique";
 
     public static final String COMPTE_EXISTE_KEY = "compteExiste";
     public static final String PSEUDO_EXISTE_KEY = "pseudoExiste";

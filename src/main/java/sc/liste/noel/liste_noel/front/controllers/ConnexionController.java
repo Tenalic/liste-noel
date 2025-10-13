@@ -14,7 +14,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sc.liste.noel.liste_noel.back.service.CompteServiceInterface;
 import sc.liste.noel.liste_noel.common.service.MessageService;
 import sc.liste.noel.liste_noel.front.Utile.Utils;
-import sc.liste.noel.liste_noel.front.constante.ConstantesSession;
 import sc.liste.noel.liste_noel.front.dto.CompteDto;
 import sc.liste.noel.liste_noel.front.service.impl.MailService;
 
@@ -61,7 +60,15 @@ public class ConnexionController {
             , HttpSession session
             , RedirectAttributes redirectAttributes
             , HttpServletRequest request) {
+
         Locale locale = request.getLocale();
+
+        // Validation de l'email
+        if (Utils.isInvalidEmail(email)) {
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(EMAIL_NON_ACCEPTE_KEY, locale));
+            return REDIRECT + CONNEXION;
+        }
+
         try {
             CompteDto compteDto = compteService.connexion(email, password);
             if (compteDto != null) {
@@ -84,7 +91,7 @@ public class ConnexionController {
             }
         } catch (Exception e) {
             LOGGER.log(Level.ERROR, e);
-            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale) + " : " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KEY, locale) + " : " + e.getMessage());
         }
         return REDIRECT + CONNEXION;
     }
@@ -97,11 +104,10 @@ public class ConnexionController {
                 compteService.deconexion(email);
             }
         } catch (Exception e) {
-            LOGGER.warn(e);
+            LOGGER.warn("Erreur lors de la déconnexion", e);
         }
-        session.setAttribute(EMAIL, null);
-        session.setAttribute(CONNECTED, false);
-        session.removeAttribute(ConstantesSession.ID_LISTE);
+        // Invalidation complète de la session
+        session.invalidate();
         return REDIRECT + CONNEXION;
     }
 
@@ -127,7 +133,7 @@ public class ConnexionController {
             redirectAttributes.addFlashAttribute(INFO, messageService.getMessage(MOT_DE_PASSE_OUBLIE_P1_KEY, locale) + email + messageService.getMessage(MOT_DE_PASSE_OUBLIE_P2_KEY, locale));
         } catch (Exception e) {
             LOGGER.log(Level.ERROR, e);
-            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale) + " : " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KEY, locale) + " : " + e.getMessage());
         }
         return REDIRECT + CONNEXION;
     }

@@ -26,7 +26,7 @@ import java.util.Optional;
 
 import static sc.liste.noel.liste_noel.front.constante.CheminConstante.*;
 import static sc.liste.noel.liste_noel.front.constante.Constantes.CONNEXION_KEY;
-import static sc.liste.noel.liste_noel.front.constante.Constantes.ERREUR_GENERIQUE_KAY;
+import static sc.liste.noel.liste_noel.front.constante.Constantes.ERREUR_GENERIQUE_KEY;
 import static sc.liste.noel.liste_noel.front.constante.ConstantesSession.ERREUR;
 
 
@@ -81,7 +81,7 @@ public class ListeController {
             listeServiceInterface.creerListe(email, nomListe);
         } catch (Exception e) {
             LOGGER.error("", e);
-            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale));
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KEY, locale));
         }
         return REDIRECT + CheminConstante.LISTE;
     }
@@ -125,7 +125,7 @@ public class ListeController {
             model.addAttribute(ConstantesSession.EMAIL, email);
         } catch (Exception e) {
             LOGGER.error("", e);
-            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale));
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KEY, locale));
             return REDIRECT + LISTE;
         }
 
@@ -151,7 +151,7 @@ public class ListeController {
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
         Locale locale = request.getLocale();
         if (email == null) {
-            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale));
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KEY, locale));
             return REDIRECT + CONNEXION;
         }
         ListeDto listeDto;
@@ -161,7 +161,7 @@ public class ListeController {
             session.setAttribute(ConstantesSession.LISTE, listeDto);
         } catch (Exception e) {
             LOGGER.error("", e);
-            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale));
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KEY, locale));
             return REDIRECT + LISTE;
         }
 
@@ -193,7 +193,7 @@ public class ListeController {
             listeServiceInterface.ajouterObjetDansUneListe(titre, url, description, idListe, email, Integer.parseInt(priorite));
         } catch (Exception e) {
             LOGGER.error("", e);
-            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale) + " : " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KEY, locale) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
@@ -215,7 +215,7 @@ public class ListeController {
             listeServiceInterface.prendreUnObjet(idListe, idObjet, email, pseudo);
         } catch (Exception e) {
             LOGGER.error("", e);
-            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale) + " : " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KEY, locale) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
@@ -235,7 +235,7 @@ public class ListeController {
             listeServiceInterface.nePlusPrendreUnObjet(idObjet);
         } catch (Exception e) {
             LOGGER.error("", e);
-            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale) + " : " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KEY, locale) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
@@ -255,7 +255,7 @@ public class ListeController {
             listeServiceInterface.ajouterFavori(Long.valueOf(idListe), email);
         } catch (Exception e) {
             LOGGER.error("", e);
-            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale) + " : " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KEY, locale) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
@@ -277,7 +277,7 @@ public class ListeController {
             listeServiceInterface.supprimerFavori(Long.valueOf(idListe), email);
         } catch (Exception e) {
             LOGGER.error("", e);
-            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale) + " : " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KEY, locale) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
@@ -299,7 +299,7 @@ public class ListeController {
             listeServiceInterface.supprimerObjet(Long.valueOf(idObjet), email);
         } catch (Exception e) {
             LOGGER.error("", e);
-            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale) + " : " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KEY, locale) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
@@ -326,7 +326,7 @@ public class ListeController {
             listeServiceInterface.modifierObjet(Long.valueOf(idObjet), titreUpdate, descriptionUpdate, urlUpdate, Integer.parseInt(prioriteUpdate));
         } catch (Exception e) {
             LOGGER.error("", e);
-            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale) + " : " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KEY, locale) + " : " + e.getMessage());
         }
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
