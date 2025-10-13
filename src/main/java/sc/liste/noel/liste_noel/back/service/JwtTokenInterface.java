@@ -1,4 +1,4 @@
-package sc.liste.noel.liste_noel.front.service;
+package sc.liste.noel.liste_noel.back.service;
 
 public interface JwtTokenInterface {
 

@@ -1,11 +1,11 @@
-package sc.liste.noel.liste_noel.front.service.impl;
+package sc.liste.noel.liste_noel.back.service.impl;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import sc.liste.noel.liste_noel.front.service.JwtTokenInterface;
+import sc.liste.noel.liste_noel.back.service.JwtTokenInterface;
 
 import java.util.Base64;
 import java.util.Date;
