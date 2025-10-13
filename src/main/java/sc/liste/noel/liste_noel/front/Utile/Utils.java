@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 public class Utils {
 
-    private static Pattern emailPattern = Pattern.compile("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");
+    private static final Pattern emailPattern = Pattern.compile("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");
 
     public static final String ERROR_CODE = "ERRONEOUS_SPECIAL_CHARS";
 
@@ -56,9 +56,8 @@ public class Utils {
         CharacterRule splCharRule = new CharacterRule(specialChars);
         splCharRule.setNumberOfCharacters(2);
 
-        String password = gen.generatePassword(10, splCharRule, lowerCaseRule,
+        return gen.generatePassword(10, splCharRule, lowerCaseRule,
                 upperCaseRule, digitRule);
-        return password;
     }
 
 }
