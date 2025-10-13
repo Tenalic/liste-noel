@@ -262,7 +262,7 @@ public class ListeController {
 
     @PostMapping("/supprimer-favori")
     public String supprimerFavori(HttpSession session,
-                                  @RequestParam(value = "idListeFavoris", required = true) String idListe,
+                                  @RequestParam(value = "idListeFavoris") String idListe,
                                   RedirectAttributes redirectAttributes,
                                   HttpServletRequest request) {
 
