@@ -15,7 +15,7 @@ import sc.liste.noel.liste_noel.front.Utile.Utils;
 import sc.liste.noel.liste_noel.front.constante.ConstantesSession;
 import sc.liste.noel.liste_noel.front.dto.CompteDto;
 import sc.liste.noel.liste_noel.back.service.CompteServiceInterface;
-import sc.liste.noel.liste_noel.front.service.MessageService;
+import sc.liste.noel.liste_noel.common.service.MessageService;
 import sc.liste.noel.liste_noel.front.service.impl.MailService;
 
 import java.util.Locale;

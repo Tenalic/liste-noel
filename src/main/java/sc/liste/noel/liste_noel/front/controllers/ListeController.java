@@ -19,7 +19,7 @@ import sc.liste.noel.liste_noel.front.constante.NomPageConstante;
 import sc.liste.noel.liste_noel.front.dto.ListeDto;
 import sc.liste.noel.liste_noel.front.dto.ObjetDto;
 import sc.liste.noel.liste_noel.front.service.ListeServiceInterface;
-import sc.liste.noel.liste_noel.front.service.MessageService;
+import sc.liste.noel.liste_noel.common.service.MessageService;
 
 import java.util.Comparator;
 import java.util.List;

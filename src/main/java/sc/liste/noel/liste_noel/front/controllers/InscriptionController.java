@@ -1,5 +1,6 @@
 package sc.liste.noel.liste_noel.front.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -7,17 +8,21 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sc.liste.noel.liste_noel.front.Utile.Utils;
-import sc.liste.noel.liste_noel.front.constante.CheminConstante;
 import sc.liste.noel.liste_noel.front.constante.Constantes;
 import sc.liste.noel.liste_noel.front.constante.ConstantesSession;
 import sc.liste.noel.liste_noel.back.dto.CompteResponse;
 import sc.liste.noel.liste_noel.back.ressource.CompteRessource;
 import sc.liste.noel.liste_noel.back.service.SecretServiceInterface;
+import sc.liste.noel.liste_noel.common.service.MessageService;
 
-import java.util.Optional;
-import static sc.liste.noel.liste_noel.front.constante.CheminConstante.REDIRECT;
-import static sc.liste.noel.liste_noel.front.constante.CheminConstante.CONSULTER_LISTE;
+import java.util.Locale;
+
+import static sc.liste.noel.liste_noel.front.constante.CheminConstante.*;
+import static sc.liste.noel.liste_noel.front.constante.Constantes.*;
+import static sc.liste.noel.liste_noel.front.constante.ConstantesSession.ERREUR;
+import static sc.liste.noel.liste_noel.front.constante.ConstantesSession.SUCCES;
 import static sc.liste.noel.liste_noel.front.constante.NomPageConstante.UPDATE_PASSWORD;
 import static sc.liste.noel.liste_noel.front.constante.NomPageConstante.CGU;
 import static sc.liste.noel.liste_noel.front.constante.NomPageConstante.POLITIQUE_CONFIDENTIALITE;
@@ -34,45 +39,49 @@ public class InscriptionController {
     @Autowired
     private SecretServiceInterface secretService;
 
+    @Autowired
+    private MessageService messageService;
+
     @GetMapping("/inscription")
-    public String inscriptionGet(Model model, HttpSession session) {
+    public String inscriptionGet(HttpSession session) {
         if (session.getAttribute(ConstantesSession.EMAIL) != null) {
             return REDIRECT + CONSULTER_LISTE;
         }
-        Utils.setupModel(session, model);
         return INSCRIPTION;
     }
 
     @PostMapping("/inscription")
-    public String inscriptionPost(@RequestParam(value = "email", required = true) String email,
-                                  @RequestParam(value = "password", required = true) String password,
-                                  @RequestParam(value = "confirmationNewPassword", required = true) String confirmationNewPassword,
+    public String inscriptionPost(@RequestParam(value = "email") String email,
+                                  @RequestParam(value = "password") String password,
+                                  @RequestParam(value = "confirmationNewPassword") String confirmationNewPassword,
                                   @RequestParam(value = "cgu", defaultValue = "false") boolean cgu,
-                                  @RequestParam(value = "pseudo", required = true) String pseudo,
-                                  Model model, HttpSession session) {
+                                  @RequestParam(value = "pseudo") String pseudo,
+                                  HttpSession session,
+                                  RedirectAttributes redirectAttributes,
+                                  HttpServletRequest request) {
 
-
+        Locale locale = request.getLocale();
         if (!cgu) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CGU_NON_ACCEPTE_KEY, Constantes.CODE_FRANCAIS));
-            return REDIRECT + CheminConstante.INSCRIPTION;
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(CGU_NON_ACCEPTE_KEY, locale));
+            return REDIRECT + INSCRIPTION;
         }
 
-        if(Utils.isInvalidEmail(email)) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.EMAIL_NON_ACCEPTE_KEY, Constantes.CODE_FRANCAIS));
-            return REDIRECT + CheminConstante.INSCRIPTION;
+        if (Utils.isInvalidEmail(email)) {
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(EMAIL_NON_ACCEPTE_KEY, locale));
+            return REDIRECT + INSCRIPTION;
         }
 
         if (!confirmationNewPassword.equals(password)) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.MDP_NOT_EQUALS_KEY, Constantes.CODE_FRANCAIS));
-            return REDIRECT + CheminConstante.INSCRIPTION;
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(MDP_NOT_EQUALS_KEY, locale));
+            return REDIRECT + INSCRIPTION;
         }
 
-        CompteResponse compteResponse = compteRessource.creerCompte(email, password, secretService.getMySecret(), Constantes.CODE_FRANCAIS, cgu, pseudo)
+        CompteResponse compteResponse = compteRessource.creerCompte(email, password, secretService.getMySecret(), pseudo, cgu, locale)
                 .getBody();
 
         if (compteResponse.getCodeRetour() != 0) {
-            Utils.setSessionErrorMessage(session, compteResponse.getMessageRetour());
-            return REDIRECT + CheminConstante.INSCRIPTION;
+            redirectAttributes.addFlashAttribute(ERREUR, compteResponse.getMessageRetour());
+            return REDIRECT + INSCRIPTION;
         }
 
         session.setAttribute(ConstantesSession.EMAIL, email);
@@ -81,51 +90,51 @@ public class InscriptionController {
     }
 
     @GetMapping("/modifier-password")
-    public String modifierPasswordGet(String password, Model model, HttpSession session) {
+    public String modifierPasswordGet(HttpSession session
+            , RedirectAttributes redirectAttributes
+            , HttpServletRequest request) {
 
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
-        int langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
-
+        Locale locale = request.getLocale();
 
         if (email == null) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, langue));
-            return REDIRECT + CheminConstante.CONNEXION;
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(CONNEXION_KEY, locale));
+            return REDIRECT + CONNEXION;
         }
-        Utils.setupModel(session, model);
 
         return UPDATE_PASSWORD;
     }
 
     @PostMapping("/modifier-password")
-    public String modifierPasswordPost(@RequestParam(value = "oldPassword", required = true) String oldPassword,
-                                       @RequestParam(value = "newPassword", required = true) String newPassword,
-                                       @RequestParam(value = "confirmationNewPassword", required = true) String confirmationNewPassword,
-                                       String password, Model model, HttpSession session) {
+    public String modifierPasswordPost(@RequestParam(value = "oldPassword") String oldPassword
+            , @RequestParam(value = "newPassword") String newPassword
+            , @RequestParam(value = "confirmationNewPassword") String confirmationNewPassword
+            , Model model
+            , HttpSession session
+            , RedirectAttributes redirectAttributes
+            , HttpServletRequest request) {
 
         String email = (String) session.getAttribute(ConstantesSession.EMAIL);
-        int langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
-
+        Locale locale = request.getLocale();
 
         if (email == null) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.CONNEXION_KEY, langue));
-            return REDIRECT + CheminConstante.CONNEXION;
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(CONNEXION_KEY, locale));
+            return REDIRECT + CONNEXION;
         }
 
         if (!confirmationNewPassword.equals(newPassword)) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.NEW_MDP_NOT_EQUALS_KEY, langue));
-            return REDIRECT + CheminConstante.MODIFIER_PASSWORD;
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(NEW_MDP_NOT_EQUALS_KEY, locale));
+            return REDIRECT + MODIFIER_PASSWORD;
         }
 
         CompteResponse compteResponse = compteRessource
-                .updatePassword(email, oldPassword, newPassword, secretService.getMySecret(), langue).getBody();
+                .updatePassword(email, oldPassword, newPassword, secretService.getMySecret(), locale).getBody();
 
         if (compteResponse.getCodeRetour() == Constantes.RETOUR_API_OK) {
-            model.addAttribute(ConstantesSession.SUCCES, compteResponse.getMessageRetour());
+            redirectAttributes.addFlashAttribute(SUCCES, compteResponse.getMessageRetour());
         } else {
-            model.addAttribute(ConstantesSession.ERREUR, compteResponse.getMessageRetour());
+            redirectAttributes.addFlashAttribute(ERREUR, compteResponse.getMessageRetour());
         }
-
-        Utils.setupModel(session, model);
 
         return UPDATE_PASSWORD;
     }

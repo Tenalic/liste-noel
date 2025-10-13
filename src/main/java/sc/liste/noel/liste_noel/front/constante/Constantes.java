@@ -77,6 +77,23 @@ public class Constantes {
     public static final String MOT_DE_PASSE_OUBLIE_P1_KEY = "motDePasseOublie_P1";
     public static final String MOT_DE_PASSE_OUBLIE_P2_KEY = "motDePasseOublie_P2";
 
+    // Messages de succès
+    public static final String API_COMPTE_CREATION_SUCCES_KEY = "api.compte.creation.succes";
+    public static final String API_COMPTE_SUPPRESSION_SUCCES_KEY = "api.compte.suppression.succes";
+    public static final String API_COMPTE_PASSWORD_UPDATE_SUCCES_KEY = "api.compte.password.update.success";
+
+    // Messages d'erreur (champs obligatoires)
+    public static final String API_COMPTE_EMAIL_OBLIGATOIRE_KEY = "api.compte.cossy.obligatoire";  // Déjà correct
+    public static final String API_COMPTE_OLD_PASSWORD_OBLIGATOIRE_KEY = "api.compte.oldPassword.obligatoire";  // Déjà correct
+    public static final String API_COMPTE_NEW_PASSWORD_TROP_COURT_KEY = "api.compte.newPassword.trop_court";  // Corrigé
+
+    // Messages d'erreur (logique métier)
+    public static final String API_COMPTE_PASSWORD_DIFFERENT_KEY = "api.compte.password.different";  // Corrigé
+    public static final String API_COMPTE_SUPPRESSION_ECHEC_KEY = "api.compte.suppression.echec";  // Déjà correct
+    public static final String API_COMPTE_ACTIVATION_SUCCES_KEY = "api.compte.activation.succes";  // Déjà correct
+    public static final String API_COMPTE_ACTIVATION_ECHEC_KEY = "api.compte.activation.echec";  // Déjà correct
+    public static final String API_SECRET_INVALID_KEY = "api.secret.invalid";  // Déjà utilisé dans ton code
+    public static final String API_ERROR_GENERIC_KEY = "api.error.generic";  // Déjà utilisé dans ton code
 
 
 }
