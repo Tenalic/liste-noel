@@ -74,6 +74,9 @@ public class Constantes {
     public static final String PASSWORD_DIFFERENT_KEY = "passwordDifferent";
     public static final String PASSWORD_DIFFERENT_FR = "Le mot de passe n'a pas etait mit a jour, l'ancien mot de passe est incorrect.";
     public static final String PASSWORD_DIFFERENT_EN = "The password was not updated, the old password is incorrect.";
+    public static final String MOT_DE_PASSE_OUBLIE_P1_KEY = "motDePasseOublie_P1";
+    public static final String MOT_DE_PASSE_OUBLIE_P2_KEY = "motDePasseOublie_P2";
+
 
 
 }

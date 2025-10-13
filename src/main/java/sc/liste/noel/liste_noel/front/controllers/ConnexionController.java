@@ -7,13 +7,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sc.liste.noel.liste_noel.front.Utile.Utils;
-import sc.liste.noel.liste_noel.front.constante.Constantes;
 import sc.liste.noel.liste_noel.front.constante.ConstantesSession;
 import sc.liste.noel.liste_noel.front.dto.CompteDto;
 import sc.liste.noel.liste_noel.back.service.CompteServiceInterface;
@@ -21,11 +19,11 @@ import sc.liste.noel.liste_noel.front.service.MessageService;
 import sc.liste.noel.liste_noel.front.service.impl.MailService;
 
 import java.util.Locale;
-import java.util.Optional;
 
 import static sc.liste.noel.liste_noel.front.constante.CheminConstante.*;
 import static sc.liste.noel.liste_noel.front.constante.Constantes.*;
 import static sc.liste.noel.liste_noel.front.constante.ConstantesSession.ERREUR;
+import static sc.liste.noel.liste_noel.front.constante.ConstantesSession.INFO;
 import static sc.liste.noel.liste_noel.front.constante.NomPageConstante.WELCOME;
 import static sc.liste.noel.liste_noel.front.constante.NomPageConstante.CONNEXION;
 import static sc.liste.noel.liste_noel.front.constante.NomPageConstante.CONTACT;
@@ -43,8 +41,7 @@ public class ConnexionController {
     private MessageService messageService;
 
     @GetMapping(value = {"", "/", "welcome", "ma-liste-de-cadeau"})
-    public String welcomeGet(Model model, HttpSession session) {
-        Utils.setupModel(session, model);
+    public String welcomeGet() {
         return WELCOME;
     }
 
@@ -60,12 +57,11 @@ public class ConnexionController {
     }
 
     @PostMapping("/connexion")
-    public String connexionPost(@RequestParam(value = "email", required = true) String email
-            , @RequestParam(value = "password", required = true) String password
+    public String connexionPost(@RequestParam(value = "email") String email
+            , @RequestParam(value = "password") String password
             , HttpSession session
             , RedirectAttributes redirectAttributes
             , HttpServletRequest request) {
-        int langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
         Locale locale = request.getLocale();
         try {
             CompteDto compteDto = compteService.connexion(email, password);
@@ -94,7 +90,7 @@ public class ConnexionController {
     }
 
     @GetMapping("/deconnexion")
-    public String deconnexionGet(Model model, HttpSession session) {
+    public String deconnexionGet(HttpSession session) {
         try {
             String email = (String) session.getAttribute(ConstantesSession.EMAIL);
             if (email != null) {
@@ -109,27 +105,28 @@ public class ConnexionController {
     }
 
     @GetMapping(value = {"contact"})
-    public String contactGet(Model model, HttpSession session) {
-        Utils.setupModel(session, model);
+    public String contactGet() {
         return CONTACT;
     }
 
     @PostMapping(value = {"mot-de-passe-oublie"})
-    public String motDePasseOubliePost(Model model, HttpSession session, @RequestParam(value = "email", required = true) String email) {
+    public String motDePasseOubliePost(HttpServletRequest request
+            , RedirectAttributes redirectAttributes
+            , @RequestParam(value = "email") String email) {
 
-        Integer langue = (Integer) Optional.ofNullable(session.getAttribute(ConstantesSession.LANGUE)).orElse(1);
+        Locale locale = request.getLocale();
 
         if (Utils.isInvalidEmail(email)) {
-            Utils.setSessionErrorMessage(session, Utils.getMessage(Constantes.EMAIL_NON_ACCEPTE_KEY, langue));
-            return REDIRECT + INSCRIPTION;
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(EMAIL_NON_ACCEPTE_KEY, locale));
+            return REDIRECT + CONNEXION;
         }
 
         try {
             compteService.genererMotDePasseEtEnvoyer(email);
-            Utils.setSessionInfoMessage(session, "Si un compte avec l'email " + email + " existe, vous devriez avoir reçu un nouveau mot de passe.");
+            redirectAttributes.addFlashAttribute(INFO, messageService.getMessage(MOT_DE_PASSE_OUBLIE_P1_KEY, locale) + email + messageService.getMessage(MOT_DE_PASSE_OUBLIE_P2_KEY, locale));
         } catch (Exception e) {
             LOGGER.log(Level.ERROR, e);
-            Utils.setSessionErrorMessage(session, Utils.getMessage(ERREUR_GENERIQUE_KAY, Constantes.CODE_FRANCAIS) + " : " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KAY, locale) + " : " + e.getMessage());
         }
         return REDIRECT + CONNEXION;
     }
