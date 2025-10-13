@@ -11,22 +11,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import sc.liste.noel.liste_noel.back.service.CompteServiceInterface;
+import sc.liste.noel.liste_noel.common.service.MessageService;
 import sc.liste.noel.liste_noel.front.Utile.Utils;
 import sc.liste.noel.liste_noel.front.constante.ConstantesSession;
 import sc.liste.noel.liste_noel.front.dto.CompteDto;
-import sc.liste.noel.liste_noel.back.service.CompteServiceInterface;
-import sc.liste.noel.liste_noel.common.service.MessageService;
 import sc.liste.noel.liste_noel.front.service.impl.MailService;
 
 import java.util.Locale;
 
 import static sc.liste.noel.liste_noel.front.constante.CheminConstante.*;
+import static sc.liste.noel.liste_noel.front.constante.CheminConstante.LISTE;
 import static sc.liste.noel.liste_noel.front.constante.Constantes.*;
-import static sc.liste.noel.liste_noel.front.constante.ConstantesSession.ERREUR;
-import static sc.liste.noel.liste_noel.front.constante.ConstantesSession.INFO;
-import static sc.liste.noel.liste_noel.front.constante.NomPageConstante.WELCOME;
+import static sc.liste.noel.liste_noel.front.constante.ConstantesSession.*;
+import static sc.liste.noel.liste_noel.front.constante.NomPageConstante.*;
 import static sc.liste.noel.liste_noel.front.constante.NomPageConstante.CONNEXION;
-import static sc.liste.noel.liste_noel.front.constante.NomPageConstante.CONTACT;
 
 @Controller
 public class ConnexionController {
@@ -49,7 +48,7 @@ public class ConnexionController {
     public String connexionGet(HttpSession session) {
 
         // Si utilisateur déjà connecté
-        if (session.getAttribute(ConstantesSession.EMAIL) != null) {
+        if (session.getAttribute(EMAIL) != null) {
             return REDIRECT + LISTE;
         }
 
@@ -67,8 +66,9 @@ public class ConnexionController {
             CompteDto compteDto = compteService.connexion(email, password);
             if (compteDto != null) {
                 session.setMaxInactiveInterval(14400);
-                session.setAttribute(ConstantesSession.EMAIL, email);
-                session.setAttribute(ConstantesSession.PSEUDO, compteDto.getPseudo());
+                session.setAttribute(EMAIL, email);
+                session.setAttribute(PSEUDO, compteDto.getPseudo());
+                session.setAttribute(CONNECTED, true);
 
                 Long idShared = (Long) session.getAttribute(SHARED_LISTE);
 
@@ -92,14 +92,14 @@ public class ConnexionController {
     @GetMapping("/deconnexion")
     public String deconnexionGet(HttpSession session) {
         try {
-            String email = (String) session.getAttribute(ConstantesSession.EMAIL);
+            String email = (String) session.getAttribute(EMAIL);
             if (email != null) {
                 compteService.deconexion(email);
             }
         } catch (Exception e) {
             LOGGER.warn(e);
         }
-        session.setAttribute(ConstantesSession.EMAIL, null);
+        session.setAttribute(EMAIL, null);
         session.removeAttribute(ConstantesSession.ID_LISTE);
         return REDIRECT + CONNEXION;
     }
