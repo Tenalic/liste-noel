@@ -1,7 +1,7 @@
-package sc.liste.noel.liste_noel.front.Utile.mapper;
+package sc.liste.noel.liste_noel.back;
 
 import sc.liste.noel.liste_noel.back.db.entity.ObjetEntity;
-import sc.liste.noel.liste_noel.front.dto.ObjetDto;
+import sc.liste.noel.liste_noel.common.dto.ObjetDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,20 +9,20 @@ import java.util.List;
 public class ObjetMapper {
 
 
-    public static List<ObjetDto> daosToDtos(List<ObjetEntity> objetEntityList) {
+    public static List<ObjetDto> entitiesToDtos(List<ObjetEntity> objetEntityList) {
         if(objetEntityList == null) {
             return null;
         }
         List<ObjetDto> objetDtoList = new ArrayList<>();
         for(ObjetEntity objetEntity : objetEntityList) {
-            ObjetDto objetDto = daoToDto(objetEntity);
+            ObjetDto objetDto = entityToDto(objetEntity);
             objetDtoList.add(objetDto);
         }
         objetDtoList.sort(((o1, o2) -> Math.toIntExact(o1.getIdObjet() - o2.getIdObjet()))); // trie part Id croissant
         return objetDtoList;
     }
 
-    private static ObjetDto daoToDto(ObjetEntity objetEntity) {
+    private static ObjetDto entityToDto(ObjetEntity objetEntity) {
         ObjetDto objetDto = new ObjetDto();
         objetDto.setDescription(objetEntity.getDescription());
         objetDto.setDetenteur(objetEntity.getDetenteur());
@@ -31,7 +31,6 @@ public class ObjetMapper {
         objetDto.setEstPrit(objetEntity.getEstPrit());
         objetDto.setTitre(objetEntity.getTitre());
         objetDto.setIdObjet(objetEntity.getIdObjet());
-        // FIXME : faire ça proprement
         objetDto.setValuePriorite(objetEntity.getPrioriteValue());
         objetDto.setPriorite(transcoPriorite(objetEntity.getPrioriteValue()));
         return objetDto;

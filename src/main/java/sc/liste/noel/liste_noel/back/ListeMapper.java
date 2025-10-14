@@ -1,14 +1,14 @@
-package sc.liste.noel.liste_noel.front.Utile.mapper;
+package sc.liste.noel.liste_noel.back;
 
 import sc.liste.noel.liste_noel.back.db.entity.ListeEntity;
-import sc.liste.noel.liste_noel.front.dto.ListeDto;
+import sc.liste.noel.liste_noel.common.dto.ListeDto;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListeMapper {
 
-    public static List<ListeDto> daosToDtos(List<ListeEntity> listeEntityList) {
+    public static List<ListeDto> entitiesToDtos(List<ListeEntity> listeEntityList) {
         if(listeEntityList == null) {
             return null;
         }
@@ -18,14 +18,14 @@ public class ListeMapper {
             listeDto.setNomListe(listeEntity.getNomListe());
             listeDto.setProprietaire(listeEntity.getProprietaire());
             listeDto.setIdListe(listeEntity.getIdListe());
-            listeDto.setListeObjet(ObjetMapper.daosToDtos(listeEntity.getObjetDaoList()));
+            listeDto.setListeObjet(ObjetMapper.entitiesToDtos(listeEntity.getObjetDaoList()));
             list.add(listeDto);
         }
         return list;
     }
 
 
-    public static ListeDto daoToDto(ListeEntity listeEntity) {
+    public static ListeDto entityToDto(ListeEntity listeEntity) {
         if(listeEntity == null) {
             return null;
         }
@@ -33,7 +33,7 @@ public class ListeMapper {
         listeDto.setNomListe(listeEntity.getNomListe());
         listeDto.setProprietaire(listeEntity.getProprietaire());
         listeDto.setIdListe(listeEntity.getIdListe());
-        listeDto.setListeObjet(ObjetMapper.daosToDtos(listeEntity.getObjetDaoList()));
+        listeDto.setListeObjet(ObjetMapper.entitiesToDtos(listeEntity.getObjetDaoList()));
         return listeDto;
     }
 

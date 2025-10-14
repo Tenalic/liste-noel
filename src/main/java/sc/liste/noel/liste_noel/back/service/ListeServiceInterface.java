@@ -1,6 +1,6 @@
-package sc.liste.noel.liste_noel.front.service;
+package sc.liste.noel.liste_noel.back.service;
 
-import sc.liste.noel.liste_noel.front.dto.ListeDto;
+import sc.liste.noel.liste_noel.common.dto.ListeDto;
 
 import java.util.List;
 

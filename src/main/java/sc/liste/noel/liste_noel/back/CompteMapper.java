@@ -1,11 +1,11 @@
-package sc.liste.noel.liste_noel.front.Utile.mapper;
+package sc.liste.noel.liste_noel.back;
 
 import sc.liste.noel.liste_noel.back.db.entity.CompteEntity;
-import sc.liste.noel.liste_noel.front.dto.CompteDto;
+import sc.liste.noel.liste_noel.common.dto.CompteDto;
 
 public class CompteMapper {
 
-    public static CompteDto DaoToDto(CompteEntity compteEntity) {
+    public static CompteDto EntityToDto(CompteEntity compteEntity) {
         if(compteEntity == null) {
             return null;
         }

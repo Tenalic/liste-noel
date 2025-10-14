@@ -6,17 +6,6 @@ public class Constantes {
 
     public static int RETOUR_API_KO = 1;
 
-    public static final String CONNEXION_KEY = "connexion";
-    public static final String MDP_NOT_EQUALS_KEY = "mdpNotEquals";
-    public static final String CGU_NON_ACCEPTE_KEY = "cguNonAccepte";
-    public static final String EMAIL_NON_ACCEPTE_KEY = "emailMalForme";
-    public static final String NEW_MDP_NOT_EQUALS_KEY = "newMdpNotEquals";
-    public static final String CONNEXION_FAIL_KEY = "connexionFail";
-    public static final String ERREUR_GENERIQUE_KEY = "erreurGenerique";
-
-    public static final String COMPTE_EXISTE_KEY = "compteExiste";
-    public static final String PSEUDO_EXISTE_KEY = "pseudoExiste";
-    public static final String COMPTE_ERROR_KEY = "compteError";
     public static final String MOT_DE_PASSE_OUBLIE_P1_KEY = "motDePasseOublie_P1";
     public static final String MOT_DE_PASSE_OUBLIE_P2_KEY = "motDePasseOublie_P2";
 
@@ -37,6 +26,17 @@ public class Constantes {
     public static final String API_COMPTE_ACTIVATION_ECHEC_KEY = "api.compte.activation.echec";
     public static final String API_SECRET_INVALID_KEY = "api.secret.invalid";
     public static final String API_ERROR_GENERIC_KEY = "api.error.generic";
+    public static final String COMPTE_EXISTE_KEY = "compteExiste";
+    public static final String PSEUDO_EXISTE_KEY = "pseudoExiste";
+    public static final String COMPTE_ERROR_KEY = "compteError";
+    public static final String CONNEXION_KEY = "connexion";
+    public static final String MDP_NOT_EQUALS_KEY = "mdpNotEquals";
+    public static final String CGU_NON_ACCEPTE_KEY = "cguNonAccepte";
+    public static final String EMAIL_NON_ACCEPTE_KEY = "emailMalForme";
+    public static final String NEW_MDP_NOT_EQUALS_KEY = "newMdpNotEquals";
+    public static final String CONNEXION_FAIL_KEY = "connexionFail";
+    public static final String ERREUR_GENERIQUE_KEY = "erreurGenerique";
+
 
 
 }

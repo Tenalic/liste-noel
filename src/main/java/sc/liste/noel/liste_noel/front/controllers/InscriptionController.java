@@ -12,7 +12,7 @@ import sc.liste.noel.liste_noel.back.dto.CompteResponse;
 import sc.liste.noel.liste_noel.back.ressource.CompteRessource;
 import sc.liste.noel.liste_noel.back.service.SecretServiceInterface;
 import sc.liste.noel.liste_noel.common.service.MessageService;
-import sc.liste.noel.liste_noel.front.Utile.Utils;
+import sc.liste.noel.liste_noel.common.utils.Utils;
 import sc.liste.noel.liste_noel.front.constante.Constantes;
 import sc.liste.noel.liste_noel.front.constante.ConstantesSession;
 

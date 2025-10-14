@@ -1,4 +1,4 @@
-package sc.liste.noel.liste_noel.front.Utile;
+package sc.liste.noel.liste_noel.common.utils;
 
 import org.passay.CharacterData;
 import org.passay.CharacterRule;

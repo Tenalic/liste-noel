@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sc.liste.noel.liste_noel.back.service.CompteServiceInterface;
 import sc.liste.noel.liste_noel.common.service.MessageService;
-import sc.liste.noel.liste_noel.front.Utile.Utils;
-import sc.liste.noel.liste_noel.front.dto.CompteDto;
-import sc.liste.noel.liste_noel.front.service.impl.MailService;
+import sc.liste.noel.liste_noel.common.utils.Utils;
+import sc.liste.noel.liste_noel.common.dto.CompteDto;
+import sc.liste.noel.liste_noel.back.service.impl.MailService;
 
 import java.util.Locale;
 

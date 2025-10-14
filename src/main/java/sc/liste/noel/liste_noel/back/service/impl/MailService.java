@@ -1,4 +1,4 @@
-package sc.liste.noel.liste_noel.front.service.impl;
+package sc.liste.noel.liste_noel.back.service.impl;
 
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;

@@ -15,9 +15,9 @@ import sc.liste.noel.liste_noel.common.service.MessageService;
 import sc.liste.noel.liste_noel.front.constante.CheminConstante;
 import sc.liste.noel.liste_noel.front.constante.ConstantesSession;
 import sc.liste.noel.liste_noel.front.constante.NomPageConstante;
-import sc.liste.noel.liste_noel.front.dto.ListeDto;
-import sc.liste.noel.liste_noel.front.dto.ObjetDto;
-import sc.liste.noel.liste_noel.front.service.ListeServiceInterface;
+import sc.liste.noel.liste_noel.common.dto.ListeDto;
+import sc.liste.noel.liste_noel.common.dto.ObjetDto;
+import sc.liste.noel.liste_noel.back.service.ListeServiceInterface;
 
 import java.util.Comparator;
 import java.util.List;

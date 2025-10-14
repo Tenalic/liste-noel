@@ -8,14 +8,13 @@ import sc.liste.noel.liste_noel.back.db.entity.CompteEntity;
 import sc.liste.noel.liste_noel.back.db.repo.CompteRepo;
 import sc.liste.noel.liste_noel.back.service.CompteServiceInterface;
 import sc.liste.noel.liste_noel.back.service.JwtTokenInterface;
-import sc.liste.noel.liste_noel.front.Utile.PasswordUtils;
-import sc.liste.noel.liste_noel.front.Utile.Utils;
-import sc.liste.noel.liste_noel.front.Utile.mapper.CompteMapper;
-import sc.liste.noel.liste_noel.front.dto.CompteDto;
-import sc.liste.noel.liste_noel.front.dto.TokenDto;
-import sc.liste.noel.liste_noel.front.exception.CompteNotFoundException;
-import sc.liste.noel.liste_noel.front.exception.TokenExpiredException;
-import sc.liste.noel.liste_noel.front.service.impl.MailService;
+import sc.liste.noel.liste_noel.back.utils.PasswordUtils;
+import sc.liste.noel.liste_noel.common.utils.Utils;
+import sc.liste.noel.liste_noel.back.CompteMapper;
+import sc.liste.noel.liste_noel.common.dto.CompteDto;
+import sc.liste.noel.liste_noel.common.dto.TokenDto;
+import sc.liste.noel.liste_noel.back.exception.CompteNotFoundException;
+import sc.liste.noel.liste_noel.back.exception.TokenExpiredException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -61,7 +60,7 @@ public class CompteServiceImpl implements CompteServiceInterface {
             compte.setNbConnexion(compte.getNbConnexion() + 1);
             compte.setDateDerniereConnexion(LocalDateTime.now());
             compteRepo.save(compte);
-            return CompteMapper.DaoToDto(compte);
+            return CompteMapper.EntityToDto(compte);
         } else {
             return null;
         }

@@ -1,9 +1,9 @@
 package sc.liste.noel.liste_noel.back.service;
 
-import sc.liste.noel.liste_noel.front.dto.CompteDto;
-import sc.liste.noel.liste_noel.front.dto.TokenDto;
-import sc.liste.noel.liste_noel.front.exception.CompteNotFoundException;
-import sc.liste.noel.liste_noel.front.exception.TokenExpiredException;
+import sc.liste.noel.liste_noel.common.dto.CompteDto;
+import sc.liste.noel.liste_noel.common.dto.TokenDto;
+import sc.liste.noel.liste_noel.back.exception.CompteNotFoundException;
+import sc.liste.noel.liste_noel.back.exception.TokenExpiredException;
 
 public interface CompteServiceInterface {
 

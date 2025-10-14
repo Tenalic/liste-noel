@@ -1,4 +1,4 @@
-package sc.liste.noel.liste_noel.front.exception;
+package sc.liste.noel.liste_noel.back.exception;
 
 public class CompteNotFoundException extends Exception {
 

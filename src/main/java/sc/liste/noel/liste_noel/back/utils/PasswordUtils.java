@@ -1,4 +1,4 @@
-package sc.liste.noel.liste_noel.front.Utile;
+package sc.liste.noel.liste_noel.back.utils;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;

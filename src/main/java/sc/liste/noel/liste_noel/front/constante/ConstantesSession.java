@@ -17,14 +17,4 @@ public class ConstantesSession {
 	public static String LISTES = "listes";
 	public static String LISTES_FAVORIS = "listesFavoris";
 
-	public static String TOURNOI_INFOS = "tournoiInfos";
-
-	public static String CURRENT_ROUND = "currentRound";
-
-	public static String TOURNAMENT_ID = "tournamentId";
-
-	public static String NOM_TOURNAMENT = "nomTournoi";
-
-	public static String LANGUE = "langue";
-
 }

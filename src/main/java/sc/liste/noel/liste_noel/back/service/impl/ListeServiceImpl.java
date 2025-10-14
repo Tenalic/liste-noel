@@ -1,11 +1,11 @@
-package sc.liste.noel.liste_noel.front.service.impl;
+package sc.liste.noel.liste_noel.back.service.impl;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import sc.liste.noel.liste_noel.front.Utile.mapper.ListeMapper;
-import sc.liste.noel.liste_noel.front.Utile.mapper.ObjetMapper;
+import sc.liste.noel.liste_noel.back.ListeMapper;
+import sc.liste.noel.liste_noel.back.ObjetMapper;
 import sc.liste.noel.liste_noel.back.db.entity.FavorisEntity;
 import sc.liste.noel.liste_noel.back.db.entity.ListeEntity;
 import sc.liste.noel.liste_noel.back.db.entity.ObjetEntity;
@@ -13,8 +13,8 @@ import sc.liste.noel.liste_noel.back.db.repo.CompteRepo;
 import sc.liste.noel.liste_noel.back.db.repo.FavorisRepo;
 import sc.liste.noel.liste_noel.back.db.repo.ListeRepo;
 import sc.liste.noel.liste_noel.back.db.repo.ObjetRepo;
-import sc.liste.noel.liste_noel.front.dto.ListeDto;
-import sc.liste.noel.liste_noel.front.service.ListeServiceInterface;
+import sc.liste.noel.liste_noel.common.dto.ListeDto;
+import sc.liste.noel.liste_noel.back.service.ListeServiceInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,13 +58,13 @@ public class ListeServiceImpl implements ListeServiceInterface {
     @Override
     public List<ListeDto> getListesOfEmail(String email) {
         List<ListeEntity> listeEntityList = listeRepo.findByProprietaire(email);
-        return ListeMapper.daosToDtos(listeEntityList);
+        return ListeMapper.entitiesToDtos(listeEntityList);
     }
 
     @Override
     public ListeDto getListeById(Long id) {
         ListeEntity listeEntity = listeRepo.findByIdListe(id);
-        ListeDto listeDto = ListeMapper.daoToDto(listeEntity);
+        ListeDto listeDto = ListeMapper.entityToDto(listeEntity);
         listeDto.setUrlPartage(ListeMapper.buildUrlPartage(baseUrl, id));
         return listeDto;
     }
@@ -117,7 +117,7 @@ public class ListeServiceImpl implements ListeServiceInterface {
             }
         }
 
-        return transcoEmailToPPseudo(ListeMapper.daosToDtos(list));
+        return transcoEmailToPPseudo(ListeMapper.entitiesToDtos(list));
     }
 
     public boolean checkifListeInFavoris(Long idListe, String email) {

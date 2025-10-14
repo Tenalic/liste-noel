@@ -1,4 +1,4 @@
-package sc.liste.noel.liste_noel.front.dto;
+package sc.liste.noel.liste_noel.common.dto;
 
 import java.io.Serializable;
 
