@@ -132,8 +132,8 @@ public class ConnexionController {
         }
 
         try {
-            compteService.genererMotDePasseEtEnvoyer(email);
             if (isActived) {
+                compteService.genererMotDePasseEtEnvoyer(email);
                 redirectAttributes.addFlashAttribute(INFO, messageService.getMessage(MOT_DE_PASSE_OUBLIE_P1_KEY, locale) + email + " " + messageService.getMessage(MOT_DE_PASSE_OUBLIE_P2_KEY, locale));
             } else {
                 redirectAttributes.addFlashAttribute(ERREUR, "Le service mot de passe oublie est actuellement désactivé");
