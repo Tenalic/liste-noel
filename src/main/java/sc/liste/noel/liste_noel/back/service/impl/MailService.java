@@ -32,7 +32,6 @@ public class MailService {
             final String password = password_email;
 
             // provide host address
-            //String host = "smtp.gmail.com";
             String host = host_email;
 
             // configure SMTP details
@@ -41,6 +40,8 @@ public class MailService {
             props.put("mail.smtp.starttls.enable", "true");
             props.put("mail.smtp.host", host);
             props.put("mail.smtp.port", "587");
+            props.put("mail.smtp.ssl.trust", host);
+
 
             // create the mail Session object
             session = Session.getInstance(props,
