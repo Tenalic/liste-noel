@@ -6,16 +6,17 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sc.liste.noel.liste_noel.back.service.CompteServiceInterface;
+import sc.liste.noel.liste_noel.back.service.impl.MailService;
+import sc.liste.noel.liste_noel.common.dto.CompteDto;
 import sc.liste.noel.liste_noel.common.service.MessageService;
 import sc.liste.noel.liste_noel.common.utils.Utils;
-import sc.liste.noel.liste_noel.common.dto.CompteDto;
-import sc.liste.noel.liste_noel.back.service.impl.MailService;
 
 import java.util.Locale;
 
@@ -37,6 +38,8 @@ public class ConnexionController {
     private CompteServiceInterface compteService;
     @Autowired
     private MessageService messageService;
+    @Value("${send_email_active}")
+    private Boolean isActived;
 
     @GetMapping(value = {"", "/", "welcome", "ma-liste-de-cadeau"})
     public String welcomeGet() {
@@ -130,7 +133,11 @@ public class ConnexionController {
 
         try {
             compteService.genererMotDePasseEtEnvoyer(email);
-            redirectAttributes.addFlashAttribute(INFO, messageService.getMessage(MOT_DE_PASSE_OUBLIE_P1_KEY, locale) + email + messageService.getMessage(MOT_DE_PASSE_OUBLIE_P2_KEY, locale));
+            if (isActived) {
+                redirectAttributes.addFlashAttribute(INFO, messageService.getMessage(MOT_DE_PASSE_OUBLIE_P1_KEY, locale) + email + " " + messageService.getMessage(MOT_DE_PASSE_OUBLIE_P2_KEY, locale));
+            } else {
+                redirectAttributes.addFlashAttribute(ERREUR, "Le service mot de passe oublie est actuellement désactivé");
+            }
         } catch (Exception e) {
             LOGGER.log(Level.ERROR, e);
             redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KEY, locale) + " : " + e.getMessage());

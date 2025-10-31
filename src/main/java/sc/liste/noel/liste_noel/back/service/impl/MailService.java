@@ -22,59 +22,62 @@ public class MailService {
     private String password_email;
     @Value("${host_email}")
     private String host_email;
+    @Value("${send_email_active}")
+    private Boolean isActived;
 
     private Session session;
 
     public void sendEmail(String destinataire, String sujet, String contenu) {
 
-        if(session == null) {
-            final String username = usernameEmail;
-            final String password = password_email;
+        if (isActived) {
 
-            // provide host address
-            String host = host_email;
+            if (session == null) {
+                final String username = usernameEmail;
+                final String password = password_email;
 
-            // configure SMTP details
-            Properties props = new Properties();
-            props.put("mail.smtp.auth", "true");
-            props.put("mail.smtp.starttls.enable", "false");
-            props.put("mail.smtp.host", host);
-            props.put("mail.smtp.port", "465");
-            props.put("mail.smtp.ssl.trust", host);
-            props.put("mail.smtp.ssl.enable", "true");
+                // provide host address
+                String host = host_email;
 
-
-            // create the mail Session object
-            session = Session.getInstance(props,
-                    new Authenticator() {
-                        @Override
-                        protected PasswordAuthentication getPasswordAuthentication() {
-                            return new PasswordAuthentication(username, password);
-                        }
-                    });
-        }
+                // configure SMTP details
+                Properties props = new Properties();
+                props.put("mail.smtp.auth", "true");
+                props.put("mail.smtp.starttls.enable", "true");
+                props.put("mail.smtp.host", host);
+                props.put("mail.smtp.port", "587");
 
 
+                // create the mail Session object
+                session = Session.getInstance(props,
+                        new Authenticator() {
+                            @Override
+                            protected PasswordAuthentication getPasswordAuthentication() {
+                                return new PasswordAuthentication(username, password);
+                            }
+                        });
+            }
 
-        try {
-            // create a MimeMessage object
-            Message message = new MimeMessage(session);
-            // set From email field
-            message.setFrom(new InternetAddress(usernameEmail));
-            // set To email field
-            message.setRecipient(Message.RecipientType.TO, new InternetAddress(destinataire));
-            // set email subject field
-            message.setSubject(sujet);
-            // set the content of the email message
-            message.setText(contenu);
 
-            // send the email message
-            Transport.send(message);
+            try {
+                // create a MimeMessage object
+                Message message = new MimeMessage(session);
+                // set From email field
+                message.setFrom(new InternetAddress(usernameEmail));
+                // set To email field
+                message.setRecipient(Message.RecipientType.TO, new InternetAddress(destinataire));
+                // set email subject field
+                message.setSubject(sujet);
+                // set the content of the email message
+                message.setText(contenu);
 
-            LOGGER.info("Email Message Sent Successfully to " + destinataire + " with the subject : " + sujet);
+                // send the email message
+                Transport.send(message);
 
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
+                LOGGER.info("Email Message Sent Successfully to " + destinataire + " with the subject : " + sujet);
+
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }
+
         }
     }
 }
