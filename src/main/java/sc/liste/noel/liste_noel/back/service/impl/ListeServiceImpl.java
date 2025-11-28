@@ -13,8 +13,8 @@ import sc.liste.noel.liste_noel.back.db.repo.CompteRepo;
 import sc.liste.noel.liste_noel.back.db.repo.FavorisRepo;
 import sc.liste.noel.liste_noel.back.db.repo.ListeRepo;
 import sc.liste.noel.liste_noel.back.db.repo.ObjetRepo;
-import sc.liste.noel.liste_noel.common.dto.ListeDto;
 import sc.liste.noel.liste_noel.back.service.ListeServiceInterface;
+import sc.liste.noel.liste_noel.common.dto.ListeDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -204,6 +204,22 @@ public class ListeServiceImpl implements ListeServiceInterface {
             objetEntity.setPrioriteValue(prioriteUpdate);
 
             objetRepo.save(objetEntity);
+        }
+    }
+
+    @Transactional
+    @Override
+    public String supprimerListe(String nomListe, String emailListe) {
+        ListeEntity listeEntity = listeRepo.findByProprietaireAndNomListe(emailListe, nomListe);
+        if (listeEntity != null) {
+            List<FavorisEntity> favorisEntityList = favorisRepo.findByIdListe(listeEntity.getIdListe());
+            for (FavorisEntity favorisEntity : favorisEntityList) {
+                favorisRepo.delete(favorisEntity);
+            }
+            listeRepo.delete(listeEntity);
+            return "La liste " + emailListe + " à bien été supprimé";
+        } else {
+            return "La liste " + emailListe + " est introuvable, elle ne peux pas être supprimée";
         }
     }
 

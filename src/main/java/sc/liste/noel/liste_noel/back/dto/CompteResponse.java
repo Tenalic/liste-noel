@@ -1,16 +1,10 @@
 package sc.liste.noel.liste_noel.back.dto;
 
-import java.io.Serializable;
-
-public class CompteResponse implements Serializable {
+public class CompteResponse extends GeneriqueResponse {
 
 	private static final long serialVersionUID = 1L;
 
 	private String email;
-
-	private String messageRetour;
-
-	private int codeRetour;
 
 	public CompteResponse() {
 	}
@@ -20,10 +14,8 @@ public class CompteResponse implements Serializable {
 	}
 
 	public CompteResponse(String email, String messageRetour, int codeRetour) {
-		super();
+        super(messageRetour, codeRetour);
 		this.email = email;
-		this.messageRetour = messageRetour;
-		this.codeRetour = codeRetour;
 	}
 
 	public String getEmail() {
@@ -32,22 +24,6 @@ public class CompteResponse implements Serializable {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public String getMessageRetour() {
-		return messageRetour;
-	}
-
-	public void setMessageRetour(String messageRetour) {
-		this.messageRetour = messageRetour;
-	}
-
-	public int getCodeRetour() {
-		return codeRetour;
-	}
-
-	public void setCodeRetour(int codeRetour) {
-		this.codeRetour = codeRetour;
 	}
 
 }

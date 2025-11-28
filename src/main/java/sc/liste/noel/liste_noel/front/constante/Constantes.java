@@ -19,6 +19,10 @@ public class Constantes {
     public static final String API_COMPTE_OLD_PASSWORD_OBLIGATOIRE_KEY = "api.compte.oldPassword.obligatoire";
     public static final String API_COMPTE_NEW_PASSWORD_TROP_COURT_KEY = "api.compte.newPassword.trop_court";
 
+    // Messages d'erreur (technique)
+    public static final String API_LISTE_ERREUR_KEY = "api.liste.erreur";
+
+
     // Messages d'erreur (logique métier)
     public static final String API_COMPTE_PASSWORD_DIFFERENT_KEY = "api.compte.password.different";
     public static final String API_COMPTE_SUPPRESSION_ECHEC_KEY = "api.compte.suppression.echec";
@@ -36,6 +40,7 @@ public class Constantes {
     public static final String NEW_MDP_NOT_EQUALS_KEY = "newMdpNotEquals";
     public static final String CONNEXION_FAIL_KEY = "connexionFail";
     public static final String ERREUR_GENERIQUE_KEY = "erreurGenerique";
+    public static final String API_LISTE_SUCCES_KEY = "api.liste.succes";
 
 
 

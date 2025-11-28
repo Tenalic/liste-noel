@@ -11,4 +11,5 @@ public interface ListeRepo extends CrudRepository<ListeEntity, Long> {
 
 	ListeEntity findByIdListe(Long idListe);
 
+	ListeEntity findByProprietaireAndNomListe(String email, String nomListe);
 }
