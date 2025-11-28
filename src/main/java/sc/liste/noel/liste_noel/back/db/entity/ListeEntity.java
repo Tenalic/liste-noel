@@ -16,7 +16,7 @@ public class ListeEntity {
     private String proprietaire;
     @Column(name = "nom_liste")
     private String nomListe;
-    @OneToMany(mappedBy = "idListe")
+    @OneToMany(mappedBy = "idListe", cascade = CascadeType.ALL)
     private List<ObjetEntity> objetEntityList;
 
     public ListeEntity() {

@@ -27,5 +27,6 @@ public interface ListeServiceInterface {
     void supprimerObjet(Long idObjet, String email);
     void modifierObjet(Long idObjet, String titreUpdate, String descriptionUpdate, String urlUpdate, int prioriteUpdate);
 
+    String supprimerListe(String nomListe, String emailListe);
 
 }

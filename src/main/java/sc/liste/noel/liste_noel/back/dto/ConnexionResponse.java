@@ -1,19 +1,14 @@
 package sc.liste.noel.liste_noel.back.dto;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class ConnexionResponse implements Serializable {
+public class ConnexionResponse extends GeneriqueResponse {
 
     private String token;
 
     private LocalDateTime tokenExpireDate;
 
     private String cossy;
-
-    private String messageRetour;
-
-    private int codeRetour;
 
     public ConnexionResponse() {
     }
@@ -22,49 +17,12 @@ public class ConnexionResponse implements Serializable {
         this.token = token;
     }
 
-    public ConnexionResponse(String token, String messageRetour, int codeRetour) {
-        this.token = token;
-        this.messageRetour = messageRetour;
-        this.codeRetour = codeRetour;
-    }
-
-    public ConnexionResponse(String token, LocalDateTime tokenExpireDate, String messageRetour, int codeRetour) {
-        this.token = token;
-        this.tokenExpireDate = tokenExpireDate;
-        this.messageRetour = messageRetour;
-        this.codeRetour = codeRetour;
-    }
-
-    public ConnexionResponse(String token, LocalDateTime tokenExpireDate, String cossy, String messageRetour, int codeRetour) {
-        this.token = token;
-        this.tokenExpireDate = tokenExpireDate;
-        this.cossy = cossy;
-        this.messageRetour = messageRetour;
-        this.codeRetour = codeRetour;
-    }
-
     public String getToken() {
         return token;
     }
 
     public void setToken(String token) {
         this.token = token;
-    }
-
-    public String getMessageRetour() {
-        return messageRetour;
-    }
-
-    public void setMessageRetour(String messageRetour) {
-        this.messageRetour = messageRetour;
-    }
-
-    public int getCodeRetour() {
-        return codeRetour;
-    }
-
-    public void setCodeRetour(int codeRetour) {
-        this.codeRetour = codeRetour;
     }
 
     public LocalDateTime getTokenExpireDate() {

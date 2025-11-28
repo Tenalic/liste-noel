@@ -4,20 +4,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import sc.liste.noel.liste_noel.back.service.ListeServiceInterface;
+import sc.liste.noel.liste_noel.common.dto.ListeDto;
+import sc.liste.noel.liste_noel.common.dto.ObjetDto;
 import sc.liste.noel.liste_noel.common.service.MessageService;
 import sc.liste.noel.liste_noel.front.constante.CheminConstante;
 import sc.liste.noel.liste_noel.front.constante.ConstantesSession;
 import sc.liste.noel.liste_noel.front.constante.NomPageConstante;
-import sc.liste.noel.liste_noel.common.dto.ListeDto;
-import sc.liste.noel.liste_noel.common.dto.ObjetDto;
-import sc.liste.noel.liste_noel.back.service.ListeServiceInterface;
+import sc.liste.noel.liste_noel.front.dtos.GeneriqueResponse;
+import sc.liste.noel.liste_noel.front.services.ListeService;
 
 import java.util.Comparator;
 import java.util.List;
@@ -28,6 +29,7 @@ import static sc.liste.noel.liste_noel.front.constante.CheminConstante.*;
 import static sc.liste.noel.liste_noel.front.constante.Constantes.CONNEXION_KEY;
 import static sc.liste.noel.liste_noel.front.constante.Constantes.ERREUR_GENERIQUE_KEY;
 import static sc.liste.noel.liste_noel.front.constante.ConstantesSession.ERREUR;
+import static sc.liste.noel.liste_noel.front.constante.ConstantesSession.INFO;
 
 
 @Controller
@@ -35,11 +37,17 @@ public class ListeController {
 
     private static final Logger LOGGER = LogManager.getLogger(ListeController.class);
 
-    @Autowired
-    private ListeServiceInterface listeServiceInterface;
+    private final ListeServiceInterface listeServiceInterface;
 
-    @Autowired
-    private MessageService messageService;
+    private final MessageService messageService;
+
+    private final ListeService listeService;
+
+    public ListeController(ListeServiceInterface listeServiceInterface, MessageService messageService, ListeService listeService) {
+        this.listeServiceInterface = listeServiceInterface;
+        this.messageService = messageService;
+        this.listeService = listeService;
+    }
 
     @GetMapping("/liste")
     public String listeGet(Model model, HttpSession session) {
@@ -328,6 +336,26 @@ public class ListeController {
             LOGGER.error("", e);
             redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KEY, locale) + " : " + e.getMessage());
         }
+        return REDIRECT + CheminConstante.CONSULTER_LISTE;
+    }
+
+    @PostMapping("/supprimer-liste")
+    public String supprimerListe(HttpSession session,
+                                 @RequestParam(value = "nomListe") String nomListe,
+                                 RedirectAttributes redirectAttributes,
+                                 HttpServletRequest request) {
+
+        String email = (String) session.getAttribute(ConstantesSession.EMAIL);
+        Locale locale = request.getLocale();
+
+        if (email == null) {
+            redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(CONNEXION_KEY, locale));
+            return REDIRECT + CONNEXION;
+        }
+
+        GeneriqueResponse generiqueResponse = listeService.supprimerListe(email, nomListe, locale);
+        redirectAttributes.addFlashAttribute(generiqueResponse.getCodeRetour() == 0 ? INFO : ERREUR, generiqueResponse.getMessageRetour());
+
         return REDIRECT + CheminConstante.CONSULTER_LISTE;
     }
 
