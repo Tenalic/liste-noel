@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" content="maximum-scale=1.0, initial-scale=1.0, width=device-width" name="viewport">
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
     <title>Consulter liste</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
-            integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
-            crossorigin="anonymous"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         function toggleAddObjectSection() {
             const section = document.getElementById('addObjectSection');
             section.style.display = section.style.display === 'none' ? 'block' : 'none';
         }
 
-        function openModal(titre, idObjet, text, action) {
+        function openModal(titre, idObjet, text, action, idListe) {
             const modalTitle = document.getElementById('modalTitle');
             const modalBody = document.getElementById('modalBody');
             const modalForm = document.getElementById('modalForm');
@@ -29,7 +29,7 @@
             modal.show();
         }
 
-        function openModalUpdate(titre, idObjet, text, action, titreObjet, description, url, priorite) {
+        function openModalUpdate(titre, idObjet, text, action, titreObjet, description, url, priorite, idListe) {
             const modalTitleUpdate = document.getElementById('modalTitleUpdate');
             const modalBodyUpdate = document.getElementById('modalBodyUpdate');
             const modalFormUpdate = document.getElementById('modalFormUpdate');
@@ -51,179 +51,198 @@
         }
 
         function toggleSort() {
-        const currentSort = new URLSearchParams(window.location.search).get('triPriorite') || 'asc';
-        const newSort = currentSort === 'asc' ? 'desc' : 'asc';
-        const params = new URLSearchParams(window.location.search);
-        params.set('triPriorite', newSort);
-        window.location.search = params.toString();
-    }
+            const currentSort = new URLSearchParams(window.location.search).get('triPriorite') || 'asc';
+            const newSort = currentSort === 'asc' ? 'desc' : 'asc';
+            const params = new URLSearchParams(window.location.search);
+            params.set('triPriorite', newSort);
+            window.location.search = params.toString();
+        }
     </script>
 </head>
-<body class="d-flex flex-column min-vh-100">
+
+<body class="bg-light d-flex flex-column min-vh-100">
+
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="container my-5">
-    <div class="text-center" th:if="${liste}">
-        <h1>Objet dans ma liste : <span th:text="${liste.nomListe}" class="text-primary"></span></h1>
-        <div class="d-flex justify-content-center my-3">
-            <form action="/liste" method="get" class="me-2">
-                <button class="btn btn-secondary">Retour</button>
-            </form>
-            <form action="/consulter-liste" method="get" class="me-2">
-                <button class="btn btn-primary">Actualiser</button>
-            </form>
-        </div>
-        <div class="mb-3">
-            <span class="fw-bold">Partager :</span>
-            <span class="text-muted" th:text="${liste.urlPartage}"></span>
-        </div>
-        <!-- Bouton pour afficher/masquer la section -->
-        <div class="text-center mb-3">
-            <button class="btn btn-success" onclick="toggleAddObjectSection()">Ajouter un objet dans la liste</button>
-        </div>
-        <!-- Section "Ajouter un objet" -->
-        <div id="addObjectSection" style="display: none;">
-            <div class="text-center">
-                <h1>Ajouter un objet</h1>
-                <div class="card mx-auto" style="max-width: 600px;">
-                    <div class="card-body">
-                        <form action="/ajouter-objet" method="post">
-                            <div class="row mb-3">
-                                <label for="titre" class="col-sm-4 col-form-label">Titre</label>
-                                <div class="col-sm-8">
-                                    <input type="text" name="titre" class="form-control" id="titre" required>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <label for="description" class="col-sm-4 col-form-label">Description</label>
-                                <div class="col-sm-8">
-                                    <textarea type="text" name="description" class="form-control"
-                                              id="description"></textarea>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <label for="url" class="col-sm-4 col-form-label">Url</label>
-                                <div class="col-sm-8">
-                                    <input type="text" name="url" class="form-control" id="url">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <label for="priorite" class="col-sm-4 col-form-label">Priorité</label>
-                                <div class="col-sm-8">
-                                    <select name="priorite" class="form-select" id="priorite" required>
-                                        <option value="1">❤️❤️❤️❤️❤️</option>
-                                        <option value="2">❤️❤️❤️❤️</option>
-                                        <option value="3" selected>❤️❤️❤️</option>
-                                        <option value="4">❤️❤️</option>
-                                        <option value="5">❤️</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <input type="hidden" id="idListe" name="idListe" th:value="${liste.idListe}">
-                            <div th:if="${erreur}" class="alert alert-danger" th:text="${erreur}"></div>
-                            <div class="text-center">
-                                <button class="btn btn-success">Ajouter objet</button>
-                            </div>
-                        </form>
+<main class="container-lg py-4">
+
+    <!-- Titre -->
+    <div class="text-center mb-4" th:if="${liste}">
+        <h1 class="fw-bold mb-1">
+            Objet dans ma liste : <span class="text-primary" th:text="${liste.nomListe}"></span>
+        </h1>
+        <div class="text-muted small" th:text="${liste.urlPartage}"></div>
+    </div>
+
+    <!-- Boutons matière -->
+    <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+        <a class="btn btn-outline-secondary btn-sm" href="/liste">Retour</a>
+        <a class="btn btn-outline-primary btn-sm" href="/consulter-liste">Actualiser</a>
+
+        <button class="btn btn-success btn-sm" onclick="toggleAddObjectSection()">
+            Ajouter un objet
+        </button>
+    </div>
+
+    <!-- Section d’ajout -->
+    <div id="addObjectSection" style="display:none;">
+        <div class="card shadow-sm mb-4 mx-auto" style="max-width:700px;">
+            <div class="card-body">
+                <h5 class="mb-3">Ajouter un objet</h5>
+
+                <form action="/ajouter-objet" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Titre</label>
+                        <input class="form-control" name="titre" required type="text">
                     </div>
-                </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Url</label>
+                        <input class="form-control" name="url" type="text">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Priorité</label>
+                        <select class="form-select" name="priorite" required>
+                            <option value="1">❤️❤️❤️❤️❤️</option>
+                            <option value="2">❤️❤️❤️❤️</option>
+                            <option selected value="3">❤️❤️❤️</option>
+                            <option value="4">❤️❤️</option>
+                            <option value="5">❤️</option>
+                        </select>
+                    </div>
+
+                    <input name="idListe" th:value="${liste.idListe}" type="hidden">
+
+                    <div class="alert alert-danger mt-2" th:if="${erreur}" th:text="${erreur}"></div>
+
+                    <div class="text-center">
+                        <button class="btn btn-success">Ajouter</button>
+                    </div>
+                </form>
+
             </div>
         </div>
-        <table class="table table-bordered table-striped">
-            <thead class="table-secondary">
+    </div>
+
+    <!-- Tableau -->
+    <div class="table-responsive shadow-sm rounded bg-white">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-dark">
             <tr>
-                <th scope="col">Titre</th>
-                <th scope="col">Description</th>
-                <th scope="col">Url</th>
-                <th scope="col" onclick="toggleSort()" style="cursor: pointer;">
-                    Priorité <span class="sort-indicator" th:if="${triPriorite == 'asc'}">▲</span>
-                    <span class="sort-indicator" th:if="${triPriorite == 'desc'}">▼</span>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>URL</th>
+                <th onclick="toggleSort()" style="cursor:pointer">
+                    Priorité
+                    <span th:if="${triPriorite == 'asc'}">▲</span>
+                    <span th:if="${triPriorite == 'desc'}">▼</span>
                 </th>
-                <th scope="col">Action</th>
+                <th>Actions</th>
             </tr>
             </thead>
+
             <tbody>
-            <tr th:each="objet: ${liste.listeObjet}">
+            <tr th:each="objet : ${liste.listeObjet}">
                 <td th:text="${objet.titre}"></td>
                 <td th:text="${objet.description}"></td>
-                <td><a th:if="${objet.url != null and !#strings.isEmpty(objet.url)}" target="_blank"
-                       th:href="${objet.url}" class="btn btn-link">Voir</a></td>
+
+                <td>
+                    <a class="btn btn-link"
+                       target="_blank" th:href="${objet.url}"
+                       th:if="${objet.url != null && !#strings.isEmpty(objet.url)}">Voir</a>
+                </td>
+
                 <td th:text="${objet.priorite}"></td>
+
                 <td>
                     <button class="btn btn-primary btn-sm"
-                            th:onclick="openModalUpdate(/*[[${objet.titre}]]*/, /*[[${objet.idObjet}]]*/ , /*[['modifier']]*/, /*[['/modifier-objet']]*/ , /*[[${objet.titre}]]*/ , /*[[${objet.description}]]*/ , /*[[${objet.url}]]*/ , /*[[${objet.valuePriorite}]]*/)">
+                            th:onclick="openModalUpdate(/*[[${objet.titre}]]*/, /*[[${objet.idObjet}]]*/ , /*[['modifier']]*/, /*[['/modifier-objet']]*/ , /*[[${objet.titre}]]*/ , /*[[${objet.description}]]*/ , /*[[${objet.url}]]*/ , /*[[${objet.valuePriorite}]]*/, /*[[${liste.idListe}]]*/)">
                         Modifier
                     </button>
+
                     <button class="btn btn-danger btn-sm"
-                            th:onclick="openModal(/*[[${objet.titre}]]*/, /*[[${objet.idObjet}]]*/ , /*[['supprimer']]*/, /*[['/supprimer-objet']]*/)">
+                            th:onclick="openModal(/*[[${objet.titre}]]*/, /*[[${objet.idObjet}]]*/ , /*[['supprimer']]*/, /*[['/supprimer-objet']]*/, /*[[${liste.idListe}]]*/)">
                         Supprimer
                     </button>
                 </td>
             </tr>
             </tbody>
         </table>
-        <div th:if="${liste.listeObjet.size()} == 0" class="alert alert-warning">Aucun objet dans la liste</div>
+
+        <div class="alert alert-warning text-center m-3"
+             th:if="${liste.listeObjet.size()} == 0">
+            Aucun objet dans la liste
+        </div>
     </div>
 
-    <hr class="my-5">
+</main>
 
-</div>
-
-<!-- Modale -->
-<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
-    <div class="modal-dialog">
+<!-- Modal suppression -->
+<div class="modal fade" id="confirmModal">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
+
             <div class="modal-header">
                 <h5 class="modal-title" id="modalTitle"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+
             <div class="modal-body" id="modalBody"></div>
+
             <div class="modal-footer">
                 <form id="modalForm" method="post">
                     <input type="hidden" name="idListe">
                     <input type="hidden" name="idObjet">
-                    <button type="submit" class="btn btn-primary">Oui</button>
+                    <button class="btn btn-primary">Oui</button>
                 </form>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
             </div>
+
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="confirmModalUpdate" tabindex="-1" aria-labelledby="modalTitleUpdate" aria-hidden="true">
-    <div class="modal-dialog">
+<!-- Modal modification -->
+<div class="modal fade" id="confirmModalUpdate">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <!-- Header -->
+
             <div class="modal-header">
                 <h5 class="modal-title" id="modalTitleUpdate"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <!-- Body -->
+
             <div class="modal-body">
                 <p id="modalBodyUpdate" class="text-muted"></p>
+
                 <form id="modalFormUpdate" method="post">
                     <input type="hidden" name="idListe">
                     <input type="hidden" name="idObjet">
-                    <!-- Titre -->
+
                     <div class="mb-3">
-                        <label for="titreUpdate" class="form-label">Titre</label>
+                        <label class="form-label">Titre</label>
                         <input type="text" name="titreUpdate" class="form-control" id="titreUpdate" required>
                     </div>
-                    <!-- Description -->
+
                     <div class="mb-3">
-                        <label for="descriptionUpdate" class="form-label">Description</label>
+                        <label class="form-label">Description</label>
                         <textarea name="descriptionUpdate" class="form-control" id="descriptionUpdate"
                                   rows="3"></textarea>
                     </div>
-                    <!-- URL -->
+
                     <div class="mb-3">
-                        <label for="urlUpdate" class="form-label">Url</label>
+                        <label class="form-label">URL</label>
                         <input type="text" name="urlUpdate" class="form-control" id="urlUpdate">
                     </div>
 
-                    <!-- Priorité -->
                     <div class="mb-3">
-                        <label for="prioriteUpdate" class="form-label">Priorité</label>
+                        <label class="form-label">Priorité</label>
                         <select name="prioriteUpdate" class="form-select" id="prioriteUpdate" required>
                             <option value="1">❤️❤️❤️❤️❤️</option>
                             <option value="2">❤️❤️❤️❤️</option>
@@ -232,17 +251,18 @@
                             <option value="5">❤️</option>
                         </select>
                     </div>
+
                 </form>
             </div>
-            <!-- Footer -->
+
             <div class="modal-footer">
-                <button type="submit" class="btn btn-primary" form="modalFormUpdate">Valider</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button class="btn btn-primary" form="modalFormUpdate">Valider</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
             </div>
+
         </div>
     </div>
 </div>
-
 
 </body>
 </html>
