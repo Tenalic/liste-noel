@@ -13,7 +13,7 @@
 <body class="d-flex flex-column min-vh-100">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="container text-center mt-5">
+<main class="container text-center mt-5">
     <h1 class="h1 mb-4">Contact</h1>
     <p>Vous avez une question, vous rencontrez un problème, ou vous avez des suggestions d'améliorations ?<br>
         N'hésitez pas à nous contacter.</p>
@@ -21,7 +21,7 @@
     <div class="card mx-auto" style="max-width: 600px;">
         <div class="card-body">
             <h5 class="card-title">Stéphane COCQUEBERT</h5>
-            <div class="d-flex align-items-center justify-content-center">
+            <div class="d-flex align-items-center justify-content-center mb-2">
                 <img th:src="@{/images/linkedin.jpg}" alt="LinkedIn" class="me-2" style="width: 24px; height: 24px;">
                 <a class="btn btn-link" target="_blank" href="https://www.linkedin.com/in/st%C3%A9phane-cocquebert-192196163">LinkedIn</a>
             </div>
@@ -35,7 +35,8 @@
     <form action="/welcome" method="get" class="mt-4">
         <button class="btn btn-secondary">Retour</button>
     </form>
-</div>
+</main>
+
 <script src="/js/theme.js"></script>
 </body>
 </html>

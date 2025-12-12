@@ -1,13 +1,20 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <title>Consulter liste</title>
 
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- CSS custom -->
+    <link href="/css/theme.css" rel="stylesheet">
+
+    <!-- Scripts Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Scripts modaux et tri -->
     <script>
         function openModal(titre, idListe, idObjet, text, action) {
             document.getElementById('modalTitle').textContent = `Vous souhaitez ${text} "${titre}" ?`;
@@ -31,13 +38,14 @@
     </script>
 </head>
 
-<body class="bg-light d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100">
 
+<!-- Header -->
 <div th:replace="~{fragments/header :: header}"></div>
 
 <main class="container-lg py-4">
 
-    <!-- Titre -->
+    <!-- Titre de la liste -->
     <div class="text-center mb-4" th:if="${liste}">
         <h1 class="fw-bold mb-1">
             Liste : <span class="text-primary" th:text="${liste.nomListe}"></span>
@@ -57,6 +65,7 @@
 
         <form action="/supprimer-favori" method="post" th:if="${connected and estFavori}">
             <input name="idListeFavoris" th:value="${liste.idListe}" type="hidden">
+            <input name="from" th:value="consulter-liste" type="hidden">
             <button class="btn btn-outline-danger btn-sm">– Favori</button>
         </form>
 
@@ -70,7 +79,7 @@
     </div>
 
     <!-- Tableau -->
-    <div class="table-responsive shadow-sm rounded bg-white">
+    <div class="table-responsive table-container rounded shadow-sm">
         <table class="table table-hover align-middle mb-0">
             <thead class="table-dark">
             <tr>
@@ -84,54 +93,32 @@
                 <th class="d-md-table-cell" style="width:10%">Détenteur</th>
             </tr>
             </thead>
-
             <tbody>
             <tr th:each="objet : ${liste.listeObjet}">
-
-                <!-- Titre + description + URL dans un petit bloc -->
                 <td>
                     <div class="fw-bold" th:text="${objet.titre}"></div>
-
-                    <!-- Description visible sous le titre sur mobile / dans un tableau large -->
                     <div class="text-muted small" th:text="${objet.description}"></div>
-
-                    <!-- Icône lien externe -->
                     <a class="text-decoration-none small" target="_blank"
-                       th:href="${objet.url}"
-                       th:if="${objet.url != null and !#strings.isEmpty(objet.url)}">
+                       th:href="${objet.url}" th:if="${objet.url != null and !#strings.isEmpty(objet.url)}">
                         🔗 Voir l'objet
                     </a>
                 </td>
-
-                <!-- Priorité -->
-                <td>
-                    <span th:text="${objet.priorite}"></span>
-                </td>
-
-                <!-- Offert / boutons -->
+                <td><span th:text="${objet.priorite}"></span></td>
                 <td>
                     <div th:if="${connected}">
-                        <button class="btn btn-warning btn-sm"
-                                th:if="!${objet.estPrit}"
+                        <button class="btn btn-warning btn-sm" th:if="!${objet.estPrit}"
                                 th:onclick="openModal(/*[[${objet.titre}]]*/, /*[[${liste.idListe}]]*/, /*[[${objet.idObjet}]]*/, 'offrir', '/prendre')">
                             J'offre
                         </button>
-
-                        <button class="btn btn-danger btn-sm"
-                                th:if="${objet.estPrit and objet.detenteur eq email}"
+                        <button class="btn btn-danger btn-sm" th:if="${objet.estPrit and objet.detenteur eq email}"
                                 th:onclick="openModal(/*[[${objet.titre}]]*/, /*[[${liste.idListe}]]*/, /*[[${objet.idObjet}]]*/, 'ne plus offrir', '/ne-plus-prendre')">
                             Annuler
                         </button>
-
                         <span th:if="${objet.estPrit and objet.detenteur != email}">Déjà offert</span>
                     </div>
-
                     <span class="text-muted small" th:if="!${connected}">Connexion requise</span>
                 </td>
-
-                <!-- Détenteur -->
                 <td class="d-md-table-cell" th:text="${objet.pseudoDetenteur}"></td>
-
             </tr>
             </tbody>
         </table>
@@ -143,26 +130,23 @@
 <div class="modal fade" id="confirmModal">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-
             <div class="modal-header">
                 <h5 class="modal-title" id="modalTitle"></h5>
                 <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-
             <div class="modal-body" id="modalBody"></div>
-
             <div class="modal-footer">
                 <form id="modalForm" method="post">
                     <input type="hidden" name="idListe">
                     <input type="hidden" name="idObjet">
                     <button class="btn btn-primary">Oui</button>
                 </form>
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Non</button>
             </div>
-
         </div>
     </div>
 </div>
+
 <script src="/js/theme.js"></script>
 </body>
 </html>

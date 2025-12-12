@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>Mes listes</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/theme.css" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         function openModal(titre, idListe, text, action, inputName) {
             const modalTitle = document.getElementById('modalTitle');
@@ -16,35 +20,36 @@
             modalBody.textContent = `Êtes-vous sûr de vouloir ${text} "${titre}" ?`;
             modalForm.action = action;
 
-            hiddenInput.name = inputName;   // le nom devient dynamique
+            hiddenInput.name = inputName;
             hiddenInput.value = idListe;
 
             new bootstrap.Modal(document.getElementById('confirmModal')).show();
         }
-    </script>
-    <script>
+
         function toggleCreateSection() {
             const section = document.getElementById('createSection');
-            section.classList.toggle('d-none'); // Ajoute ou enlève la classe 'd-none' pour masquer/afficher
+            section.classList.toggle('d-none');
         }
     </script>
 </head>
+
 <body class="d-flex flex-column min-vh-100">
+
 <div th:replace="~{fragments/header :: header}"></div>
 
 <main class="container my-4">
+
+    <!-- Mes listes -->
     <div class="text-center" th:if="${listes}">
         <h1 class="display-4 mb-4">Mes listes</h1>
         <form th:if="${connected}" action="/liste" method="get" class="mb-3">
             <button class="btn btn-primary">Actualiser</button>
         </form>
 
-        <div th:if="${connected}" class="text-center">
-            <!-- Bouton pour afficher/cacher la section -->
+        <div class="text-center mb-3" th:if="${connected}">
             <button class="btn btn-success mb-3" onclick="toggleCreateSection()">Créer une nouvelle liste</button>
 
-            <!-- Section à afficher ou masquer -->
-            <div id="createSection" class="card mx-auto d-none" style="max-width: 500px;">
+            <div class="card mx-auto d-none table-container" id="createSection" style="max-width: 500px;">
                 <div class="card-body">
                     <form action="/creer-liste" method="post">
                         <div class="mb-3">
@@ -60,93 +65,97 @@
             </div>
         </div>
 
-        <table class="table table-hover">
-            <thead class="table-dark">
-            <tr>
-                <th>Nom de la liste</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="liste : ${listes}">
-                <td th:text="${liste.nomListe}"></td>
-                <td>
-                    <form action="/selectionner-liste" method="post">
-                        <input type="hidden" name="idListe" th:value="${liste.idListe}">
-                        <button class="btn btn-success">Sélectionner</button>
-                    </form>
-                    <button class="btn btn-danger btn-sm d-inline"
-                            th:onclick="openModal(/*[[${liste.nomListe}]]*/, /*[[${liste.nomListe}]]*/ , /*[['supprimer la liste']]*/, /*[['/supprimer-liste']]*/ , /*[['nomListe']]*/)">
-                        Supprimer
-                    </button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <div th:if="!${connected}" class="d-flex justify-content-center my-3">
-            <form action="/connexion" method="get" class="mb-3">
+        <div class="table-responsive shadow-sm rounded table-container">
+            <table class="table table-hover mb-0">
+                <thead class="table-dark">
+                <tr>
+                    <th>Nom de la liste</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="liste : ${listes}">
+                    <td th:text="${liste.nomListe}"></td>
+                    <td>
+                        <form action="/selectionner-liste" class="d-inline" method="post">
+                            <input name="idListe" th:value="${liste.idListe}" type="hidden">
+                            <button class="btn btn-success btn-sm">Sélectionner</button>
+                        </form>
+                        <button class="btn btn-danger btn-sm d-inline"
+                                th:onclick="openModal(/*[[${liste.nomListe}]]*/, /*[[${liste.nomListe}]]*/ , /*[['supprimer la liste']]*/, /*[['/supprimer-liste']]*/ , /*[['nomListe']]*/)">
+                            Supprimer
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-center my-3 gap-2" th:if="!${connected}">
+            <form action="/connexion" method="get">
                 <button class="btn btn-primary">Connexion</button>
             </form>
             <form action="/inscription" method="get">
                 <button class="btn btn-secondary">Inscription</button>
             </form>
         </div>
-        <div th:if="${connected}">
-            <p class="text-muted" th:if="${listes.size()} == 0">Aucune liste disponible</p>
-        </div>
+
+        <p class="text-muted mt-3" th:if="${connected} and ${listes.size()} == 0">Aucune liste disponible</p>
     </div>
 
-    <div class="text-center" th:if="${connected}">
+    <!-- Mes favoris -->
+    <div class="text-center mt-5" th:if="${connected}">
         <h1 class="display-4 mb-4">Mes favoris</h1>
         <form action="/liste" method="get" class="mb-3">
             <button class="btn btn-primary">Actualiser</button>
         </form>
 
-        <table class="table table-hover">
-            <thead class="table-dark">
-            <tr>
-                <th>Nom de la liste</th>
-                <th>Propriétaire</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="listeFavoris : ${listesFavoris}">
-                <td th:text="${listeFavoris.nomListe}"></td>
-                <td th:text="${listeFavoris.proprietaire}"></td>
-                <td>
-                    <form action="/selectionner-liste" method="post">
-                        <input type="hidden" name="listeFavoris" th:value="${listeFavoris.idListe}">
-                        <button class="btn btn-success">Sélectionner</button>
-                    </form>
-                    <button class="btn btn-danger btn-sm"
-                            th:onclick="openModal(/*[[${listeFavoris.nomListe}]]*/, /*[[${listeFavoris.idListe}]]*/ , /*[['supprimer de vos favoris la liste']]*/, /*[['/supprimer-favori']]*/ , /*[['idListeFavoris']]*/)">
-                        Supprimer
-                    </button>
+        <div class="table-responsive shadow-sm rounded table-container">
+            <table class="table table-hover mb-0">
+                <thead class="table-dark">
+                <tr>
+                    <th>Nom de la liste</th>
+                    <th>Propriétaire</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="listeFavoris : ${listesFavoris}">
+                    <td th:text="${listeFavoris.nomListe}"></td>
+                    <td th:text="${listeFavoris.proprietaire}"></td>
+                    <td>
+                        <form action="/selectionner-liste" class="d-inline" method="post">
+                            <input name="listeFavoris" th:value="${listeFavoris.idListe}" type="hidden">
+                            <button class="btn btn-success btn-sm">Sélectionner</button>
+                        </form>
+                        <button class="btn btn-danger btn-sm d-inline"
+                                th:onclick="openModal(/*[[${listeFavoris.nomListe}]]*/, /*[[${listeFavoris.idListe}]]*/ , /*[['supprimer de vos favoris la liste']]*/, /*[['/supprimer-favori']]*/ , /*[['idListeFavoris']]*/)">
+                            Supprimer
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
 
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <p class="text-muted" th:if="${listesFavoris.size()} == 0">Aucune liste favorite enregistrée</p>
+        <p class="text-muted mt-3" th:if="${listesFavoris.size()} == 0">Aucune liste favorite enregistrée</p>
     </div>
 
-
 </main>
-
 
 <!-- Modale -->
 <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content table-container">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalTitle"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button aria-label="Fermer" class="btn-close" data-bs-dismiss="modal" type="button"></button>
             </div>
             <div class="modal-body" id="modalBody"></div>
             <div class="modal-footer">
                 <form id="modalForm" method="post">
-                    <input id="modalHiddenInput" name="modalHiddenInput" type="hidden">
+                    <input id="modalHiddenInput" type="hidden">
+                    <input name="from" th:value="liste" type="hidden">
                     <button type="submit" class="btn btn-primary">Oui</button>
                 </form>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>

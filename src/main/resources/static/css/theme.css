@@ -1,0 +1,41 @@
+/* Mode sombre */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+/* Conteneur tableau */
+body.dark-mode .table-container {
+    background-color: #1e1e1e;
+    box-shadow: none;
+}
+
+/* Table */
+body.dark-mode .table {
+    color: #e0e0e0;
+}
+
+body.dark-mode .table th {
+    background-color: #2c2c2c;
+    color: #ffffff;
+}
+
+body.dark-mode .table td {
+    background-color: #1e1e1e;
+}
+
+body.dark-mode .btn-outline-secondary,
+body.dark-mode .btn-outline-primary,
+body.dark-mode .btn-outline-success,
+body.dark-mode .btn-outline-danger {
+    border-color: #555;
+    color: #e0e0e0;
+}
+
+body.dark-mode .btn-outline-secondary:hover,
+body.dark-mode .btn-outline-primary:hover,
+body.dark-mode .btn-outline-success:hover,
+body.dark-mode .btn-outline-danger:hover {
+    background-color: #555;
+    color: #fff;
+}

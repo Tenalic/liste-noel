@@ -271,6 +271,7 @@ public class ListeController {
     @PostMapping("/supprimer-favori")
     public String supprimerFavori(HttpSession session,
                                   @RequestParam(value = "idListeFavoris") String idListe,
+                                  @RequestParam(value = "from") String from,
                                   RedirectAttributes redirectAttributes,
                                   HttpServletRequest request) {
 
@@ -287,7 +288,7 @@ public class ListeController {
             LOGGER.error("", e);
             redirectAttributes.addFlashAttribute(ERREUR, messageService.getMessage(ERREUR_GENERIQUE_KEY, locale) + " : " + e.getMessage());
         }
-        return REDIRECT + CheminConstante.CONSULTER_LISTE;
+        return REDIRECT + from;
     }
 
     @PostMapping("/supprimer-objet")
