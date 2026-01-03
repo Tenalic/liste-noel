@@ -118,7 +118,10 @@
                     </div>
                     <span class="text-muted small" th:if="!${connected}">Connexion requise</span>
                 </td>
-                <td class="d-md-table-cell" th:text="${objet.pseudoDetenteur}"></td>
+                <td class="d-md-table-cell" th:if="${connected}" th:text="${objet.pseudoDetenteur}"></td>
+                <td class="d-md-table-cell" th:if="!${connected}">
+                    <span class="text-muted small">Connexion requise</span>
+                </td>
             </tr>
             </tbody>
         </table>
