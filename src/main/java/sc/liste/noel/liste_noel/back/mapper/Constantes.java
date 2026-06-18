@@ -1,4 +1,4 @@
-package sc.liste.noel.liste_noel.back;
+package sc.liste.noel.liste_noel.back.mapper;
 
 public class Constantes {
 

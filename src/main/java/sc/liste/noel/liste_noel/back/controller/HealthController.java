@@ -1,4 +1,4 @@
-package sc.liste.noel.liste_noel.back.Controller;
+package sc.liste.noel.liste_noel.back.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

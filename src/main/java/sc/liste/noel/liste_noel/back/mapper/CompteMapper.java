@@ -1,4 +1,4 @@
-package sc.liste.noel.liste_noel.back;
+package sc.liste.noel.liste_noel.back.mapper;
 
 import sc.liste.noel.liste_noel.back.db.entity.CompteEntity;
 import sc.liste.noel.liste_noel.back.dto.CompteDto;

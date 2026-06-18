@@ -12,7 +12,7 @@ import sc.liste.noel.liste_noel.back.exception.MotDePasseException;
 import sc.liste.noel.liste_noel.back.service.CompteServiceInterface;
 import sc.liste.noel.liste_noel.back.utils.PasswordUtils;
 import sc.liste.noel.liste_noel.back.service.PasswordService;
-import sc.liste.noel.liste_noel.back.CompteMapper;
+import sc.liste.noel.liste_noel.back.mapper.CompteMapper;
 import sc.liste.noel.liste_noel.back.dto.CompteDto;
 import sc.liste.noel.liste_noel.back.dto.TokenDto;
 

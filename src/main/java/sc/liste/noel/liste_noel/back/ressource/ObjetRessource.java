@@ -9,13 +9,13 @@ import sc.liste.noel.liste_noel.back.exception.ModificationInterditeException;
 import sc.liste.noel.liste_noel.back.service.ListeServiceInterface;
 import sc.liste.noel.liste_noel.back.dto.ObjetDto;
 import sc.liste.noel.liste_noel.back.service.MessageService;
-import sc.liste.noel.liste_noel.back.Constantes;
+import sc.liste.noel.liste_noel.back.mapper.Constantes;
 
 import java.security.Principal;
 import java.util.Locale;
 
 import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static sc.liste.noel.liste_noel.back.Constantes.API_LISTE_ERREUR_KEY;
+import static sc.liste.noel.liste_noel.back.mapper.Constantes.API_LISTE_ERREUR_KEY;
 
 @RestController
 @RequestMapping("/api/cadeau")

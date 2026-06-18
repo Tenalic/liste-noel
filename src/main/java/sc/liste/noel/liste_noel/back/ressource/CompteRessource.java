@@ -2,10 +2,7 @@ package sc.liste.noel.liste_noel.back.ressource;
 
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +25,13 @@ import sc.liste.noel.liste_noel.back.service.JwtService;
 import sc.liste.noel.liste_noel.back.service.SecretServiceInterface;
 import sc.liste.noel.liste_noel.back.dto.CompteDto;
 import sc.liste.noel.liste_noel.back.service.MessageService;
-import sc.liste.noel.liste_noel.back.Constantes;
+import sc.liste.noel.liste_noel.back.mapper.Constantes;
 
 import java.security.Principal;
 import java.time.Duration;
 import java.util.Locale;
 
-import static sc.liste.noel.liste_noel.back.Constantes.*;
+import static sc.liste.noel.liste_noel.back.mapper.Constantes.*;
 
 @RestController
 @RequestMapping("/api/compte")

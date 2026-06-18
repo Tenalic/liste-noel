@@ -1,6 +1,5 @@
 package sc.liste.noel.liste_noel.back.ressource;
 
-import jakarta.validation.constraints.NotBlank;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -12,18 +11,17 @@ import sc.liste.noel.liste_noel.back.dto.response.ListeReponse;
 import sc.liste.noel.liste_noel.back.dto.response.MesListesResponse;
 import sc.liste.noel.liste_noel.back.exception.ListeNotFoundException;
 import sc.liste.noel.liste_noel.back.service.ListeServiceInterface;
-import sc.liste.noel.liste_noel.back.service.SecretServiceInterface;
 import sc.liste.noel.liste_noel.back.dto.ListeDto;
 import sc.liste.noel.liste_noel.back.dto.ListeContexteDto;
 import sc.liste.noel.liste_noel.back.dto.ObjetDto;
 import sc.liste.noel.liste_noel.back.service.MessageService;
-import sc.liste.noel.liste_noel.back.Constantes;
+import sc.liste.noel.liste_noel.back.mapper.Constantes;
 
 import java.security.Principal;
 import java.util.List;
 import java.util.Locale;
 
-import static sc.liste.noel.liste_noel.back.Constantes.*;
+import static sc.liste.noel.liste_noel.back.mapper.Constantes.*;
 
 @RestController
 @RequestMapping("/api/liste")
