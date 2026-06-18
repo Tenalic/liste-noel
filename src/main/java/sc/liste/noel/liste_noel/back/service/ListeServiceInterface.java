@@ -1,5 +1,6 @@
 package sc.liste.noel.liste_noel.back.service;
 
+import sc.liste.noel.liste_noel.back.exception.ListeNotFoundException;
 import sc.liste.noel.liste_noel.back.exception.ModificationInterditeException;
 import sc.liste.noel.liste_noel.back.dto.ListeDto;
 import sc.liste.noel.liste_noel.back.dto.ListeContexteDto;
@@ -12,7 +13,7 @@ public interface ListeServiceInterface {
 
     List<ListeDto> getListesOfEmail(String email);
 
-    ListeDto getListeById(Long id);
+    ListeDto getListeById(Long id) throws ListeNotFoundException;
 
     void ajouterObjetDansUneListe(String titre, String url, String description, String idListe, String proprietaire, int priorite);
 
@@ -33,6 +34,6 @@ public interface ListeServiceInterface {
     String supprimerListe(String nomListe, String emailListe);
     String supprimerListe(Long idListe);
 
-    ListeContexteDto getListeAvecContexte(Long id, String email);
+    ListeContexteDto getListeAvecContexte(Long id, String email) throws ListeNotFoundException;
 
 }

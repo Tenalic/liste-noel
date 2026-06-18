@@ -13,6 +13,7 @@ import sc.liste.noel.liste_noel.back.db.repo.CompteRepo;
 import sc.liste.noel.liste_noel.back.db.repo.FavorisRepo;
 import sc.liste.noel.liste_noel.back.db.repo.ListeRepo;
 import sc.liste.noel.liste_noel.back.db.repo.ObjetRepo;
+import sc.liste.noel.liste_noel.back.exception.ListeNotFoundException;
 import sc.liste.noel.liste_noel.back.exception.ModificationInterditeException;
 import sc.liste.noel.liste_noel.back.service.ListeServiceInterface;
 import sc.liste.noel.liste_noel.back.dto.ListeContexteDto;
@@ -68,11 +69,15 @@ public class ListeServiceImpl implements ListeServiceInterface {
     }
 
     @Override
-    public ListeDto getListeById(Long id) {
+    public ListeDto getListeById(Long id) throws ListeNotFoundException {
         ListeEntity listeEntity = listeRepo.findByIdListe(id);
         ListeDto listeDto = ListeMapper.entityToDto(listeEntity);
-        listeDto.setUrlPartage(ListeMapper.buildUrlPartage(baseUrl, id));
-        return listeDto;
+        if(listeDto != null) {
+            listeDto.setUrlPartage(ListeMapper.buildUrlPartage(baseUrl, id));
+            return listeDto;
+        } else {
+            throw new ListeNotFoundException("Liste introuvable : " + id);
+        }
     }
 
     @Override
@@ -273,7 +278,7 @@ public class ListeServiceImpl implements ListeServiceInterface {
     }
 
     @Override
-    public ListeContexteDto getListeAvecContexte(Long id, String email) {
+    public ListeContexteDto getListeAvecContexte(Long id, String email) throws ListeNotFoundException {
         ListeDto liste = this.getListeById(id);
 
         ListeContexteDto listeContexte = new ListeContexteDto(liste);

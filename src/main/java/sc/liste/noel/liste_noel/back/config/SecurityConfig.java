@@ -9,7 +9,10 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 import sc.liste.noel.liste_noel.back.service.JwtAuthFilter;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -24,6 +27,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configurationSource(request -> {
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.setAllowedOrigins(List.of(
+                            "https://gift-list-manager.pages.dev"          // prod Cloudflare
+                    ));
+                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    config.setAllowedHeaders(List.of("*"));
+                    config.setAllowCredentials(true);
+                    return config;
+                }))
                 // Désactive CSRF : on est protégé par le cookie SameSite=Strict + JWT
                 .csrf(AbstractHttpConfigurer::disable)
 

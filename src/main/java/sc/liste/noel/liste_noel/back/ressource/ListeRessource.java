@@ -10,6 +10,7 @@ import sc.liste.noel.liste_noel.back.dto.request.CreationListeRequest;
 import sc.liste.noel.liste_noel.back.dto.response.GeneriqueResponse;
 import sc.liste.noel.liste_noel.back.dto.response.ListeReponse;
 import sc.liste.noel.liste_noel.back.dto.response.MesListesResponse;
+import sc.liste.noel.liste_noel.back.exception.ListeNotFoundException;
 import sc.liste.noel.liste_noel.back.service.ListeServiceInterface;
 import sc.liste.noel.liste_noel.back.service.SecretServiceInterface;
 import sc.liste.noel.liste_noel.back.dto.ListeDto;
@@ -22,8 +23,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Locale;
 
-import static sc.liste.noel.liste_noel.back.Constantes.API_LISTE_ERREUR_KEY;
-import static sc.liste.noel.liste_noel.back.Constantes.API_SECRET_INVALID_KEY;
+import static sc.liste.noel.liste_noel.back.Constantes.*;
 
 @RestController
 @RequestMapping("/api/liste")
@@ -56,12 +56,17 @@ public class ListeRessource {
 
     @GetMapping("/{idListe}")
     public ResponseEntity<ListeReponse> getUneListe(Principal principal,
-                                                    @PathVariable String idListe) {
+                                                    @PathVariable String idListe,
+                                                    Locale locale) {
         String email = principal != null ? principal.getName() : null;
         try {
             ListeContexteDto liste = listeServiceInterface.getListeAvecContexte(Long.valueOf(idListe), email);
             return ResponseEntity.ok(new ListeReponse("Succes", Constantes.RETOUR_API_OK, liste, liste.isEstProprietaire(), liste.isEstFavoris()));
-        } catch (Exception e) {
+        } catch (ListeNotFoundException e) {
+            LOGGER.warn("La liste {} est introuvalbe en BDD", idListe);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ListeReponse(messageService.getMessage(LISTE_INTROUVABLE, locale), Constantes.RETOUR_API_KO));
+        }
+        catch (Exception e) {
             LOGGER.error("Erreur lors de la récupération de la listes " + idListe, e);
             return ResponseEntity.internalServerError().build();
         }

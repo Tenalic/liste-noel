@@ -84,7 +84,7 @@ public class CompteRessource {
                     .secure(true)                       // HTTPS uniquement (false en dev local)
                     .path("/")                          // valable sur toutes les routes
                     .maxAge(Duration.ofSeconds(86400))  // 24h, comme jwt.expiration
-                    .sameSite("Strict")                 // protection CSRF
+                    .sameSite("None")                 // protection CSRF
                     .build();
 
 
@@ -116,7 +116,7 @@ public class CompteRessource {
                     .secure(true)                       // HTTPS uniquement (false en dev local)
                     .path("/")                          // valable sur toutes les routes
                     .maxAge(Duration.ofSeconds(86400))  // 24h, comme jwt.expiration
-                    .sameSite("Strict")                 // protection CSRF
+                    .sameSite("None")                 // protection CSRF
                     .build();
 
             return ResponseEntity.ok()
@@ -143,7 +143,7 @@ public class CompteRessource {
                 .secure(true)
                 .path("/")
                 .maxAge(0)          // ← c'est ça qui supprime le cookie
-                .sameSite("Strict")
+                .sameSite("None")
                 .build();
 
         return ResponseEntity.ok()
