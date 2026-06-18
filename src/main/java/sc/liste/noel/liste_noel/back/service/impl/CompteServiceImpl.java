@@ -11,10 +11,10 @@ import sc.liste.noel.liste_noel.back.exception.MailServiceDesactivedException;
 import sc.liste.noel.liste_noel.back.exception.MotDePasseException;
 import sc.liste.noel.liste_noel.back.service.CompteServiceInterface;
 import sc.liste.noel.liste_noel.back.utils.PasswordUtils;
-import sc.liste.noel.liste_noel.common.utils.Utils;
+import sc.liste.noel.liste_noel.back.service.PasswordService;
 import sc.liste.noel.liste_noel.back.CompteMapper;
-import sc.liste.noel.liste_noel.common.dto.CompteDto;
-import sc.liste.noel.liste_noel.common.dto.TokenDto;
+import sc.liste.noel.liste_noel.back.dto.CompteDto;
+import sc.liste.noel.liste_noel.back.dto.TokenDto;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -162,7 +162,7 @@ public class CompteServiceImpl implements CompteServiceInterface {
     public void genererMotDePasseEtEnvoyer(String email) throws MailServiceDesactivedException {
 
         if (mailServiceActived) {
-            String newMdp = Utils.generatePassayPassword();
+            String newMdp = PasswordService.generatePassayPassword();
             boolean isUpdate = forceUpdatePassword(email, newMdp);
             if (isUpdate) {
                 String body = "Votre mot de passe a été réinitialisé, voici votre nouveau mot de passe, vous pourrez le modifier une fois connecté : " + newMdp;

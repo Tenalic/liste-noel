@@ -14,22 +14,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sc.liste.noel.liste_noel.back.dto.*;
+import sc.liste.noel.liste_noel.back.dto.request.ConnexionRequest;
+import sc.liste.noel.liste_noel.back.dto.request.InscriptionRequest;
+import sc.liste.noel.liste_noel.back.dto.request.ModifierMotDePasseRequest;
+import sc.liste.noel.liste_noel.back.dto.request.MotDePasseOublieRequest;
+import sc.liste.noel.liste_noel.back.dto.response.CompteResponse;
+import sc.liste.noel.liste_noel.back.dto.response.GeneriqueResponse;
 import sc.liste.noel.liste_noel.back.exception.CompteNotFoundException;
 import sc.liste.noel.liste_noel.back.exception.MailServiceDesactivedException;
 import sc.liste.noel.liste_noel.back.exception.MotDePasseException;
 import sc.liste.noel.liste_noel.back.service.CompteServiceInterface;
 import sc.liste.noel.liste_noel.back.service.JwtService;
 import sc.liste.noel.liste_noel.back.service.SecretServiceInterface;
-import sc.liste.noel.liste_noel.common.dto.CompteDto;
-import sc.liste.noel.liste_noel.common.service.MessageService;
-import sc.liste.noel.liste_noel.front.constante.Constantes;
+import sc.liste.noel.liste_noel.back.dto.CompteDto;
+import sc.liste.noel.liste_noel.back.service.MessageService;
+import sc.liste.noel.liste_noel.back.Constantes;
 
 import java.security.Principal;
 import java.time.Duration;
 import java.util.Locale;
 
-import static sc.liste.noel.liste_noel.front.constante.Constantes.*;
+import static sc.liste.noel.liste_noel.back.Constantes.*;
 
 @RestController
 @RequestMapping("/api/compte")
@@ -45,51 +50,6 @@ public class CompteRessource {
     private MessageService messageService;
     @Autowired
     private JwtService jwtService;
-
-    /**
-     * API permettant de créer un nouveau compte.
-     *
-     * @param email       Email de l'utilisateur.
-     * @param password    Mot de passe (doit faire au moins 8 caractères).
-     * @param secret      Secret de l'application appelante pour l'authentification.
-     * @param pseudo      Pseudo de l'utilisateur.
-     * @param cguAccepted Indique si les CGU sont acceptées.
-     * @param locale      Locale pour la langue des messages (optionnel, défaut = fr).
-     * @return ResponseEntity<CompteResponse> avec le code retour (0 si OK) et un message.
-     */
-    @PostMapping("/creer")
-    public ResponseEntity<CompteResponse> creerCompte(
-            @RequestParam(value = "email") @Email String email,
-            @RequestParam(value = "password") @Size(min = 8) String password,
-            @RequestHeader(value = "secret") String secret,
-            @RequestParam(value = "pseudo") String pseudo,
-            @RequestParam(value = "cguAccepted") @AssertTrue(message = CGU_NON_ACCEPTE_KEY) boolean cguAccepted,
-            Locale locale) {
-        try {
-            // Vérification du secret
-            if (!secretService.verifierSecret(secret)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new CompteResponse(email, messageService.getMessage(API_SECRET_INVALID_KEY, locale), Constantes.RETOUR_API_KO));
-            }
-
-            // Vérification de l'existence du compte
-            if (compteService.compteExiste(email)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(new CompteResponse(email, messageService.getMessage(COMPTE_EXISTE_KEY, locale), Constantes.RETOUR_API_KO));
-            }
-
-            // Vérification de l'existence du pseudo
-            if (compteService.pseudoExiste(pseudo)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(new CompteResponse(email, messageService.getMessage(PSEUDO_EXISTE_KEY, locale), Constantes.RETOUR_API_KO));
-            }
-
-            // Création du compte
-            compteService.creationCompte(email, password, cguAccepted, pseudo);
-            return ResponseEntity.ok(new CompteResponse(email, messageService.getMessage(Constantes.API_COMPTE_CREATION_SUCCES_KEY, locale), Constantes.RETOUR_API_OK));
-
-        } catch (Exception e) {
-            LOGGER.error("Erreur lors de la création du compte pour l'email : " + email, e);
-            return ResponseEntity.internalServerError().body(new CompteResponse(email, messageService.getMessage(COMPTE_ERROR_KEY, locale), Constantes.RETOUR_API_KO));
-        }
-    }
 
     /**
      * API permettant de créer un nouveau compte.
@@ -204,43 +164,6 @@ public class CompteRessource {
             LOGGER.error("[mot-de-passe-oublie] Une erreur est survenu", e);
             return ResponseEntity.internalServerError()
                     .body(new GeneriqueResponse(messageService.getMessage(API_ERROR_GENERIC_KEY, locale), Constantes.RETOUR_API_KO));
-        }
-    }
-
-    /**
-     * Mettre a jour le mot de passe d'un compte
-     *
-     * @param email       : email du compte
-     * @param oldPassword : ancien mot de passe
-     * @param newPassword : nouveau mot de passe
-     * @return ResponseEntity<CompteResponse> contenant le email, le code retour (0
-     * si ok) et le messegae retour
-     */
-    //@PostMapping("/update-password")
-    public ResponseEntity<CompteResponse> updatePassword(
-            @RequestParam @NotBlank(message = API_COMPTE_EMAIL_OBLIGATOIRE_KEY) String email,
-            @RequestParam @NotBlank(message = API_COMPTE_OLD_PASSWORD_OBLIGATOIRE_KEY) String oldPassword,
-            @RequestParam @Size(message = API_COMPTE_NEW_PASSWORD_TROP_COURT_KEY) String newPassword,
-            @RequestHeader(value = "secret") String secret,
-            Locale locale) {
-
-        try {
-            if (!secretService.verifierSecret(secret)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(new CompteResponse(email, messageService.getMessage(API_SECRET_INVALID_KEY, locale), Constantes.RETOUR_API_KO));
-            }
-
-            boolean isUpdate = compteService.updatePassword(email, oldPassword, newPassword);
-            if (!isUpdate) {
-                return ResponseEntity.badRequest()
-                        .body(new CompteResponse(email, messageService.getMessage(API_COMPTE_PASSWORD_DIFFERENT_KEY, locale), Constantes.RETOUR_API_KO));
-            }
-
-            return ResponseEntity.ok(new CompteResponse(email, messageService.getMessage(API_COMPTE_PASSWORD_UPDATE_SUCCES_KEY, locale), Constantes.RETOUR_API_OK));
-        } catch (Exception e) {
-            LOGGER.error("Erreur lors de la mise à jour du mot de passe pour le email : " + email, e);
-            return ResponseEntity.internalServerError()
-                    .body(new CompteResponse(email, messageService.getMessage(API_ERROR_GENERIC_KEY, locale), Constantes.RETOUR_API_KO));
         }
     }
 

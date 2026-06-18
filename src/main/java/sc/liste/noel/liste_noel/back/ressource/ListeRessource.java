@@ -6,26 +6,24 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sc.liste.noel.liste_noel.back.dto.CreationListeRequest;
-import sc.liste.noel.liste_noel.back.dto.GeneriqueResponse;
-import sc.liste.noel.liste_noel.back.dto.ListeReponse;
-import sc.liste.noel.liste_noel.back.dto.MesListesResponse;
-import sc.liste.noel.liste_noel.back.exception.ModificationInterditeException;
+import sc.liste.noel.liste_noel.back.dto.request.CreationListeRequest;
+import sc.liste.noel.liste_noel.back.dto.response.GeneriqueResponse;
+import sc.liste.noel.liste_noel.back.dto.response.ListeReponse;
+import sc.liste.noel.liste_noel.back.dto.response.MesListesResponse;
 import sc.liste.noel.liste_noel.back.service.ListeServiceInterface;
 import sc.liste.noel.liste_noel.back.service.SecretServiceInterface;
-import sc.liste.noel.liste_noel.common.dto.ListeDto;
-import sc.liste.noel.liste_noel.common.dto.ListeContexteDto;
-import sc.liste.noel.liste_noel.common.dto.ObjetDto;
-import sc.liste.noel.liste_noel.common.service.MessageService;
-import sc.liste.noel.liste_noel.front.constante.Constantes;
+import sc.liste.noel.liste_noel.back.dto.ListeDto;
+import sc.liste.noel.liste_noel.back.dto.ListeContexteDto;
+import sc.liste.noel.liste_noel.back.dto.ObjetDto;
+import sc.liste.noel.liste_noel.back.service.MessageService;
+import sc.liste.noel.liste_noel.back.Constantes;
 
 import java.security.Principal;
 import java.util.List;
 import java.util.Locale;
 
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static sc.liste.noel.liste_noel.front.constante.Constantes.API_LISTE_ERREUR_KEY;
-import static sc.liste.noel.liste_noel.front.constante.Constantes.API_SECRET_INVALID_KEY;
+import static sc.liste.noel.liste_noel.back.Constantes.API_LISTE_ERREUR_KEY;
+import static sc.liste.noel.liste_noel.back.Constantes.API_SECRET_INVALID_KEY;
 
 @RestController
 @RequestMapping("/api/liste")
@@ -35,13 +33,11 @@ public class ListeRessource {
 
     private final ListeServiceInterface listeServiceInterface;
 
-    private final SecretServiceInterface secretService;
-
     private final MessageService messageService;
 
-    public ListeRessource(ListeServiceInterface listeServiceInterface, SecretServiceInterface secretService, MessageService messageService) {
+    public ListeRessource(ListeServiceInterface listeServiceInterface,
+                          MessageService messageService) {
         this.listeServiceInterface = listeServiceInterface;
-        this.secretService = secretService;
         this.messageService = messageService;
     }
 
@@ -59,7 +55,8 @@ public class ListeRessource {
     }
 
     @GetMapping("/{idListe}")
-    public ResponseEntity<ListeReponse> getUneListe(Principal principal, @PathVariable String idListe) {
+    public ResponseEntity<ListeReponse> getUneListe(Principal principal,
+                                                    @PathVariable String idListe) {
         String email = principal != null ? principal.getName() : null;
         try {
             ListeContexteDto liste = listeServiceInterface.getListeAvecContexte(Long.valueOf(idListe), email);
@@ -71,19 +68,21 @@ public class ListeRessource {
     }
 
     @PostMapping("/{idListe}/favoris")
-    public ResponseEntity<GeneriqueResponse> addFavoris(Principal principal, @PathVariable String idListe) {
+    public ResponseEntity<GeneriqueResponse> addFavoris(Principal principal,
+                                                        @PathVariable String idListe) {
         String email = principal.getName();
         try {
             listeServiceInterface.modifierFavori(Long.valueOf(idListe), email);
             return ResponseEntity.ok(new GeneriqueResponse("Succes", Constantes.RETOUR_API_OK));
         } catch (Exception e) {
-            LOGGER.error("Erreur lors de la modification de favoris {} {}",idListe, email, e);
+            LOGGER.error("Erreur lors de la modification de favoris {} {}", idListe, email, e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @PostMapping("/creer")
-    public ResponseEntity<GeneriqueResponse> creerUneListe(Principal principal, @RequestBody CreationListeRequest listeRequest) {
+    public ResponseEntity<GeneriqueResponse> creerUneListe(Principal principal,
+                                                           @RequestBody CreationListeRequest listeRequest) {
         String email = principal.getName();
         listeServiceInterface.creerListe(email, listeRequest.getNomListe());
         return ResponseEntity.ok(new GeneriqueResponse("Succes", Constantes.RETOUR_API_OK));
@@ -91,7 +90,8 @@ public class ListeRessource {
 
     @DeleteMapping("/{idListe}")
     public ResponseEntity<GeneriqueResponse> supprimerUneListe(
-            Locale locale, @PathVariable String idListe, Principal principal) {
+            Locale locale, @PathVariable String idListe,
+            Principal principal) {
         String email = principal.getName();
         try {
             String response = listeServiceInterface.supprimerListe(Long.valueOf(idListe));
@@ -102,35 +102,17 @@ public class ListeRessource {
         }
     }
 
-    @DeleteMapping("/supprimer-liste")
-    public ResponseEntity<GeneriqueResponse> supprimerListe(
-            @RequestParam @NotBlank String email,
-            @RequestParam @NotBlank String nomListe,
-            @RequestHeader(value = "secret") String secret,
-            Locale locale) {
-        try {
-            if (!secretService.verifierSecret(secret)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(new GeneriqueResponse(messageService.getMessage(API_SECRET_INVALID_KEY, locale), Constantes.RETOUR_API_KO));
-            }
-            String response = listeServiceInterface.supprimerListe(nomListe, email);
-            return ResponseEntity.ok(new GeneriqueResponse(response, Constantes.RETOUR_API_OK));
-        } catch (Exception e) {
-            LOGGER.error("Erreur lors de la suppression de la liste " + nomListe + " pour l'email " + email, e);
-            return ResponseEntity.internalServerError().body(new GeneriqueResponse(messageService.getMessage(API_LISTE_ERREUR_KEY, locale), Constantes.RETOUR_API_KO));
-        }
-    }
-
     @PostMapping("/{idListe}/cadeau")
-    public ResponseEntity<GeneriqueResponse> ajouterObjet(Principal principal, @RequestBody ObjetDto objet, @PathVariable String idListe,
+    public ResponseEntity<GeneriqueResponse> ajouterObjet(Principal principal,
+                                                          @RequestBody ObjetDto objet,
+                                                          @PathVariable String idListe,
                                                           Locale locale) {
         String email = principal.getName();
         LOGGER.info("Ajout de l'objet {} par l'utilisateur {}", objet.getTitre(), email);
         try {
             listeServiceInterface.ajouterObjetDansUneListe(objet.getTitre(), objet.getUrl(), objet.getDescription(), idListe, email, objet.getValuePriorite());
             return ResponseEntity.ok(new GeneriqueResponse("Succes", Constantes.RETOUR_API_OK));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new GeneriqueResponse(messageService.getMessage(API_LISTE_ERREUR_KEY, locale), Constantes.RETOUR_API_KO));
         }
     }

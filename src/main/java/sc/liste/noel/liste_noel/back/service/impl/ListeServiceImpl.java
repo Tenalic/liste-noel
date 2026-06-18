@@ -15,8 +15,8 @@ import sc.liste.noel.liste_noel.back.db.repo.ListeRepo;
 import sc.liste.noel.liste_noel.back.db.repo.ObjetRepo;
 import sc.liste.noel.liste_noel.back.exception.ModificationInterditeException;
 import sc.liste.noel.liste_noel.back.service.ListeServiceInterface;
-import sc.liste.noel.liste_noel.common.dto.ListeContexteDto;
-import sc.liste.noel.liste_noel.common.dto.ListeDto;
+import sc.liste.noel.liste_noel.back.dto.ListeContexteDto;
+import sc.liste.noel.liste_noel.back.dto.ListeDto;
 
 import java.util.ArrayList;
 import java.util.List;

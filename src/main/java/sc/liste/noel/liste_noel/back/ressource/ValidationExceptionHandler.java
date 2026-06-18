@@ -5,9 +5,9 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import sc.liste.noel.liste_noel.back.dto.CompteResponse;
+import sc.liste.noel.liste_noel.back.dto.response.CompteResponse;
 
-import static sc.liste.noel.liste_noel.front.constante.Constantes.RETOUR_API_KO;
+import static sc.liste.noel.liste_noel.back.Constantes.RETOUR_API_KO;
 
 @RestControllerAdvice
 public class ValidationExceptionHandler {

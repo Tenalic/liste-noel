@@ -1,7 +1,7 @@
 package sc.liste.noel.liste_noel.back;
 
 import sc.liste.noel.liste_noel.back.db.entity.CompteEntity;
-import sc.liste.noel.liste_noel.common.dto.CompteDto;
+import sc.liste.noel.liste_noel.back.dto.CompteDto;
 
 public class CompteMapper {
 

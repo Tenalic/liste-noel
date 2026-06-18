@@ -2,10 +2,8 @@ package sc.liste.noel.liste_noel.back.service;
 
 import sc.liste.noel.liste_noel.back.exception.MailServiceDesactivedException;
 import sc.liste.noel.liste_noel.back.exception.MotDePasseException;
-import sc.liste.noel.liste_noel.common.dto.CompteDto;
-import sc.liste.noel.liste_noel.common.dto.TokenDto;
+import sc.liste.noel.liste_noel.back.dto.CompteDto;
 import sc.liste.noel.liste_noel.back.exception.CompteNotFoundException;
-import sc.liste.noel.liste_noel.back.exception.TokenExpiredException;
 
 public interface CompteServiceInterface {
 

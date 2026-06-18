@@ -1,7 +1,7 @@
 package sc.liste.noel.liste_noel.back;
 
 import sc.liste.noel.liste_noel.back.db.entity.ListeEntity;
-import sc.liste.noel.liste_noel.common.dto.ListeDto;
+import sc.liste.noel.liste_noel.back.dto.ListeDto;
 
 import java.util.ArrayList;
 import java.util.List;

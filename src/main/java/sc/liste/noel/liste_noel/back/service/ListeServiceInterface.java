@@ -1,8 +1,8 @@
 package sc.liste.noel.liste_noel.back.service;
 
 import sc.liste.noel.liste_noel.back.exception.ModificationInterditeException;
-import sc.liste.noel.liste_noel.common.dto.ListeDto;
-import sc.liste.noel.liste_noel.common.dto.ListeContexteDto;
+import sc.liste.noel.liste_noel.back.dto.ListeDto;
+import sc.liste.noel.liste_noel.back.dto.ListeContexteDto;
 
 import java.util.List;
 

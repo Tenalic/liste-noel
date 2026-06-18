@@ -2,21 +2,20 @@ package sc.liste.noel.liste_noel.back.ressource;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sc.liste.noel.liste_noel.back.dto.GeneriqueResponse;
+import sc.liste.noel.liste_noel.back.dto.response.GeneriqueResponse;
 import sc.liste.noel.liste_noel.back.exception.ModificationInterditeException;
 import sc.liste.noel.liste_noel.back.service.ListeServiceInterface;
-import sc.liste.noel.liste_noel.common.dto.ObjetDto;
-import sc.liste.noel.liste_noel.common.service.MessageService;
-import sc.liste.noel.liste_noel.front.constante.Constantes;
+import sc.liste.noel.liste_noel.back.dto.ObjetDto;
+import sc.liste.noel.liste_noel.back.service.MessageService;
+import sc.liste.noel.liste_noel.back.Constantes;
 
 import java.security.Principal;
 import java.util.Locale;
 
 import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static sc.liste.noel.liste_noel.front.constante.Constantes.API_LISTE_ERREUR_KEY;
+import static sc.liste.noel.liste_noel.back.Constantes.API_LISTE_ERREUR_KEY;
 
 @RestController
 @RequestMapping("/api/cadeau")
@@ -28,14 +27,18 @@ public class ObjetRessource {
 
     private final MessageService messageService;
 
-    public ObjetRessource(ListeServiceInterface listeServiceInterface, MessageService messageService) {
+    public ObjetRessource(ListeServiceInterface listeServiceInterface,
+                          MessageService messageService) {
         this.listeServiceInterface = listeServiceInterface;
         this.messageService = messageService;
     }
 
 
     @PutMapping("/{idObjet}")
-    public ResponseEntity<GeneriqueResponse> modifierObjet(Principal principal, @RequestBody ObjetDto objet, @PathVariable String idObjet, Locale locale) {
+    public ResponseEntity<GeneriqueResponse> modifierObjet(Principal principal,
+                                                           @RequestBody ObjetDto objet,
+                                                           @PathVariable String idObjet,
+                                                           Locale locale) {
         String email = principal.getName();
         LOGGER.info("Modification de l'objet {} par l'utilisateur {}", idObjet, email);
         try {
@@ -50,7 +53,9 @@ public class ObjetRessource {
     }
 
     @DeleteMapping("/{idObjet}")
-    public ResponseEntity<GeneriqueResponse> supprimerCadeau(Principal principal, @PathVariable String idObjet, Locale locale) {
+    public ResponseEntity<GeneriqueResponse> supprimerCadeau(Principal principal,
+                                                             @PathVariable String idObjet,
+                                                             Locale locale) {
         String email = principal.getName();
         try {
             listeServiceInterface.supprimerObjet(Long.valueOf(idObjet), email);
