@@ -52,7 +52,6 @@ public class SecurityConfig {
                                 "/api/compte/**",
                                 "/api/liste/*",
                                 "/error",
-                                "/actuator/health",
                                 "/health"
                         ).permitAll()
                         // Toutes les autres routes nécessitent d'être connecté
