@@ -87,7 +87,7 @@ public class CompteRessource {
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                    .body(new CompteResponse(inscriptionRequest.getEmail(), messageService.getMessage(Constantes.API_COMPTE_CREATION_SUCCES_KEY, locale), Constantes.RETOUR_API_OK));
+                    .body(new CompteResponse(inscriptionRequest.getEmail(), inscriptionRequest.getPseudo(), messageService.getMessage(Constantes.API_COMPTE_CREATION_SUCCES_KEY, locale), Constantes.RETOUR_API_OK));
 
         } catch (Exception e) {
             LOGGER.error("Erreur lors de la création du compte pour l'email : " + inscriptionRequest.getEmail(), e);
