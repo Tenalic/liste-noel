@@ -118,7 +118,7 @@ public class CompteRessource {
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                    .body(new CompteResponse(compte.getEmail(), "Connexion réussie", RETOUR_API_OK));
+                    .body(new CompteResponse(compte.getEmail(), compte.getPseudo(), "Connexion réussie", RETOUR_API_OK));
 
         } catch (CompteNotFoundException exception) {
             return ResponseEntity.ok()
