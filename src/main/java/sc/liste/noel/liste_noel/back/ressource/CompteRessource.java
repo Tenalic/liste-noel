@@ -188,6 +188,15 @@ public class CompteRessource {
         }
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<CompteResponse> getMe(Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        // Si principal n'est pas null, Spring Security a validé le cookie/token
+        return ResponseEntity.ok(new CompteResponse(principal.getName(), "Session active", RETOUR_API_OK));
+    }
+
     /**
      * API permetant de supprimer un compte
      *
