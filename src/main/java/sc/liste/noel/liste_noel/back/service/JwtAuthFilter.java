@@ -5,13 +5,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import sc.liste.noel.liste_noel.back.ressource.ListeRessource;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -20,8 +17,6 @@ import java.util.Optional;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
-
-    private static final Logger LOGGER = LogManager.getLogger(JwtAuthFilter.class);
 
     private final JwtService jwtService;
 
@@ -42,24 +37,28 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        LOGGER.info("JwtAuthFilter - URI: {}", request.getRequestURI());
+        String path = request.getRequestURI();
 
-        Optional<String> token = extraireTokenDuCookie(request);
-
-        LOGGER.info("JwtAuthFilter - Cookie présent: {}", token.isPresent());
-
-        if (token.isPresent()) {
-            LOGGER.info("JwtAuthFilter - Token valide: {}", jwtService.estValide(token.get()));
+        // On laisse passer les URLs publiques sans vérifier le JWT
+        if (URLS_PUBLIQUES.stream().anyMatch(path::startsWith)) {
+            filterChain.doFilter(request, response);
+            return;
         }
 
+        // On cherche le cookie "auth-token" dans la requête
+        Optional<String> token = extraireTokenDuCookie(request);
+
         if (token.isPresent() && jwtService.estValide(token.get())) {
+            // Token valide → on identifie l'utilisateur dans le contexte Spring Security
             String email = jwtService.extraireEmail(token.get());
-            LOGGER.info("JwtAuthFilter - Email extrait: {}", email);
 
             UsernamePasswordAuthenticationToken auth =
                     new UsernamePasswordAuthenticationToken(email, null, List.of());
+
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
+        // Token absent ou invalide → SecurityContext reste vide
+        // Spring Security refusera l'accès aux endpoints protégés (401)
 
         filterChain.doFilter(request, response);
     }
