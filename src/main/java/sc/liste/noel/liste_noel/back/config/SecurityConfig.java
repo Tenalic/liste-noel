@@ -30,7 +30,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
                     config.setAllowedOrigins(List.of(
-                            "https://gift-list-manager.pages.dev"          // prod Cloudflare
+                            "https://gift-list-manager.pages.dev",          // prod Cloudflare
+                            "https://gift-list-manager.pages.dev/"          // prod Cloudflare
                     ));
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     config.setAllowedHeaders(List.of("*"));
