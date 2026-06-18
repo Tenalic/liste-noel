@@ -22,9 +22,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     // URLs qui ne nécessitent PAS d'être connecté
     private static final List<String> URLS_PUBLIQUES = List.of(
-            "/compte/connexion",
-            "/compte/inscription",
-            "/compte/mot-de-passe-oublie"
+            "/api/compte/connexion",
+            "/api/compte/inscription",
+            "/api/compte/mot-de-passe-oublie"
     );
 
     public JwtAuthFilter(JwtService jwtService) {

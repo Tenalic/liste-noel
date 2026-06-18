@@ -32,24 +32,14 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 ).exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) -> {
-                            // Si c'est un appel API → renvoie 401 en JSON
-                            if (request.getRequestURI().startsWith("/api/compte/")) {
-                                response.setStatus(401);
-                                response.setContentType("application/json");
-                                response.getWriter().write("{\"messageRetour\":\"Non autorisé\",\"codeRetour\":1}");
-                            } else {
-                                // Si c'est une page → redirige vers connexion
-                                response.sendRedirect("/connexion");
-                            }
+                            response.setStatus(401);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"messageRetour\":\"Non autorisé\",\"codeRetour\":1}");
                         })
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            if (request.getRequestURI().startsWith("/api/compte/")) {
-                                response.setStatus(403);
-                                response.setContentType("application/json");
-                                response.getWriter().write("{\"messageRetour\":\"Accès refusé\",\"codeRetour\":1}");
-                            } else {
-                                response.sendRedirect("/connexion");
-                            }
+                            response.setStatus(403);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"messageRetour\":\"Accès refusé\",\"codeRetour\":1}");
                         })
                 )
                 // Définition des routes publiques et protégées
@@ -63,19 +53,7 @@ public class SecurityConfig {
                                 "/api/liste/*",
                                 "/error",
                                 "/connexion",
-
-                                // Tes anciennes routes Thymeleaf (à supprimer au fur et à mesure)
-                                "/welcome",
-                                "/liste",
-                                "/connexion",
-                                "/inscription",
-                                "/",
-                                // ... toutes tes autres routes Thymeleaf
-
-                                // Ressources statiques (CSS, JS, images)
-                                "/css/**",
-                                "/js/**",
-                                "/images/**"
+                                "/actuator/health"
                         ).permitAll()
                         // Toutes les autres routes nécessitent d'être connecté
                         .anyRequest().authenticated()
