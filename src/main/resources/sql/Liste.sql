@@ -47,3 +47,6 @@ INSERT INTO liste_noel.ref_priorite (id, value, libelle) VALUES
 ALTER TABLE liste_noel.objet
 ADD COLUMN priorite INT,
 ADD CONSTRAINT fk_priorite FOREIGN KEY (priorite) REFERENCES liste_noel.ref_priorite(value);
+
+ALTER TABLE liste_noel.liste
+    ADD COLUMN publique boolean NOT NULL DEFAULT false;

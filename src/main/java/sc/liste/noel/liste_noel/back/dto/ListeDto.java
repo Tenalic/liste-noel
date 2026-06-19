@@ -6,16 +6,20 @@ import java.util.List;
 public class ListeDto implements Serializable {
 
     private String urlPartage;
-    
+
     private Long idListe;
 
     private String nomListe;
 
     private List<ObjetDto> listeObjet;
 
+    private int nombreObjet;
+
     private String proprietaire;
 
     private String pseudoProprietaire;
+
+    private boolean publique;
 
 
     public List<ObjetDto> getListeObjet() {
@@ -65,5 +69,21 @@ public class ListeDto implements Serializable {
 
     public void setPseudoProprietaire(String pseudoProprietaire) {
         this.pseudoProprietaire = pseudoProprietaire;
+    }
+
+    public boolean isPublique() {
+        return publique;
+    }
+
+    public void setPublique(boolean publique) {
+        this.publique = publique;
+    }
+
+    public int getNombreObjet() {
+        return nombreObjet;
+    }
+
+    public void setNombreObjet(int nombreObjet) {
+        this.nombreObjet = nombreObjet;
     }
 }

@@ -9,7 +9,13 @@ public interface ListeRepo extends CrudRepository<ListeEntity, Long> {
 
 	List<ListeEntity> findByProprietaire(String email);
 
+	List<ListeEntity> findByPublique(boolean publique);
+
+	List<ListeEntity> findByPubliqueAndNomListeContainingIgnoreCase(boolean publique, String nomListe);
+
 	ListeEntity findByIdListe(Long idListe);
+
+
 
 	ListeEntity findByProprietaireAndNomListe(String email, String nomListe);
 }

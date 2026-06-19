@@ -12,6 +12,11 @@ public class ListeReponse extends GeneriqueResponse{
         super(messageRetour, codeRetour);
     }
 
+    public ListeReponse(String messageRetour, int codeRetour, ListeDto listeCadeaux) {
+        super(messageRetour, codeRetour);
+        this.listeCadeaux = listeCadeaux;
+    }
+
     public ListeReponse(String messageRetour, int codeRetour, ListeDto listeCadeaux, boolean estProprietaire, boolean estEnFavoris) {
         super(messageRetour, codeRetour);
         this.listeCadeaux = listeCadeaux;

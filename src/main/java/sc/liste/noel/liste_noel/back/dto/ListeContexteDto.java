@@ -15,6 +15,8 @@ public class ListeContexteDto extends ListeDto{
         this.setListeObjet(liste.getListeObjet());
         this.setUrlPartage(liste.getUrlPartage());
         this.setPseudoProprietaire(liste.getPseudoProprietaire());
+        this.setPublique(liste.isPublique());
+        this.setNombreObjet(liste.getNombreObjet());
     }
 
     public boolean isEstProprietaire() {

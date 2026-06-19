@@ -47,6 +47,7 @@ public class Constantes {
     public static final String MDP_CHANGE_INTROUVABLE = "api.compte.mdp.change.introuvable";
     public static final String COMPTE_INTROUVABLE = "api.compte.introuvable";
     public static final String LISTE_INTROUVABLE = "api.liste.notfound";
+    public static final String MODIFICATION_INTERDITE = "api.modification.interdit";
 
 
 

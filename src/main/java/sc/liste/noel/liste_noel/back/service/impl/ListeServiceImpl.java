@@ -48,11 +48,12 @@ public class ListeServiceImpl implements ListeServiceInterface {
     private Boolean mailServiceActived;
 
     @Override
-    public ListeDto creerListe(String proprietaire, String nomListe) {
+    public ListeDto creerListe(String proprietaire, String nomListe, boolean publique) {
 
         ListeEntity listeEntity = new ListeEntity();
         listeEntity.setNomListe(nomListe);
         listeEntity.setProprietaire(proprietaire);
+        listeEntity.setPublique(publique);
 
         try {
             listeRepo.save(listeEntity);
@@ -72,12 +73,52 @@ public class ListeServiceImpl implements ListeServiceInterface {
     public ListeDto getListeById(Long id) throws ListeNotFoundException {
         ListeEntity listeEntity = listeRepo.findByIdListe(id);
         ListeDto listeDto = ListeMapper.entityToDto(listeEntity);
-        if(listeDto != null) {
+        if (listeDto != null) {
             listeDto.setUrlPartage(ListeMapper.buildUrlPartage(baseUrl, id));
             return listeDto;
         } else {
             throw new ListeNotFoundException("Liste introuvable : " + id);
         }
+    }
+
+    // FIXME creer un repo ListeSimpleEntity sans les objets (perf)
+    @Override
+    public List<ListeDto> getListes(boolean publique, String nomListe) throws ListeNotFoundException {
+        List<ListeEntity> listeEntities;
+        boolean isRechercheParNon = nomListe != null && !nomListe.isBlank();
+        if (isRechercheParNon) {
+            listeEntities = listeRepo.findByPubliqueAndNomListeContainingIgnoreCase(publique, nomListe);
+        } else {
+            listeEntities = listeRepo.findByPublique(publique);
+        }
+        List<ListeDto> listeDtos = ListeMapper.entitiesToDtosSansListeObjet(listeEntities);
+
+        if (listeDtos != null) {
+            listeDtos.forEach(listeDto -> {
+                        listeDto.setUrlPartage(ListeMapper.buildUrlPartage(baseUrl, listeDto.getIdListe()));
+                        this.transcoEmailToPPseudo(listeDto);
+                    }
+            );
+        } else {
+            throw new ListeNotFoundException("Aucune liste trouvé" + (isRechercheParNon ? " " + nomListe : ""));
+        }
+        return listeDtos;
+    }
+
+    @Transactional
+    @Override
+    public void updatePublique(Long idListe, boolean publique, String email) throws ModificationInterditeException, ListeNotFoundException {
+        ListeEntity listeEntity = listeRepo.findByIdListe(idListe);
+        if(listeEntity == null) {
+            throw new ListeNotFoundException("Liste introuvable");
+        }
+        if (listeEntity.getProprietaire().equals(email)) {
+            listeEntity.setPublique(publique);
+            listeRepo.save(listeEntity);
+        } else {
+            throw new ModificationInterditeException("La liste n'appartient pas à l'utilisateur");
+        }
+
     }
 
     @Override
@@ -143,9 +184,8 @@ public class ListeServiceImpl implements ListeServiceInterface {
         return list;
     }
 
-    private ListeDto transcoEmailToPPseudo(ListeDto list) {
+    private void transcoEmailToPPseudo(ListeDto list) {
         list.setProprietaire(compteRepo.findByEmail(list.getProprietaire()).getPseudo());
-        return list;
     }
 
     @Transactional

@@ -18,6 +18,8 @@ public class ListeEntity {
     private String nomListe;
     @OneToMany(mappedBy = "idListe", cascade = CascadeType.ALL)
     private List<ObjetEntity> objetEntityList;
+    @Column(name = "publique")
+    private Boolean publique;
 
     public ListeEntity() {
     }
@@ -52,5 +54,21 @@ public class ListeEntity {
 
     public void setNomListe(String nomListe) {
         this.nomListe = nomListe;
+    }
+
+    public List<ObjetEntity> getObjetEntityList() {
+        return objetEntityList;
+    }
+
+    public void setObjetEntityList(List<ObjetEntity> objetEntityList) {
+        this.objetEntityList = objetEntityList;
+    }
+
+    public Boolean getPublique() {
+        return publique;
+    }
+
+    public void setPublique(Boolean publique) {
+        this.publique = publique;
     }
 }
