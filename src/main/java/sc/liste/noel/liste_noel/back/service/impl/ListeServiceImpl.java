@@ -325,8 +325,9 @@ public class ListeServiceImpl implements ListeServiceInterface {
 
         listeContexte.setEstProprietaire(liste.getProprietaire().equals(email));
 
+        this.transcoEmailToPPseudo(listeContexte);
+
         if (email != null) {
-            this.transcoEmailToPPseudo(listeContexte);
             if (!listeContexte.isEstProprietaire()) {
                 listeContexte.setEstFavoris(
                         this.getListeFavorisOfEmail(email)
