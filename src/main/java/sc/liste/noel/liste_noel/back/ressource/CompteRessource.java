@@ -189,12 +189,25 @@ public class CompteRessource {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<CompteResponse> getMe(Principal principal) {
+    public ResponseEntity<CompteResponse> getMe(Principal principal, Locale locale) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         // Si principal n'est pas null, Spring Security a validé le cookie/token
-        return ResponseEntity.ok(new CompteResponse(principal.getName(), "Session active", RETOUR_API_OK));
+        String email = principal.getName();
+        String pseudo;
+        try {
+            pseudo = compteService.getPseudo(email);
+        } catch (CompteNotFoundException e) {
+            LOGGER.warn("Le compte {} est introuvable", email);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new CompteResponse(email, messageService.getMessage(COMPTE_INTROUVABLE, locale), Constantes.RETOUR_API_KO));
+        } catch (Exception e) {
+            LOGGER.error("[getMe] Une erreur est survenue : {}", email, e);
+            return ResponseEntity.internalServerError()
+                    .body(new CompteResponse(email, messageService.getMessage(API_ERROR_GENERIC_KEY, locale), Constantes.RETOUR_API_KO));
+        }
+        return ResponseEntity.ok(new CompteResponse(email, pseudo, "Session active", RETOUR_API_OK));
     }
 
     /**

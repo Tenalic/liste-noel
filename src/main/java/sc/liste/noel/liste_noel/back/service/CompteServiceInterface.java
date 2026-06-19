@@ -15,6 +15,8 @@ public interface CompteServiceInterface {
      */
     boolean compteExiste(String email);
 
+    String getPseudo(String email) throws CompteNotFoundException;
+
     /**
      * Verifie si un compte avec le pseudo donnee existe en base de données
      *

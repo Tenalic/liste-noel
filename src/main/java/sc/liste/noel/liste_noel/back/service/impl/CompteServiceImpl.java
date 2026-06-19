@@ -49,6 +49,15 @@ public class CompteServiceImpl implements CompteServiceInterface {
     }
 
     @Override
+    public String getPseudo(String email) throws CompteNotFoundException {
+        CompteEntity compte = compteRepo.findByEmail(email);
+        if(compte == null) {
+            throw new CompteNotFoundException("Compte introuvable");
+        }
+        return compte.getPseudo();
+    }
+
+    @Override
     public boolean pseudoExiste(String pseudo) {
         return Optional.ofNullable(compteRepo.findByPseudo(pseudo)).isPresent();
     }
