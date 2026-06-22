@@ -20,13 +20,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
 
-    // URLs qui ne nécessitent PAS d'être connecté
-    private static final List<String> URLS_PUBLIQUES = List.of(
-            "/api/compte/connexion",
-            "/api/compte/inscription",
-            "/api/compte/mot-de-passe-oublie"
-    );
-
     public JwtAuthFilter(JwtService jwtService) {
         this.jwtService = jwtService;
     }
@@ -36,14 +29,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
-
-        String path = request.getRequestURI();
-
-        // On laisse passer les URLs publiques sans vérifier le JWT
-        if (URLS_PUBLIQUES.stream().anyMatch(path::startsWith)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
 
         // On cherche le cookie "auth-token" dans la requête
         Optional<String> token = extraireTokenDuCookie(request);
