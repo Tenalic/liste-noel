@@ -21,17 +21,9 @@ public interface ListeServiceInterface {
 
     void ajouterObjetDansUneListe(String titre, String url, String description, String idListe, String proprietaire, int priorite);
 
-    void prendreUnObjet(String idListe, String idObjet, String personne, String pseudo);
-
-    void nePlusPrendreUnObjet(String idObjet);
-
     List<ListeDto> getListeFavorisOfEmail(String email);
 
-    boolean checkifListeInFavoris(Long idListe, String email);
-
     void ajouterFavori(Long idListe, String email);
-
-    void supprimerFavori(Long idListe, String email);
 
     void modifierFavori(Long idListe, String email);
 
@@ -39,9 +31,7 @@ public interface ListeServiceInterface {
 
     void modifierObjet(Long idObjet, String titreUpdate, String descriptionUpdate, String urlUpdate, int prioriteUpdate, String email) throws ModificationInterditeException;
 
-    String supprimerListe(String nomListe, String emailListe);
-
-    String supprimerListe(Long idListe);
+    String supprimerListe(Long idListe, String emailListe) throws ModificationInterditeException, ListeNotFoundException;
 
     ListeContexteDto getListeAvecContexte(Long id, String email) throws ListeNotFoundException;
 

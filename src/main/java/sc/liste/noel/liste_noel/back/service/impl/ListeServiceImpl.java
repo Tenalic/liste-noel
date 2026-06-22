@@ -109,7 +109,7 @@ public class ListeServiceImpl implements ListeServiceInterface {
     @Override
     public void updatePublique(Long idListe, boolean publique, String email) throws ModificationInterditeException, ListeNotFoundException {
         ListeEntity listeEntity = listeRepo.findByIdListe(idListe);
-        if(listeEntity == null) {
+        if (listeEntity == null) {
             throw new ListeNotFoundException("Liste introuvable");
         }
         if (listeEntity.getProprietaire().equals(email)) {
@@ -133,26 +133,6 @@ public class ListeServiceImpl implements ListeServiceInterface {
         objetRepo.save(objetEntity);
     }
 
-    @Override
-    @Transactional
-    public void prendreUnObjet(String idListe, String idObjet, String personne, String pseudo) {
-        ObjetEntity objetEntity = objetRepo.findByIdObjet(Long.valueOf(idObjet));
-        objetEntity.setDetenteur(personne);
-        objetEntity.setPseudoDetenteur(pseudo);
-        objetEntity.setEstPrit(true);
-        objetRepo.save(objetEntity);
-    }
-
-    @Override
-    @Transactional
-    public void nePlusPrendreUnObjet(String idObjet) {
-        ObjetEntity objetEntity = objetRepo.findByIdObjet(Long.valueOf(idObjet));
-        objetEntity.setDetenteur(null);
-        objetEntity.setPseudoDetenteur(null);
-        objetEntity.setEstPrit(false);
-        objetRepo.save(objetEntity);
-    }
-
 
     public List<ListeDto> getListeFavorisOfEmail(String email) {
         List<FavorisEntity> favorisEntityList = favorisRepo.findByEmail(email);
@@ -171,11 +151,6 @@ public class ListeServiceImpl implements ListeServiceInterface {
 
         return transcoEmailToPPseudo(ListeMapper.entitiesToDtosSansListeObjet(list));
     }
-
-    public boolean checkifListeInFavoris(Long idListe, String email) {
-        return favorisRepo.findByEmailAndIdListe(email, idListe) != null;
-    }
-
 
     private List<ListeDto> transcoEmailToPPseudo(List<ListeDto> list) {
         for (ListeDto listeDto : list) {
@@ -197,15 +172,6 @@ public class ListeServiceImpl implements ListeServiceInterface {
             favorisEntity.setEmail(email);
             favorisEntity.setIdListe(idListe);
             favorisRepo.save(favorisEntity);
-        }
-    }
-
-    @Transactional
-    @Override
-    public void supprimerFavori(Long idListe, String email) {
-        FavorisEntity favorisEntityList = favorisRepo.findByEmailAndIdListe(email, idListe);
-        if (favorisEntityList != null) {
-            favorisRepo.delete(favorisEntityList);
         }
     }
 
@@ -287,33 +253,21 @@ public class ListeServiceImpl implements ListeServiceInterface {
 
     @Transactional
     @Override
-    public String supprimerListe(String nomListe, String emailListe) {
-        ListeEntity listeEntity = listeRepo.findByProprietaireAndNomListe(emailListe, nomListe);
-        if (listeEntity != null) {
-            List<FavorisEntity> favorisEntityList = favorisRepo.findByIdListe(listeEntity.getIdListe());
-            for (FavorisEntity favorisEntity : favorisEntityList) {
-                favorisRepo.delete(favorisEntity);
-            }
-            listeRepo.delete(listeEntity);
-            return "La liste " + emailListe + " à bien été supprimé";
-        } else {
-            return "La liste " + emailListe + " est introuvable, elle ne peux pas être supprimée";
-        }
-    }
-
-    @Transactional
-    @Override
-    public String supprimerListe(Long idListe) {
+    public String supprimerListe(Long idListe, String email) throws ModificationInterditeException, ListeNotFoundException {
         ListeEntity listeEntity = listeRepo.findByIdListe(idListe);
         if (listeEntity != null) {
-            List<FavorisEntity> favorisEntityList = favorisRepo.findByIdListe(listeEntity.getIdListe());
-            for (FavorisEntity favorisEntity : favorisEntityList) {
-                favorisRepo.delete(favorisEntity);
+            if (listeEntity.getProprietaire().equals(email)) {
+                List<FavorisEntity> favorisEntityList = favorisRepo.findByIdListe(listeEntity.getIdListe());
+                for (FavorisEntity favorisEntity : favorisEntityList) {
+                    favorisRepo.delete(favorisEntity);
+                }
+                listeRepo.delete(listeEntity);
+                return "La liste " + listeEntity.getNomListe() + " à bien été supprimé";
+            } else {
+                throw new ModificationInterditeException("Vous ne pouvez pas supprimer une liste qui ne vous appartient pas");
             }
-            listeRepo.delete(listeEntity);
-            return "La liste " + listeEntity.getNomListe() + " à bien été supprimé";
         } else {
-            return "La liste " + idListe + " est introuvable, elle ne peux pas être supprimée";
+            throw new ListeNotFoundException("Liste introuvable");
         }
     }
 

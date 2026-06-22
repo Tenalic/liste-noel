@@ -48,6 +48,7 @@ public class Constantes {
     public static final String COMPTE_INTROUVABLE = "api.compte.introuvable";
     public static final String LISTE_INTROUVABLE = "api.liste.notfound";
     public static final String MODIFICATION_INTERDITE = "api.modification.interdit";
+    public static final String SUPPRESSION_INTERDITE = "api.liste.suppression.interdit";
 
 
 

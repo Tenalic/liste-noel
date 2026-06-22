@@ -99,8 +99,14 @@ public class ListeRessource {
             Principal principal) {
         String email = principal.getName();
         try {
-            String response = listeServiceInterface.supprimerListe(Long.valueOf(idListe));
+            String response = listeServiceInterface.supprimerListe(Long.valueOf(idListe), email);
             return ResponseEntity.ok(new GeneriqueResponse(response, Constantes.RETOUR_API_OK));
+        } catch (ModificationInterditeException e) {
+            LOGGER.warn("warning lors de la suppression de la liste {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new GeneriqueResponse(messageService.getMessage(SUPPRESSION_INTERDITE, locale), Constantes.RETOUR_API_KO));
+        } catch (ListeNotFoundException e) {
+            LOGGER.warn("warning lors de la suppression de la liste {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new GeneriqueResponse(messageService.getMessage(LISTE_INTROUVABLE, locale), Constantes.RETOUR_API_KO));
         } catch (Exception e) {
             LOGGER.error("Erreur lors de la suppression de la liste " + idListe + " pour l'email " + email, e);
             return ResponseEntity.internalServerError().body(new GeneriqueResponse(messageService.getMessage(API_LISTE_ERREUR_KEY, locale), Constantes.RETOUR_API_KO));
