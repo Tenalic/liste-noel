@@ -67,7 +67,7 @@ public class MailService {
                 // set email subject field
                 message.setSubject(sujet);
                 // set the content of the email message
-                message.setText(contenu);
+                message.setContent(contenu, "text/html; charset=UTF-8");
 
                 // send the email message
                 Transport.send(message);

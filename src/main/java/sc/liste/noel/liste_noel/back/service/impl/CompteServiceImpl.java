@@ -3,12 +3,16 @@ package sc.liste.noel.liste_noel.back.service.impl;
 import com.fasterxml.uuid.Generators;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import sc.liste.noel.liste_noel.back.db.entity.CompteEntity;
 import sc.liste.noel.liste_noel.back.db.repo.CompteRepo;
 import sc.liste.noel.liste_noel.back.exception.CompteNotFoundException;
 import sc.liste.noel.liste_noel.back.exception.MailServiceDesactivedException;
 import sc.liste.noel.liste_noel.back.exception.MotDePasseException;
 import sc.liste.noel.liste_noel.back.service.CompteServiceInterface;
+import sc.liste.noel.liste_noel.back.service.EmailTemplateService;
 import sc.liste.noel.liste_noel.back.utils.PasswordUtils;
 import sc.liste.noel.liste_noel.back.service.PasswordService;
 import sc.liste.noel.liste_noel.back.mapper.CompteMapper;
@@ -36,9 +40,12 @@ public class CompteServiceImpl implements CompteServiceInterface {
     @Value("${send_email_active}")
     private Boolean mailServiceActived;
 
-    public CompteServiceImpl(CompteRepo compteRepo, MailService mailService) {
+    private final EmailTemplateService emailTemplateService;
+
+    public CompteServiceImpl(CompteRepo compteRepo, MailService mailService, EmailTemplateService emailTemplateService) {
         this.compteRepo = compteRepo;
         this.mailService = mailService;
+        this.emailTemplateService = emailTemplateService;
     }
 
     @Override
@@ -78,12 +85,8 @@ public class CompteServiceImpl implements CompteServiceInterface {
         String activationkey = Generators.timeBasedEpochGenerator().generate().toString();
         compteRepo.save(new CompteEntity(email, PasswordUtils.generateSecurePassword(password, salt), cguAccepted, pseudo, activationkey));
         String url = baseUrl + "/compte/activate?userId=" + email + "&key=" + activationkey;
-        String template = Files.readString(
-                Paths.get("src/main/resources/templates/activation-email.html")
-        );
-        String body = template
-                .replace("${email}", email)
-                .replace("${url}", url);
+
+        String body = emailTemplateService.generateBodyActivationEmail(email, url);
         mailService.sendEmail(email, "Confirmation de création de compte", body);
         return email;
     }
