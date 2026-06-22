@@ -205,7 +205,6 @@ public class ListeServiceImpl implements ListeServiceInterface {
                         + " a été supprimé de la liste " + listeEntity.getNomListe()
                         + " qui fait partie de vos favoris" + " consulter la liste : \n\n"
                         + ListeMapper.buildUrlPartage(baseUrl, listeEntity.getIdListe());
-                ;
                 String sujetEmail = "Objet supprimé de la liste : " + listeEntity.getNomListe();
 
                 List<FavorisEntity> favorisEntityList = favorisRepo.findByIdListe(listeEntity.getIdListe());
@@ -258,9 +257,7 @@ public class ListeServiceImpl implements ListeServiceInterface {
         if (listeEntity != null) {
             if (listeEntity.getProprietaire().equals(email)) {
                 List<FavorisEntity> favorisEntityList = favorisRepo.findByIdListe(listeEntity.getIdListe());
-                for (FavorisEntity favorisEntity : favorisEntityList) {
-                    favorisRepo.delete(favorisEntity);
-                }
+                favorisRepo.deleteAll(favorisEntityList);
                 listeRepo.delete(listeEntity);
                 return "La liste " + listeEntity.getNomListe() + " à bien été supprimé";
             } else {
