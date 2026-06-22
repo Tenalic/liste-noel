@@ -2,9 +2,9 @@ package sc.liste.noel.liste_noel.back.mapper;
 
 public class Constantes {
 
-    public static int RETOUR_API_OK = 0;
+    public static final int RETOUR_API_OK = 0;
 
-    public static int RETOUR_API_KO = 1;
+    public static final int RETOUR_API_KO = 1;
 
     public static final String MOT_DE_PASSE_OUBLIE_P1_KEY = "motDePasseOublie_P1";
     public static final String MOT_DE_PASSE_OUBLIE_P2_KEY = "motDePasseOublie_P2";
