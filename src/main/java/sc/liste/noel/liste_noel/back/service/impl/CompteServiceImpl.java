@@ -76,19 +76,6 @@ public class CompteServiceImpl implements CompteServiceInterface {
     }
 
     @Override
-    public boolean deconexion(String cossy) {
-        CompteEntity compte = compteRepo.findByEmail(cossy);
-        if (compte != null) {
-            compte.setNbDeconnexion(compte.getNbDeconnexion() + 1);
-            compte.setDateDerniereDeconnexion(LocalDateTime.now());
-            compteRepo.save(compte);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
     public String creationCompte(String email, String password, boolean cguAccepted, String pseudo) {
         String activationkey = Generators.timeBasedEpochGenerator().generate().toString();
         compteRepo.save(new CompteEntity(email, PasswordUtils.generateSecurePassword(password, salt), cguAccepted, pseudo, activationkey));
@@ -123,21 +110,7 @@ public class CompteServiceImpl implements CompteServiceInterface {
     }
 
     @Override
-    public boolean updatePassword(String email, String oldPassword, String newPassword) {
-        CompteEntity compteEntity = compteRepo.findByEmailAndPassword(email,
-                PasswordUtils.generateSecurePassword(oldPassword, salt));
-        if (compteEntity != null) {
-            compteEntity.setPassword(PasswordUtils.generateSecurePassword(newPassword, salt));
-            compteEntity.setNbModificationMdp(compteEntity.getNbModificationMdp() + 1);
-            compteEntity.setDateDerniereModificationMdp(LocalDateTime.now());
-            compteRepo.save(compteEntity);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean updatePassword(String email, String oldPassword, String newPassword, String confirmationNewPassWord) throws CompteNotFoundException, MotDePasseException {
+    public void updatePassword(String email, String oldPassword, String newPassword, String confirmationNewPassWord) throws CompteNotFoundException, MotDePasseException {
         CompteEntity compteEntity = compteRepo.findByEmailAndPassword(email,
                 PasswordUtils.generateSecurePassword(oldPassword, salt));
         if (compteEntity != null) {
@@ -146,7 +119,6 @@ public class CompteServiceImpl implements CompteServiceInterface {
                 compteEntity.setNbModificationMdp(compteEntity.getNbModificationMdp() + 1);
                 compteEntity.setDateDerniereModificationMdp(LocalDateTime.now());
                 compteRepo.save(compteEntity);
-                return true;
             } else {
                 throw new MotDePasseException("Les mots de passes ne sont pas identique");
             }

@@ -60,28 +60,8 @@ public interface CompteServiceInterface {
      * @param email       : email compte
      * @param oldPassword : ancien mot de passe
      * @param newPassword : nouveau mot de passe
-     * @return true si tout s'est bien passé
      */
-    boolean updatePassword(String email, String oldPassword, String newPassword);
-
-    /**
-     * Met a jour le password du compte
-     *
-     * @param email       : email compte
-     * @param oldPassword : ancien mot de passe
-     * @param newPassword : nouveau mot de passe
-     * @return true si tout s'est bien passé
-     */
-    boolean updatePassword(String email, String oldPassword, String newPassword, String confirmationNewPassword) throws CompteNotFoundException, MotDePasseException;
-
-
-    /**
-     * augmente le nombre de deconexion du compte
-     *
-     * @param email : email du compte
-     * @return true si cela c'est bien passé, false sinon
-     */
-    boolean deconexion(String email);
+    void updatePassword(String email, String oldPassword, String newPassword, String confirmationNewPassword) throws CompteNotFoundException, MotDePasseException;
 
     void genererMotDePasseEtEnvoyer(String email) throws MailServiceDesactivedException;
 
