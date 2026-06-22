@@ -1,7 +1,6 @@
 package sc.liste.noel.liste_noel.back.service.impl;
 
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sc.liste.noel.liste_noel.back.mapper.ListeMapper;
