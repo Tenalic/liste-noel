@@ -15,6 +15,7 @@ import sc.liste.noel.liste_noel.back.db.repo.ListeRepo;
 import sc.liste.noel.liste_noel.back.db.repo.ObjetRepo;
 import sc.liste.noel.liste_noel.back.exception.ListeNotFoundException;
 import sc.liste.noel.liste_noel.back.exception.ModificationInterditeException;
+import sc.liste.noel.liste_noel.back.service.EmailTemplateService;
 import sc.liste.noel.liste_noel.back.service.ListeServiceInterface;
 import sc.liste.noel.liste_noel.back.dto.ListeContexteDto;
 import sc.liste.noel.liste_noel.back.dto.ListeDto;
@@ -46,6 +47,8 @@ public class ListeServiceImpl implements ListeServiceInterface {
 
     @Value("${send_email_active}")
     private Boolean mailServiceActived;
+    @Autowired
+    private EmailTemplateService emailTemplateService;
 
     @Override
     public void creerListe(String proprietaire, String nomListe, boolean publique) {
@@ -198,11 +201,14 @@ public class ListeServiceImpl implements ListeServiceInterface {
                 throw new ModificationInterditeException("Vous ne pouvez pas supprimer un objet qui n'appartient pas à l'une de vos liste");
             }
 
+
+
             if (mailServiceActived) {
-                String bodyEmail = "L'objet " + objetEntity.getTitre() + " : " + objetEntity.getDescription() + " " + objetEntity.getUrl()
-                        + " a été supprimé de la liste " + listeEntity.getNomListe()
-                        + " qui fait partie de vos favoris" + " consulter la liste : \n\n"
-                        + ListeMapper.buildUrlPartage(baseUrl, listeEntity.getIdListe());
+                String bodyEmail = emailTemplateService.generateBodySuppressionObjet(objetEntity.getTitre(),
+                        objetEntity.getDescription(),
+                        objetEntity.getUrl(),
+                        listeEntity.getNomListe(),
+                        ListeMapper.buildUrlPartage(baseUrl, listeEntity.getIdListe()));;
                 String sujetEmail = "Objet supprimé de la liste : " + listeEntity.getNomListe();
 
                 List<FavorisEntity> favorisEntityList = favorisRepo.findByIdListe(listeEntity.getIdListe());
@@ -229,10 +235,16 @@ public class ListeServiceImpl implements ListeServiceInterface {
                 throw new ModificationInterditeException("Vous ne pouvez pas modifier un objet qui n'appartient pas à l'une de vos liste");
             }
 
-            String bodyEmail = "L'objet " + objetEntity.getTitre() + " : " + objetEntity.getDescription() + " - " + objetEntity.getUrl()
-                    + " a été modifié dans la liste " + listeEntity.getNomListe()
-                    + " qui fait partie de vos favoris.\n\n Voici les nouvelles informations :\n\n " + titreUpdate + " : " + descriptionUpdate + " - " + urlUpdate + " " + ObjetMapper.transcoPriorite(prioriteUpdate) + " \n\n consulter la liste : "
-                    + ListeMapper.buildUrlPartage(baseUrl, listeEntity.getIdListe());
+            String bodyEmail = emailTemplateService.generateBodyModificationObjet(objetEntity.getTitre(),
+                    objetEntity.getDescription(),
+                    objetEntity.getUrl(),
+                    titreUpdate,
+                    descriptionUpdate,
+                    urlUpdate,
+                    ObjetMapper.transcoPriorite(prioriteUpdate),
+                    listeEntity.getNomListe(),
+                    ListeMapper.buildUrlPartage(baseUrl, listeEntity.getIdListe())
+                    );
             String sujetEmail = "Objet modifié dans la liste : " + listeEntity.getNomListe();
 
             List<FavorisEntity> favorisEntityList = favorisRepo.findByIdListe(listeEntity.getIdListe());

@@ -1,12 +1,8 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Activation du compte</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org">
 <body>
 
-<p>Bonjour,</p>
+<div th:replace="~{fragments/header :: header('Activation du compte')}"></div>
 
 <p>
     Merci d'avoir créé un compte sur notre plateforme.
@@ -23,7 +19,7 @@
 </ul>
 
 <p>
-    Pour activer votre compte, cliquez sur le lien ci-dessous :
+    Cliquez sur le bouton ci-dessous pour activer votre compte.
 </p>
 
 <p>
@@ -31,16 +27,10 @@
 </p>
 
 <p>
-    Si vous n'avez pas créé ce compte, veuillez ignorer cet email.
+    Si vous n'êtes pas à l'origine de cette inscription, vous pouvez ignorer cet email.
 </p>
 
-<p>
-    Nous vous remercions de votre confiance et restons à votre disposition.
-</p>
-
-<p>
-    Cordialement,
-</p>
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 </body>
 </html>
