@@ -68,7 +68,7 @@ public class CompteServiceImpl implements CompteServiceInterface {
             compte.setNbConnexion(compte.getNbConnexion() + 1);
             compte.setDateDerniereConnexion(LocalDateTime.now());
             compteRepo.save(compte);
-            return CompteMapper.EntityToDto(compte);
+            return CompteMapper.entityToDto(compte);
         } else {
             throw new CompteNotFoundException("Compte non trouvé");
         }

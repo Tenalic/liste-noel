@@ -87,8 +87,8 @@ public class ListeServiceImpl implements ListeServiceInterface {
     @Override
     public List<ListeDto> getListes(boolean publique, String nomListe) throws ListeNotFoundException {
         List<ListeEntity> listeEntities;
-        boolean isRechercheParNon = nomListe != null && !nomListe.isBlank();
-        if (isRechercheParNon) {
+        boolean isRechercheParNom = nomListe != null && !nomListe.isBlank();
+        if (isRechercheParNom) {
             listeEntities = listeRepo.findByPubliqueAndNomListeContainingIgnoreCase(publique, nomListe);
         } else {
             listeEntities = listeRepo.findByPublique(publique);
@@ -98,11 +98,11 @@ public class ListeServiceImpl implements ListeServiceInterface {
         if (listeDtos != null) {
             listeDtos.forEach(listeDto -> {
                         listeDto.setUrlPartage(ListeMapper.buildUrlPartage(baseUrl, listeDto.getIdListe()));
-                        this.transcoEmailToPPseudo(listeDto);
+                        this.remplacerEmailsParPseudo(listeDto);
                     }
             );
         } else {
-            throw new ListeNotFoundException("Aucune liste trouvé" + (isRechercheParNon ? " " + nomListe : ""));
+            throw new ListeNotFoundException("Aucune liste trouvé" + (isRechercheParNom ? " " + nomListe : ""));
         }
         return listeDtos;
     }
@@ -151,17 +151,17 @@ public class ListeServiceImpl implements ListeServiceInterface {
             }
         }
 
-        return transcoEmailToPPseudo(ListeMapper.entitiesToDtosSansListeObjet(list));
+        return remplacerEmailsParPseudo(ListeMapper.entitiesToDtosSansListeObjet(list));
     }
 
-    private List<ListeDto> transcoEmailToPPseudo(List<ListeDto> list) {
+    private List<ListeDto> remplacerEmailsParPseudo(List<ListeDto> list) {
         for (ListeDto listeDto : list) {
             listeDto.setProprietaire(compteRepo.findByEmail(listeDto.getProprietaire()).getPseudo());
         }
         return list;
     }
 
-    private void transcoEmailToPPseudo(ListeDto list) {
+    private void remplacerEmailsParPseudo(ListeDto list) {
         list.setProprietaire(compteRepo.findByEmail(list.getProprietaire()).getPseudo());
     }
 
@@ -286,7 +286,7 @@ public class ListeServiceImpl implements ListeServiceInterface {
 
         listeContexte.setEstProprietaire(liste.getProprietaire().equals(email));
 
-        this.transcoEmailToPPseudo(listeContexte);
+        this.remplacerEmailsParPseudo(listeContexte);
 
         if (email != null) {
             if (!listeContexte.isEstProprietaire()) {

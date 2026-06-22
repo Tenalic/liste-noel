@@ -5,7 +5,7 @@ import sc.liste.noel.liste_noel.back.dto.CompteDto;
 
 public class CompteMapper {
 
-    public static CompteDto EntityToDto(CompteEntity compteEntity) {
+    public static CompteDto entityToDto(CompteEntity compteEntity) {
         if(compteEntity == null) {
             return null;
         }
