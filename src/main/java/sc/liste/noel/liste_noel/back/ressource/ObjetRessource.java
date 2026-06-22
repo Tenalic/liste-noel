@@ -21,7 +21,7 @@ import static sc.liste.noel.liste_noel.back.mapper.Constantes.API_LISTE_ERREUR_K
 @RequestMapping("/api/cadeau")
 public class ObjetRessource {
 
-    private static final Logger LOGGER = LogManager.getLogger(ListeRessource.class);
+    private static final Logger LOGGER = LogManager.getLogger(ObjetRessource.class);
 
     private final ListeServiceInterface listeServiceInterface;
 
