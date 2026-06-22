@@ -5,6 +5,8 @@ import sc.liste.noel.liste_noel.back.exception.MotDePasseException;
 import sc.liste.noel.liste_noel.back.dto.CompteDto;
 import sc.liste.noel.liste_noel.back.exception.CompteNotFoundException;
 
+import java.io.IOException;
+
 public interface CompteServiceInterface {
 
     /**
@@ -44,7 +46,7 @@ public interface CompteServiceInterface {
      * @param password : mot de passe joueur
      * @return true si tout s'est bien passé
      */
-    String creationCompte(String email, String password, boolean cguAccepted, String pseudo);
+    String creationCompte(String email, String password, boolean cguAccepted, String pseudo) throws IOException;
 
     /**
      * Supprime en base de données le compte avec le email donné

@@ -14,6 +14,9 @@ import sc.liste.noel.liste_noel.back.service.PasswordService;
 import sc.liste.noel.liste_noel.back.mapper.CompteMapper;
 import sc.liste.noel.liste_noel.back.dto.CompteDto;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -39,8 +42,8 @@ public class CompteServiceImpl implements CompteServiceInterface {
     }
 
     @Override
-    public boolean compteExiste(String cossy) {
-        return Optional.ofNullable(compteRepo.findByEmail(cossy)).isPresent();
+    public boolean compteExiste(String email) {
+        return Optional.ofNullable(compteRepo.findByEmail(email)).isPresent();
     }
 
     @Override
@@ -71,33 +74,24 @@ public class CompteServiceImpl implements CompteServiceInterface {
     }
 
     @Override
-    public String creationCompte(String email, String password, boolean cguAccepted, String pseudo) {
+    public String creationCompte(String email, String password, boolean cguAccepted, String pseudo) throws IOException {
         String activationkey = Generators.timeBasedEpochGenerator().generate().toString();
         compteRepo.save(new CompteEntity(email, PasswordUtils.generateSecurePassword(password, salt), cguAccepted, pseudo, activationkey));
         String url = baseUrl + "/compte/activate?userId=" + email + "&key=" + activationkey;
-        String body = "Bonjour,\n" +
-                "\n" +
-                "Merci d'avoir créé un compte sur notre plateforme. Nous sommes ravis de vous accueillir parmi nous !\n" +
-                "\n" +
-                "Voici les détails de votre compte :\n" +
-                "\n" +
-                "Nom de compte : " + email + "\n" +
-                "Pour activer votre compte, veuillez cliquer sur le lien ci-dessous :\n" +
-                url + "\n" +
-                "\n" +
-                "Si vous n'avez pas créé ce compte, veuillez ignorer cet email.\n" +
-                "\n" +
-                "Nous vous remercions de votre confiance et restons à votre disposition pour toute question.\n" +
-                "\n" +
-                "Cordialement,";
+        String template = Files.readString(
+                Paths.get("src/main/resources/templates/activation-email.html")
+        );
+        String body = template
+                .replace("${email}", email)
+                .replace("${url}", url);
         mailService.sendEmail(email, "Confirmation de création de compte", body);
         return email;
     }
 
     @Override
-    public boolean supprimerCompte(String cossy) {
-        if (compteRepo.findByEmail(cossy) != null) {
-            compteRepo.deleteById(cossy);
+    public boolean supprimerCompte(String email) {
+        if (compteRepo.findByEmail(email) != null) {
+            compteRepo.deleteById(email);
         } else {
             return false;
         }

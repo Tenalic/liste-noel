@@ -15,7 +15,7 @@ public class Constantes {
     public static final String API_COMPTE_PASSWORD_UPDATE_SUCCES_KEY = "api.compte.password.update.success";
 
     // Messages d'erreur (champs obligatoires)
-    public static final String API_COMPTE_EMAIL_OBLIGATOIRE_KEY = "api.compte.cossy.obligatoire";
+    public static final String API_COMPTE_EMAIL_OBLIGATOIRE_KEY = "api.compte.email.obligatoire";
     public static final String API_COMPTE_PASSWORD_OBLIGATOIRE = "api.compte.password.obligatoire";
 
     // Messages d'erreur (technique)
