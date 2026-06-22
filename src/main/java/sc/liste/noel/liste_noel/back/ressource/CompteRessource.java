@@ -39,14 +39,20 @@ public class CompteRessource {
 
     private static final Logger LOGGER = LogManager.getLogger(CompteRessource.class);
 
-    @Autowired
-    private CompteServiceInterface compteService;
-    @Autowired
-    private SecretServiceInterface secretService;
-    @Autowired
-    private MessageService messageService;
-    @Autowired
-    private JwtService jwtService;
+    private final CompteServiceInterface compteService;
+
+    private final SecretServiceInterface secretService;
+
+    private final MessageService messageService;
+
+    private final JwtService jwtService;
+
+    public CompteRessource(CompteServiceInterface compteService, SecretServiceInterface secretService, MessageService messageService, JwtService jwtService) {
+        this.compteService = compteService;
+        this.secretService = secretService;
+        this.messageService = messageService;
+        this.jwtService = jwtService;
+    }
 
     /**
      * API permettant de créer un nouveau compte.

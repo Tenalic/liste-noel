@@ -27,28 +27,33 @@ import java.util.Optional;
 
 @Service
 public class ListeServiceImpl implements ListeServiceInterface {
-    @Autowired
-    private ListeRepo listeRepo;
 
-    @Autowired
-    private ObjetRepo objetRepo;
+    private final ListeRepo listeRepo;
 
-    @Autowired
-    private FavorisRepo favorisRepo;
+    private final ObjetRepo objetRepo;
 
-    @Autowired
-    private CompteRepo compteRepo;
+    private final FavorisRepo favorisRepo;
+
+    private final CompteRepo compteRepo;
 
     @Value("${base_url}")
     private String baseUrl;
 
-    @Autowired
-    private MailService mailService;
+    private final MailService mailService;
 
     @Value("${send_email_active}")
     private Boolean mailServiceActived;
-    @Autowired
-    private EmailTemplateService emailTemplateService;
+
+    private final EmailTemplateService emailTemplateService;
+
+    public ListeServiceImpl(ListeRepo listeRepo, ObjetRepo objetRepo, FavorisRepo favorisRepo, CompteRepo compteRepo, MailService mailService, EmailTemplateService emailTemplateService) {
+        this.listeRepo = listeRepo;
+        this.objetRepo = objetRepo;
+        this.favorisRepo = favorisRepo;
+        this.compteRepo = compteRepo;
+        this.mailService = mailService;
+        this.emailTemplateService = emailTemplateService;
+    }
 
     @Override
     public void creerListe(String proprietaire, String nomListe, boolean publique) {
@@ -58,10 +63,7 @@ public class ListeServiceImpl implements ListeServiceInterface {
         listeEntity.setProprietaire(proprietaire);
         listeEntity.setPublique(publique);
 
-        try {
-            listeRepo.save(listeEntity);
-        } catch (Exception e) {
-        }
+        listeRepo.save(listeEntity);
     }
 
     @Override
@@ -202,13 +204,12 @@ public class ListeServiceImpl implements ListeServiceInterface {
             }
 
 
-
             if (mailServiceActived) {
                 String bodyEmail = emailTemplateService.generateBodySuppressionObjet(objetEntity.getTitre(),
                         objetEntity.getDescription(),
                         objetEntity.getUrl(),
                         listeEntity.getNomListe(),
-                        ListeMapper.buildUrlPartage(baseUrl, listeEntity.getIdListe()));;
+                        ListeMapper.buildUrlPartage(baseUrl, listeEntity.getIdListe()));
                 String sujetEmail = "Objet supprimé de la liste : " + listeEntity.getNomListe();
 
                 List<FavorisEntity> favorisEntityList = favorisRepo.findByIdListe(listeEntity.getIdListe());
@@ -244,7 +245,7 @@ public class ListeServiceImpl implements ListeServiceInterface {
                     ObjetMapper.transcoPriorite(prioriteUpdate),
                     listeEntity.getNomListe(),
                     ListeMapper.buildUrlPartage(baseUrl, listeEntity.getIdListe())
-                    );
+            );
             String sujetEmail = "Objet modifié dans la liste : " + listeEntity.getNomListe();
 
             List<FavorisEntity> favorisEntityList = favorisRepo.findByIdListe(listeEntity.getIdListe());
