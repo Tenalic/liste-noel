@@ -12,10 +12,13 @@ import java.util.Set;
 @Service
 public class SecretServiceImpl implements SecretServiceInterface {
 
-    @Autowired
-    private SecretRepo secretRepo;
+   private final SecretRepo secretRepo;
 
     private final Set<String> listSecretDejaAutorise = new HashSet<>();
+
+    public SecretServiceImpl(SecretRepo secretRepo) {
+        this.secretRepo = secretRepo;
+    }
 
     @Override
     public boolean verifierSecret(String secret) {

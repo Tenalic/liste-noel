@@ -48,7 +48,7 @@ public class ListeServiceImpl implements ListeServiceInterface {
     private Boolean mailServiceActived;
 
     @Override
-    public ListeDto creerListe(String proprietaire, String nomListe, boolean publique) {
+    public void creerListe(String proprietaire, String nomListe, boolean publique) {
 
         ListeEntity listeEntity = new ListeEntity();
         listeEntity.setNomListe(nomListe);
@@ -57,9 +57,7 @@ public class ListeServiceImpl implements ListeServiceInterface {
 
         try {
             listeRepo.save(listeEntity);
-            return new ListeDto();
         } catch (Exception e) {
-            return null;
         }
     }
 

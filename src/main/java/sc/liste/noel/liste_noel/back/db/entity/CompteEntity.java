@@ -45,17 +45,6 @@ public class CompteEntity {
         super();
     }
 
-    public CompteEntity(String email, String password, boolean cguAccepted) {
-        super();
-        this.email = email;
-        this.password = password;
-        this.nbConnexion = 1;
-        this.nbDeconnexion = 0;
-        this.nbModificationMdp = 0;
-        this.setDateDerniereConnexion(LocalDateTime.now());
-        this.cguAccepted = cguAccepted;
-    }
-
     public CompteEntity(String email, String password, boolean cguAccepted, String pseudo, String activationKey) {
         super();
         this.email = email;
@@ -69,24 +58,6 @@ public class CompteEntity {
         this.emailVerified = false;
         this.activationKey = activationKey;
     }
-
-    public CompteEntity(String email, String password, Integer initInteger) {
-        super();
-        this.email = email;
-        this.password = password;
-        this.nbConnexion = initInteger;
-        this.nbDeconnexion = initInteger;
-        this.nbModificationMdp = initInteger;
-    }
-
-    public CompteEntity(String email, String password, Integer nbConnexion, Integer nbDeconnexion, Integer nbModificationMdp) {
-        this.email = email;
-        this.password = password;
-        this.nbConnexion = nbConnexion;
-        this.nbDeconnexion = nbDeconnexion;
-        this.nbModificationMdp = nbModificationMdp;
-    }
-
 
 
     public String getEmail() {

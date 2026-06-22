@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ListeServiceInterface {
 
-    ListeDto creerListe(String proprietaire, String nomListe, boolean publique);
+    void creerListe(String proprietaire, String nomListe, boolean publique);
 
     List<ListeDto> getListesOfEmail(String email);
 

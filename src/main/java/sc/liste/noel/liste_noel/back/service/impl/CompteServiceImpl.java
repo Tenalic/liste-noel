@@ -1,7 +1,6 @@
 package sc.liste.noel.liste_noel.back.service.impl;
 
 import com.fasterxml.uuid.Generators;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sc.liste.noel.liste_noel.back.db.entity.CompteEntity;
@@ -14,11 +13,8 @@ import sc.liste.noel.liste_noel.back.utils.PasswordUtils;
 import sc.liste.noel.liste_noel.back.service.PasswordService;
 import sc.liste.noel.liste_noel.back.mapper.CompteMapper;
 import sc.liste.noel.liste_noel.back.dto.CompteDto;
-import sc.liste.noel.liste_noel.back.dto.TokenDto;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -27,21 +23,20 @@ public class CompteServiceImpl implements CompteServiceInterface {
     @Value("${base_url}")
     private String baseUrl;
 
-    private static final int DURABILITE_TOKEN = 24;
-
-    @Autowired
-    private CompteRepo compteRepo;
+    private final CompteRepo compteRepo;
 
     @Value("${salt}")
     private String salt;
 
-    @Autowired
-    private MailService mailService;
+    private final MailService mailService;
 
     @Value("${send_email_active}")
     private Boolean mailServiceActived;
 
-    private final Map<String, TokenDto> tokenValideMap = new HashMap<>();
+    public CompteServiceImpl(CompteRepo compteRepo, MailService mailService) {
+        this.compteRepo = compteRepo;
+        this.mailService = mailService;
+    }
 
     @Override
     public boolean compteExiste(String cossy) {

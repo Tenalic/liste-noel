@@ -155,7 +155,7 @@ public class CompteRessource {
             return ResponseEntity.ok().body(new GeneriqueResponse(messageService.getMessage(MOT_DE_PASSE_OUBLIE_P1_KEY, locale) + motDePasseOublieRequest.getEmail()
                     + " " + messageService.getMessage(MOT_DE_PASSE_OUBLIE_P2_KEY, locale), Constantes.RETOUR_API_OK));
         } catch (MailServiceDesactivedException e) {
-            LOGGER.warn("L'envois d'email est désactivé, le mot de passe pour le compte {} n\'a pas été généré", motDePasseOublieRequest.getEmail());
+            LOGGER.warn("L'envois d'email est désactivé, le mot de passe pour le compte {} n'a pas été généré", motDePasseOublieRequest.getEmail());
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new GeneriqueResponse(messageService.getMessage(EMAIL_DESACTIVETED, locale), Constantes.RETOUR_API_KO));
         } catch (Exception e) {
             LOGGER.error("[mot-de-passe-oublie] Une erreur est survenu", e);

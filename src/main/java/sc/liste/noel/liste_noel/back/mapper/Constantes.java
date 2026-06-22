@@ -16,8 +16,6 @@ public class Constantes {
 
     // Messages d'erreur (champs obligatoires)
     public static final String API_COMPTE_EMAIL_OBLIGATOIRE_KEY = "api.compte.cossy.obligatoire";
-    public static final String API_COMPTE_OLD_PASSWORD_OBLIGATOIRE_KEY = "api.compte.oldPassword.obligatoire";
-    public static final String API_COMPTE_NEW_PASSWORD_TROP_COURT_KEY = "api.compte.newPassword.trop_court";
     public static final String API_COMPTE_PASSWORD_OBLIGATOIRE = "api.compte.password.obligatoire";
 
     // Messages d'erreur (technique)
@@ -34,14 +32,7 @@ public class Constantes {
     public static final String COMPTE_EXISTE_KEY = "compteExiste";
     public static final String PSEUDO_EXISTE_KEY = "pseudoExiste";
     public static final String COMPTE_ERROR_KEY = "compteError";
-    public static final String CONNEXION_KEY = "connexion";
-    public static final String MDP_NOT_EQUALS_KEY = "mdpNotEquals";
-    public static final String CGU_NON_ACCEPTE_KEY = "cguNonAccepte";
-    public static final String EMAIL_NON_ACCEPTE_KEY = "emailMalForme";
-    public static final String NEW_MDP_NOT_EQUALS_KEY = "newMdpNotEquals";
     public static final String CONNEXION_FAIL_KEY = "connexionFail";
-    public static final String ERREUR_GENERIQUE_KEY = "erreurGenerique";
-    public static final String API_LISTE_SUCCES_KEY = "api.liste.succes";
     public static final String EMAIL_DESACTIVETED = "api.compte.mail.desactive";
     public static final String MDP_CHANGE_INCORECTE = "api.compte.mdp.change.incorecte";
     public static final String MDP_CHANGE_INTROUVABLE = "api.compte.mdp.change.introuvable";
