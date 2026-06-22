@@ -3,9 +3,6 @@ package sc.liste.noel.liste_noel.back.service.impl;
 import com.fasterxml.uuid.Generators;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import sc.liste.noel.liste_noel.back.db.entity.CompteEntity;
 import sc.liste.noel.liste_noel.back.db.repo.CompteRepo;
 import sc.liste.noel.liste_noel.back.exception.CompteNotFoundException;
@@ -18,9 +15,6 @@ import sc.liste.noel.liste_noel.back.service.PasswordService;
 import sc.liste.noel.liste_noel.back.mapper.CompteMapper;
 import sc.liste.noel.liste_noel.back.dto.CompteDto;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -81,7 +75,7 @@ public class CompteServiceImpl implements CompteServiceInterface {
     }
 
     @Override
-    public String creationCompte(String email, String password, boolean cguAccepted, String pseudo) throws IOException {
+    public String creationCompte(String email, String password, boolean cguAccepted, String pseudo) {
         String activationkey = Generators.timeBasedEpochGenerator().generate().toString();
         compteRepo.save(new CompteEntity(email, PasswordUtils.generateSecurePassword(password, salt), cguAccepted, pseudo, activationkey));
         String url = baseUrl + "/compte/activate?userId=" + email + "&key=" + activationkey;
