@@ -1,24 +1,21 @@
 package sc.liste.noel.liste_noel.back.service.impl;
 
 import com.fasterxml.uuid.Generators;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sc.liste.noel.liste_noel.back.db.entity.CompteEntity;
 import sc.liste.noel.liste_noel.back.db.repo.CompteRepo;
-import sc.liste.noel.liste_noel.back.service.CompteServiceInterface;
-import sc.liste.noel.liste_noel.back.service.JwtTokenInterface;
-import sc.liste.noel.liste_noel.back.utils.PasswordUtils;
-import sc.liste.noel.liste_noel.common.utils.Utils;
-import sc.liste.noel.liste_noel.back.CompteMapper;
-import sc.liste.noel.liste_noel.common.dto.CompteDto;
-import sc.liste.noel.liste_noel.common.dto.TokenDto;
 import sc.liste.noel.liste_noel.back.exception.CompteNotFoundException;
-import sc.liste.noel.liste_noel.back.exception.TokenExpiredException;
+import sc.liste.noel.liste_noel.back.exception.MailServiceDesactivedException;
+import sc.liste.noel.liste_noel.back.exception.MotDePasseException;
+import sc.liste.noel.liste_noel.back.service.CompteServiceInterface;
+import sc.liste.noel.liste_noel.back.service.EmailTemplateService;
+import sc.liste.noel.liste_noel.back.utils.PasswordUtils;
+import sc.liste.noel.liste_noel.back.service.PasswordService;
+import sc.liste.noel.liste_noel.back.mapper.CompteMapper;
+import sc.liste.noel.liste_noel.back.dto.CompteDto;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -27,25 +24,36 @@ public class CompteServiceImpl implements CompteServiceInterface {
     @Value("${base_url}")
     private String baseUrl;
 
-    private static final int DURABILITE_TOKEN = 24;
-
-    @Autowired
-    private CompteRepo compteRepo;
-
-    @Autowired
-    private JwtTokenInterface jwtToken;
+    private final CompteRepo compteRepo;
 
     @Value("${salt}")
     private String salt;
 
-    @Autowired
-    private MailService mailService;
+    private final MailService mailService;
 
-    private final Map<String, TokenDto> tokenValideMap = new HashMap<>();
+    @Value("${send_email_active}")
+    private Boolean mailServiceActived;
+
+    private final EmailTemplateService emailTemplateService;
+
+    public CompteServiceImpl(CompteRepo compteRepo, MailService mailService, EmailTemplateService emailTemplateService) {
+        this.compteRepo = compteRepo;
+        this.mailService = mailService;
+        this.emailTemplateService = emailTemplateService;
+    }
 
     @Override
-    public boolean compteExiste(String cossy) {
-        return Optional.ofNullable(compteRepo.findByEmail(cossy)).isPresent();
+    public boolean compteExiste(String email) {
+        return Optional.ofNullable(compteRepo.findByEmail(email)).isPresent();
+    }
+
+    @Override
+    public String getPseudo(String email) throws CompteNotFoundException {
+        CompteEntity compte = compteRepo.findByEmail(email);
+        if(compte == null) {
+            throw new CompteNotFoundException("Compte introuvable");
+        }
+        return compte.getPseudo();
     }
 
     @Override
@@ -54,59 +62,33 @@ public class CompteServiceImpl implements CompteServiceInterface {
     }
 
     @Override
-    public CompteDto connexion(String email, String password) {
+    public CompteDto connexion(String email, String password) throws CompteNotFoundException {
         CompteEntity compte = compteRepo.findByEmailAndPassword(email, PasswordUtils.generateSecurePassword(password, salt));
         if (compte != null) {
             compte.setNbConnexion(compte.getNbConnexion() + 1);
             compte.setDateDerniereConnexion(LocalDateTime.now());
             compteRepo.save(compte);
-            return CompteMapper.EntityToDto(compte);
+            return CompteMapper.entityToDto(compte);
         } else {
-            return null;
+            throw new CompteNotFoundException("Compte non trouvé");
         }
     }
 
     @Override
-    public boolean deconexion(String cossy) {
-        CompteEntity compte = compteRepo.findByEmail(cossy);
-        if (compte != null) {
-            compte.setNbDeconnexion(compte.getNbDeconnexion() + 1);
-            compte.setDateDerniereDeconnexion(LocalDateTime.now());
-            compteRepo.save(compte);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean creationCompte(String email, String password, boolean cguAccepted, String pseudo) {
+    public String creationCompte(String email, String password, boolean cguAccepted, String pseudo) {
         String activationkey = Generators.timeBasedEpochGenerator().generate().toString();
         compteRepo.save(new CompteEntity(email, PasswordUtils.generateSecurePassword(password, salt), cguAccepted, pseudo, activationkey));
         String url = baseUrl + "/compte/activate?userId=" + email + "&key=" + activationkey;
-        String body = "Bonjour,\n" +
-                "\n" +
-                "Merci d'avoir créé un compte sur notre plateforme. Nous sommes ravis de vous accueillir parmi nous !\n" +
-                "\n" +
-                "Voici les détails de votre compte :\n" +
-                "\n" +
-                "Nom de compte : " + email +"\n" +
-                "Pour activer votre compte, veuillez cliquer sur le lien ci-dessous :\n" +
-                url + "\n" +
-                "\n" +
-                "Si vous n'avez pas créé ce compte, veuillez ignorer cet email.\n" +
-                "\n" +
-                "Nous vous remercions de votre confiance et restons à votre disposition pour toute question.\n" +
-                "\n" +
-                "Cordialement,";
+
+        String body = emailTemplateService.generateBodyActivationEmail(email, url);
         mailService.sendEmail(email, "Confirmation de création de compte", body);
-        return true;
+        return email;
     }
 
     @Override
-    public boolean supprimerCompte(String cossy) {
-        if (compteRepo.findByEmail(cossy) != null) {
-            compteRepo.deleteById(cossy);
+    public boolean supprimerCompte(String email) {
+        if (compteRepo.findByEmail(email) != null) {
+            compteRepo.deleteById(email);
         } else {
             return false;
         }
@@ -114,17 +96,21 @@ public class CompteServiceImpl implements CompteServiceInterface {
     }
 
     @Override
-    public boolean updatePassword(String email, String oldPassword, String newPassword) {
+    public void updatePassword(String email, String oldPassword, String newPassword, String confirmationNewPassWord) throws CompteNotFoundException, MotDePasseException {
         CompteEntity compteEntity = compteRepo.findByEmailAndPassword(email,
                 PasswordUtils.generateSecurePassword(oldPassword, salt));
         if (compteEntity != null) {
-            compteEntity.setPassword(PasswordUtils.generateSecurePassword(newPassword, salt));
-            compteEntity.setNbModificationMdp(compteEntity.getNbModificationMdp() + 1);
-            compteEntity.setDateDerniereModificationMdp(LocalDateTime.now());
-            compteRepo.save(compteEntity);
-            return true;
+            if (newPassword.equals(confirmationNewPassWord)) {
+                compteEntity.setPassword(PasswordUtils.generateSecurePassword(newPassword, salt));
+                compteEntity.setNbModificationMdp(compteEntity.getNbModificationMdp() + 1);
+                compteEntity.setDateDerniereModificationMdp(LocalDateTime.now());
+                compteRepo.save(compteEntity);
+            } else {
+                throw new MotDePasseException("Les mots de passes ne sont pas identique");
+            }
+        } else {
+            throw new CompteNotFoundException("Compte introuvable ou le mot de passe n'est pas corecte");
         }
-        return false;
     }
 
     private boolean forceUpdatePassword(String email, String newPassword) {
@@ -140,48 +126,19 @@ public class CompteServiceImpl implements CompteServiceInterface {
     }
 
     @Override
-    public TokenDto getTokenDtoByEmail(String cossy) {
+    public void genererMotDePasseEtEnvoyer(String email) throws MailServiceDesactivedException {
 
-        TokenDto tokenDto = tokenValideMap.get(cossy);
-
-        if (tokenDto != null && jwtToken.validateToken(tokenDto.getToken())) {
-            return tokenDto;
-        } else {
-            String newToken = jwtToken.generateToken(cossy);
-            tokenDto = new TokenDto();
-            tokenDto.setCossy(cossy);
-            tokenDto.setTokenExpireDate(LocalDateTime.now().plusHours(DURABILITE_TOKEN));
-            tokenDto.setToken(newToken);
-            tokenValideMap.put(cossy, tokenDto);
-            return tokenDto;
-        }
-    }
-
-    @Override
-    public TokenDto getTokenDtoByToken(String token) throws CompteNotFoundException, TokenExpiredException {
-
-        String cossy = jwtToken.getUsernameFromToken(token);
-
-        TokenDto tokenDto = tokenValideMap.get(cossy);
-
-        if (tokenDto != null && jwtToken.validateToken(tokenDto.getToken())) {
-            return tokenDto;
-        } else {
-            if (tokenDto == null) {
-                throw new CompteNotFoundException("Aucun compte ne correspond a ce token");
+        if (mailServiceActived) {
+            String newMdp = PasswordService.generatePassayPassword();
+            boolean isUpdate = forceUpdatePassword(email, newMdp);
+            if (isUpdate) {
+                String body = "Votre mot de passe a été réinitialisé, voici votre nouveau mot de passe, vous pourrez le modifier une fois connecté : " + newMdp;
+                mailService.sendEmail(email, "Mot de passe modifié", body);
             }
-            throw new TokenExpiredException("Le token n'est plus valide");
+        } else {
+            throw new MailServiceDesactivedException("L'envois de mail est désactivé");
         }
-    }
 
-    @Override
-    public void genererMotDePasseEtEnvoyer(String email) {
-        String newMdp = Utils.generatePassayPassword();
-        boolean isUpdate = forceUpdatePassword(email, newMdp);
-        if (isUpdate) {
-            String body = "Votre mot de passe a été réinitialisé, voici votre nouveau mot de passe, vous pourrez le modifier une fois connecté : " + newMdp;
-            mailService.sendEmail(email, "Mot de passe modifié", body);
-        }
     }
 
     @Override

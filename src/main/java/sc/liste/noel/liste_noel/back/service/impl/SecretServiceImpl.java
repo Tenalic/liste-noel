@@ -12,33 +12,24 @@ import java.util.Set;
 @Service
 public class SecretServiceImpl implements SecretServiceInterface {
 
-	private static final String NAME_MY_SECRET = "client-pairing";
+   private final SecretRepo secretRepo;
 
-	private String mySecret;
+    private final Set<String> listSecretDejaAutorise = new HashSet<>();
 
-	@Autowired
-	private SecretRepo secretRepo;
+    public SecretServiceImpl(SecretRepo secretRepo) {
+        this.secretRepo = secretRepo;
+    }
 
-	private final Set<String> listSecretDejaAutorise = new HashSet<>();
-
-	@Override
-	public boolean verifierSecret(String secret) {
-		if (listSecretDejaAutorise.contains(secret)) {
-			return true;
-		}
-		if (Optional.ofNullable(secretRepo.findBySecret(secret)).isPresent()) {
-			listSecretDejaAutorise.add(secret);
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public String getMySecret() {
-		if (mySecret == null) {
-			mySecret = secretRepo.findByNomApplication(NAME_MY_SECRET).getSecret();
-		}
-		return mySecret;
-	}
+    @Override
+    public boolean verifierSecret(String secret) {
+        if (listSecretDejaAutorise.contains(secret)) {
+            return true;
+        }
+        if (Optional.ofNullable(secretRepo.findBySecret(secret)).isPresent()) {
+            listSecretDejaAutorise.add(secret);
+            return true;
+        }
+        return false;
+    }
 
 }

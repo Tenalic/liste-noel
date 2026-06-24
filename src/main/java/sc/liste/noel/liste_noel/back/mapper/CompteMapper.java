@@ -1,0 +1,17 @@
+package sc.liste.noel.liste_noel.back.mapper;
+
+import sc.liste.noel.liste_noel.back.db.entity.CompteEntity;
+import sc.liste.noel.liste_noel.back.dto.CompteDto;
+
+public class CompteMapper {
+
+    public static CompteDto entityToDto(CompteEntity compteEntity) {
+        if(compteEntity == null) {
+            return null;
+        }
+        CompteDto compteDto = new CompteDto();
+        compteDto.setEmail(compteEntity.getEmail());
+        compteDto.setPseudo(compteEntity.getPseudo());
+        return compteDto;
+    }
+}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:replace="~{fragments/header :: header('Objet supprimé')}"></div>
+
+<p>
+    Un objet appartenant à une liste présente dans vos favoris a été supprimé.
+</p>
+
+<h3>Objet supprimé</h3>
+
+<ul>
+    <li><strong>Titre :</strong> <span th:text="${titre}"></span></li>
+    <li><strong>Description :</strong> <span th:text="${description}"></span></li>
+    <li><strong>Lien :</strong> <a th:href="${url}" th:text="${url}"></a></li>
+</ul>
+
+<p>
+    <strong>Liste :</strong>
+    <span th:text="${nomListe}"></span>
+</p>
+
+<p>
+    Consulter la liste :
+</p>
+
+<p>
+    <a th:href="${urlListe}" th:text="${urlListe}"></a>
+</p>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

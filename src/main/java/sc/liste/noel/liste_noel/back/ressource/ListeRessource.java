@@ -1,56 +1,161 @@
 package sc.liste.noel.liste_noel.back.ressource;
 
-import jakarta.validation.constraints.NotBlank;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sc.liste.noel.liste_noel.back.dto.GeneriqueResponse;
+import sc.liste.noel.liste_noel.back.dto.request.CreationListeRequest;
+import sc.liste.noel.liste_noel.back.dto.request.PubliqueRequest;
+import sc.liste.noel.liste_noel.back.dto.response.GeneriqueResponse;
+import sc.liste.noel.liste_noel.back.dto.response.ListeReponse;
+import sc.liste.noel.liste_noel.back.dto.response.ListesReponse;
+import sc.liste.noel.liste_noel.back.dto.response.MesListesResponse;
+import sc.liste.noel.liste_noel.back.exception.ListeNotFoundException;
+import sc.liste.noel.liste_noel.back.exception.ModificationInterditeException;
 import sc.liste.noel.liste_noel.back.service.ListeServiceInterface;
-import sc.liste.noel.liste_noel.back.service.SecretServiceInterface;
-import sc.liste.noel.liste_noel.common.service.MessageService;
-import sc.liste.noel.liste_noel.front.constante.Constantes;
+import sc.liste.noel.liste_noel.back.dto.ListeDto;
+import sc.liste.noel.liste_noel.back.dto.ListeContexteDto;
+import sc.liste.noel.liste_noel.back.dto.ObjetDto;
+import sc.liste.noel.liste_noel.back.service.MessageService;
+import sc.liste.noel.liste_noel.back.mapper.Constantes;
 
+import java.security.Principal;
+import java.util.List;
 import java.util.Locale;
 
-import static sc.liste.noel.liste_noel.front.constante.Constantes.API_LISTE_ERREUR_KEY;
-import static sc.liste.noel.liste_noel.front.constante.Constantes.API_SECRET_INVALID_KEY;
+import static sc.liste.noel.liste_noel.back.mapper.Constantes.*;
 
 @RestController
-@RequestMapping("/liste")
+@RequestMapping("/api/liste")
 public class ListeRessource {
 
     private static final Logger LOGGER = LogManager.getLogger(ListeRessource.class);
 
     private final ListeServiceInterface listeServiceInterface;
 
-    private final SecretServiceInterface secretService;
-
     private final MessageService messageService;
 
-    public ListeRessource(ListeServiceInterface listeServiceInterface, SecretServiceInterface secretService, MessageService messageService) {
+    public ListeRessource(ListeServiceInterface listeServiceInterface,
+                          MessageService messageService) {
         this.listeServiceInterface = listeServiceInterface;
-        this.secretService = secretService;
         this.messageService = messageService;
     }
 
-    @DeleteMapping("supprimer-liste")
-    public ResponseEntity<GeneriqueResponse> supprimerListe(
-            @RequestParam @NotBlank String email,
-            @RequestParam @NotBlank String nomListe,
-            @RequestHeader(value = "secret") String secret,
-            @RequestHeader(value = "Accept-Language", required = false, defaultValue = "fr") Locale locale) {
+    @GetMapping("/mes-listes")
+    public ResponseEntity<MesListesResponse> getMesListes(Principal principal) {
+        String email = principal.getName();
         try {
-            if (!secretService.verifierSecret(secret)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(new GeneriqueResponse(messageService.getMessage(API_SECRET_INVALID_KEY, locale), Constantes.RETOUR_API_KO));
-            }
-            String response = listeServiceInterface.supprimerListe(nomListe, email);
-            return ResponseEntity.ok(new GeneriqueResponse(response, Constantes.RETOUR_API_OK));
+            List<ListeDto> listes = listeServiceInterface.getListesOfEmail(email);
+            List<ListeDto> favoris = listeServiceInterface.getListeFavorisOfEmail(email);
+            return ResponseEntity.ok(new MesListesResponse(listes, favoris));
         } catch (Exception e) {
-            LOGGER.error("Erreur lors de la suppression de la liste " + nomListe + " pour l'email " + email, e);
+            LOGGER.error("Erreur lors de la récupération des listes pour " + email, e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/{idListe}")
+    public ResponseEntity<ListeReponse> getUneListe(Principal principal,
+                                                    @PathVariable String idListe,
+                                                    Locale locale) {
+        String email = principal != null ? principal.getName() : null;
+        try {
+            ListeContexteDto liste = listeServiceInterface.getListeAvecContexte(Long.valueOf(idListe), email);
+            return ResponseEntity.ok(new ListeReponse("Succes", Constantes.RETOUR_API_OK, liste, liste.isEstProprietaire(), liste.isEstFavoris()));
+        } catch (ListeNotFoundException e) {
+            LOGGER.warn("La liste {} est introuvalbe en BDD", idListe);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ListeReponse(messageService.getMessage(LISTE_INTROUVABLE, locale), Constantes.RETOUR_API_KO));
+        } catch (Exception e) {
+            LOGGER.error("Erreur lors de la récupération de la listes " + idListe, e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/{idListe}/favoris")
+    public ResponseEntity<GeneriqueResponse> addFavoris(Principal principal,
+                                                        @PathVariable String idListe) {
+        String email = principal.getName();
+        try {
+            listeServiceInterface.modifierFavori(Long.valueOf(idListe), email);
+            return ResponseEntity.ok(new GeneriqueResponse("Succes", Constantes.RETOUR_API_OK));
+        } catch (Exception e) {
+            LOGGER.error("Erreur lors de la modification de favoris {} {}", idListe, email, e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/creer")
+    public ResponseEntity<GeneriqueResponse> creerUneListe(Principal principal,
+                                                           @RequestBody CreationListeRequest listeRequest) {
+        String email = principal.getName();
+        listeServiceInterface.creerListe(email, listeRequest.getNomListe(), listeRequest.getPublique());
+        return ResponseEntity.ok(new GeneriqueResponse("Succes", Constantes.RETOUR_API_OK));
+    }
+
+    @DeleteMapping("/{idListe}")
+    public ResponseEntity<GeneriqueResponse> supprimerUneListe(
+            Locale locale, @PathVariable String idListe,
+            Principal principal) {
+        String email = principal.getName();
+        try {
+            String response = listeServiceInterface.supprimerListe(Long.valueOf(idListe), email);
+            return ResponseEntity.ok(new GeneriqueResponse(response, Constantes.RETOUR_API_OK));
+        } catch (ModificationInterditeException e) {
+            LOGGER.warn("warning lors de la suppression de la liste {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new GeneriqueResponse(messageService.getMessage(SUPPRESSION_INTERDITE, locale), Constantes.RETOUR_API_KO));
+        } catch (ListeNotFoundException e) {
+            LOGGER.warn("warning lors de la suppression de la liste {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new GeneriqueResponse(messageService.getMessage(LISTE_INTROUVABLE, locale), Constantes.RETOUR_API_KO));
+        } catch (Exception e) {
+            LOGGER.error("Erreur lors de la suppression de la liste " + idListe + " pour l'email " + email, e);
             return ResponseEntity.internalServerError().body(new GeneriqueResponse(messageService.getMessage(API_LISTE_ERREUR_KEY, locale), Constantes.RETOUR_API_KO));
+        }
+    }
+
+    @PostMapping("/{idListe}/cadeau")
+    public ResponseEntity<GeneriqueResponse> ajouterObjet(Principal principal,
+                                                          @RequestBody ObjetDto objet,
+                                                          @PathVariable String idListe,
+                                                          Locale locale) {
+        String email = principal.getName();
+        LOGGER.info("Ajout de l'objet {} par l'utilisateur {}", objet.getTitre(), email);
+        try {
+            listeServiceInterface.ajouterObjetDansUneListe(objet.getTitre(), objet.getUrl(), objet.getDescription(), idListe, email, objet.getValuePriorite());
+            return ResponseEntity.ok(new GeneriqueResponse("Succes", Constantes.RETOUR_API_OK));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new GeneriqueResponse(messageService.getMessage(API_LISTE_ERREUR_KEY, locale), Constantes.RETOUR_API_KO));
+        }
+    }
+
+    @GetMapping("/publiques")
+    public ResponseEntity<ListesReponse> getPubliqueListe(@RequestParam(name = "recherche", defaultValue = "") String recherche, Locale locale) {
+        try {
+            List<ListeDto> listes = listeServiceInterface.getListes(true, recherche);
+
+            ListesReponse reponse = new ListesReponse("Succes", Constantes.RETOUR_API_OK, listes);
+
+            return ResponseEntity.ok(reponse);
+        } catch (ListeNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ListesReponse(messageService.getMessage(LISTE_INTROUVABLE, locale), Constantes.RETOUR_API_KO));
+        }
+    }
+
+    @PutMapping("/{idListe}/publique")
+    public ResponseEntity<GeneriqueResponse> updatePublique(@PathVariable String idListe,
+                                                            @RequestBody PubliqueRequest publiqueRequest,
+                                                            Locale locale,
+                                                            Principal principal) {
+        String email = principal.getName();
+        try {
+            listeServiceInterface.updatePublique(Long.valueOf(idListe), publiqueRequest.getPublique(), email);
+            return ResponseEntity.ok(new GeneriqueResponse("Succes", Constantes.RETOUR_API_OK));
+        } catch (ListeNotFoundException e) {
+            LOGGER.warn(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new GeneriqueResponse(messageService.getMessage(LISTE_INTROUVABLE, locale), Constantes.RETOUR_API_KO));
+        } catch (ModificationInterditeException e) {
+            LOGGER.warn(e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new GeneriqueResponse(messageService.getMessage(MODIFICATION_INTERDITE, locale), Constantes.RETOUR_API_KO));
         }
     }
 }

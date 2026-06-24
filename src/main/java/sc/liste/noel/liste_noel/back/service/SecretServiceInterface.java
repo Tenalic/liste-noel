@@ -10,12 +10,4 @@ public interface SecretServiceInterface {
 	 */
 	boolean verifierSecret(String secret);
 
-	/**
-	 * Utilisé par l'application pairing-client afin d'appeler l'API création de
-	 * compte
-	 * 
-	 * @return le secret
-	 */
-	String getMySecret();
-
 }

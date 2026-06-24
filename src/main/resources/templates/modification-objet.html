@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:replace="~{fragments/header :: header('Objet modifié')}"></div>
+
+<p>
+    Un objet d'une liste faisant partie de vos favoris a été modifié.
+</p>
+
+<h3>Anciennes informations</h3>
+
+<ul>
+    <li><strong>Titre :</strong> <span th:text="${ancienTitre}"></span></li>
+    <li><strong>Description :</strong> <span th:text="${ancienneDescription}"></span></li>
+    <li><strong>Lien :</strong> <a th:href="${ancienneUrl}" th:text="${ancienneUrl}"></a></li>
+</ul>
+
+<h3>Nouvelles informations</h3>
+
+<ul>
+    <li><strong>Titre :</strong> <span th:text="${nouveauTitre}"></span></li>
+    <li><strong>Description :</strong> <span th:text="${nouvelleDescription}"></span></li>
+    <li><strong>Lien :</strong> <a th:href="${nouvelleUrl}" th:text="${nouvelleUrl}"></a></li>
+    <li><strong>Priorité :</strong> <span th:text="${priorite}"></span></li>
+</ul>
+
+<p>
+    <strong>Liste :</strong>
+    <span th:text="${nomListe}"></span>
+</p>
+
+<p>
+    Consulter la liste :
+</p>
+
+<p>
+    <a th:href="${urlListe}" th:text="${urlListe}"></a>
+</p>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

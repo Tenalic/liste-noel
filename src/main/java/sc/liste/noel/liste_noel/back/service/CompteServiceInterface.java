@@ -1,9 +1,11 @@
 package sc.liste.noel.liste_noel.back.service;
 
-import sc.liste.noel.liste_noel.common.dto.CompteDto;
-import sc.liste.noel.liste_noel.common.dto.TokenDto;
+import sc.liste.noel.liste_noel.back.exception.MailServiceDesactivedException;
+import sc.liste.noel.liste_noel.back.exception.MotDePasseException;
+import sc.liste.noel.liste_noel.back.dto.CompteDto;
 import sc.liste.noel.liste_noel.back.exception.CompteNotFoundException;
-import sc.liste.noel.liste_noel.back.exception.TokenExpiredException;
+
+import java.io.IOException;
 
 public interface CompteServiceInterface {
 
@@ -14,6 +16,8 @@ public interface CompteServiceInterface {
      * @return true si un compte existe déjà, false sinon
      */
     boolean compteExiste(String email);
+
+    String getPseudo(String email) throws CompteNotFoundException;
 
     /**
      * Verifie si un compte avec le pseudo donnee existe en base de données
@@ -32,7 +36,7 @@ public interface CompteServiceInterface {
      * @return true si un compte correspond à la combinaison email et mot de passe,
      * false sinon
      */
-    CompteDto connexion(String email, String password);
+    CompteDto connexion(String email, String password) throws CompteNotFoundException;
 
     /**
      * Sauvegarde un nouveau compte avec le email et password donné en base de
@@ -42,7 +46,7 @@ public interface CompteServiceInterface {
      * @param password : mot de passe joueur
      * @return true si tout s'est bien passé
      */
-    boolean creationCompte(String email, String password, boolean cguAccepted, String pseudo);
+    String creationCompte(String email, String password, boolean cguAccepted, String pseudo) throws IOException;
 
     /**
      * Supprime en base de données le compte avec le email donné
@@ -58,36 +62,10 @@ public interface CompteServiceInterface {
      * @param email       : email compte
      * @param oldPassword : ancien mot de passe
      * @param newPassword : nouveau mot de passe
-     * @return true si tout s'est bien passé
      */
-    boolean updatePassword(String email, String oldPassword, String newPassword);
+    void updatePassword(String email, String oldPassword, String newPassword, String confirmationNewPassword) throws CompteNotFoundException, MotDePasseException;
 
-
-    /**
-     * augmente le nombre de deconexion du compte
-     *
-     * @param email : email du compte
-     * @return true si cela c'est bien passé, false sinon
-     */
-    boolean deconexion(String email);
-
-    /**
-     * Recupère le token d'un joueur
-     *
-     * @param email : email dont on souhaite récupérer le token
-     * @return TokenDto
-     */
-    TokenDto getTokenDtoByEmail(String email);
-
-    /**
-     * Recupère le email a partir d'un token
-     *
-     * @param token : token
-     * @return email
-     */
-    TokenDto getTokenDtoByToken(String token) throws CompteNotFoundException, TokenExpiredException;
-
-    void genererMotDePasseEtEnvoyer(String email);
+    void genererMotDePasseEtEnvoyer(String email) throws MailServiceDesactivedException;
 
     boolean activateUser(String email, String key);
 }
